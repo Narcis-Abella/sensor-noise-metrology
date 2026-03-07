@@ -200,6 +200,8 @@ Las trayectorias se comparan contra el YuMi usando `evo` (ATE/RPE con alineació
   - [`docs/HARDWARE_PAYLOAD.md`](docs/HARDWARE_PAYLOAD.md)  
 - **Current status and decisions taken so far:**  
   - [`PROGRESS_LOG.md`](PROGRESS_LOG.md)
+- **Consolidated audit review (all audited points for future revision):**  
+  - [`docs/AUDIT_CONSOLIDATED_REVIEW.md`](docs/AUDIT_CONSOLIDATED_REVIEW.md)
 - **Extended reference pool (for manuscript and experimentation):**  
   - [`docs/REFERENCES_POOL.md`](docs/REFERENCES_POOL.md)
 
