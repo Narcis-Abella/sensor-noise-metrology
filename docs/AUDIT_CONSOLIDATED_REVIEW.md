@@ -9,13 +9,13 @@
 
 ## Propósito de este documento
 
-Este documento consolida **todos los puntos auditados** en las dos revisiones académicas del proyecto. Sirve como:
+Este documento consolida todos los puntos auditados en las dos revisiones académicas del proyecto. Sirve como:
 
-1. **Checklist de revisión futura** — antes de recoger datos, enviar al supervisor o someter a revista.
-2. **Registro de debilidades identificadas** — con referencias a archivos y secciones concretas.
-3. **Guía de acciones correctivas** — priorizadas por criticidad y esfuerzo.
+1. Checklist de revisión futura — antes de recoger datos, enviar al supervisor o someter a revista.
+2. Registro de debilidades identificadas — con referencias a archivos y secciones concretas.
+3. Guía de acciones correctivas — priorizadas por criticidad y esfuerzo.
 
-**Uso recomendado:** Revisar este documento en cada hito (pre-supervisor, pre-sesiones dinámicas, pre-manuscrito) y marcar los ítems resueltos.
+Revisar en cada hito (pre-supervisor, pre-sesiones dinámicas, pre-manuscrito) y marcar los ítems resueltos.
 
 ---
 
@@ -46,10 +46,10 @@ Este documento consolida **todos los puntos auditados** en las dos revisiones ac
 | 2 | Hipótesis y falsabilidad | 7/10 | 8/10 | Media 7.5 |
 | 3 | Rigor diseño experimental | 7/10 | 8/10 | Media 7.5 |
 | 4 | Modelo de ruido M1–M4 | 5/10 | 7/10 | Media 6 |
-| 5 | Metodología estadística | **4/10** | 6/10 | **Crítico** |
+| 5 | Metodología estadística | 4/10 | 6/10 | Crítico |
 | 6 | Backends SLAM | 7/10 | 8/10 | Media 7.5 |
 | 7 | Reproducibilidad | 6/10 | 6/10 | Media 6 |
-| 8 | Referencias | **3/10** | 8/10 | **Discrepancia** |
+| 8 | Referencias | 3/10 | 8/10 | Discrepancia |
 | 9 | Viabilidad y alcance | 6/10 | 7/10 | Media 6.5 |
 
 ---
@@ -69,16 +69,16 @@ Este documento consolida **todos los puntos auditados** en las dos revisiones ac
 
 | Auditoría | Fortalezas | Debilidades |
 |-----------|------------|-------------|
-| **Audit 1** | Afirmación estructurada; M4 es el objeto teórico más claro; YuMi como referencia cinemática es diferenciador. | Competidores cercanos no identificados; papers críticos de SLAM/sensor no citados; M4 presentado como fórmula única para IMU/LiDAR/cámara cuando los mecanismos físicos son distintos. |
-| **Audit 2** | Gap explícito; framing distinto vs Sim2Real clásico; M4 es objeto concreto. | M4 percibido como heurístico; afirmación "no prior work" frágil en RA-L/T-RO; novedad del dataset no desarrollada como clase de contribución. |
+| Audit 1 | Afirmación estructurada; M4 es el objeto teórico más claro; YuMi como referencia cinemática es diferenciador. | Competidores cercanos no identificados; papers críticos de SLAM/sensor no citados; M4 presentado como fórmula única para IMU/LiDAR/cámara cuando los mecanismos físicos son distintos. |
+| Audit 2 | Gap explícito; framing distinto vs Sim2Real clásico; M4 es objeto concreto. | M4 percibido como heurístico; afirmación "no prior work" frágil en RA-L/T-RO; novedad del dataset no desarrollada como clase de contribución. |
 
 ### Referencias faltantes o débiles
 
-- **EuRoC MAV dataset** (Burri et al., 2016) — benchmark visual-inertial de referencia.
-- **TUM-VI benchmark** (Schubert et al., 2018) — caracterización explícita de ruido IMU con Allan Variance (BMI160), comparable a BMI055.
-- **Hilti SLAM Challenge** — ground truth de alta calidad.
-- **Rehder et al. (2016)** "Extending kalibr" — calibración IMU-cámara continua con ground truth de brazo robótico.
-- **Furgale et al. (2013)** "Unified temporal and spatial calibration" — base del toolchain kalibr.
+- EuRoC MAV dataset (Burri et al., 2016) — benchmark visual-inertial de referencia.
+- TUM-VI benchmark (Schubert et al., 2018) — caracterización explícita de ruido IMU con Allan Variance (BMI160), comparable a BMI055.
+- Hilti SLAM Challenge — ground truth de alta calidad.
+- Rehder et al. (2016) "Extending kalibr" — calibración IMU-cámara continua con ground truth de brazo robótico.
+- Furgale et al. (2013) "Unified temporal and spatial calibration" — base del toolchain kalibr.
 
 ### Acciones recomendadas
 
@@ -99,16 +99,16 @@ Este documento consolida **todos los puntos auditados** en las dos revisiones ac
 
 ### Hipótesis actuales
 
-- **H0:** Simulación metrológica vs. hardware real → ATE estadísticamente indistinguible (p > 0.05).
-- **H1:** Calidad del IMU afecta sistemáticamente al rendimiento SLAM.
-- **H2:** Asimetría CW/CCW observable en bias del giroscopio.
+- H0: Simulación metrológica vs. hardware real → ATE estadísticamente indistinguible (p > 0.05).
+- H1: Calidad del IMU afecta sistemáticamente al rendimiento SLAM.
+- H2: Asimetría CW/CCW observable en bias del giroscopio.
 
 ### Hallazgos de la auditoría
 
 | Auditoría | Fortalezas | Debilidades |
 |-----------|------------|-------------|
-| **Audit 1** | H0/H1/H2 claros; criterio de éxito pre-registrado; H0 rechazada también publicable. | **Error lógico crítico:** p > 0.05 ≠ equivalencia; "ausencia de evidencia no es evidencia de ausencia"; se requiere **test de equivalencia (TOST)**. |
-| **Audit 2** | H0/H1/H2 operacionales; criterios de éxito definidos; enlace hipótesis–pipeline claro. | Sin margen de equivalencia pre-declarado; múltiples análisis secundarios no priorizados. |
+| Audit 1 | H0/H1/H2 claros; criterio de éxito pre-registrado; H0 rechazada también publicable. | Error lógico crítico: p > 0.05 ≠ equivalencia; "ausencia de evidencia no es evidencia de ausencia"; se requiere test de equivalencia (TOST). |
+| Audit 2 | H0/H1/H2 operacionales; criterios de éxito definidos; enlace hipótesis–pipeline claro. | Sin margen de equivalencia pre-declarado; múltiples análisis secundarios no priorizados. |
 
 ### Problema estadístico central
 
@@ -117,9 +117,9 @@ El diseño actual usa:
 - Test: H0: μ_M = μ_R vs. H1: μ_M ≠ μ_R
 - Criterio de éxito: p > 0.05 (no rechazar H0)
 
-**Problema:** Un p > 0.05 con n = 9 indica **potencia insuficiente** para detectar diferencias, no evidencia positiva de equivalencia. En revistas metrológicas (IEEE TIM, Measurement) esto se considera un error lógico.
+Problema: un p > 0.05 con n = 9 indica potencia insuficiente para detectar diferencias, no evidencia positiva de equivalencia. En revistas metrológicas (IEEE TIM, Measurement) esto se considera un error lógico.
 
-**Solución:** **TOST (Two One-Sided Tests)** de bioequivalencia:
+Solución: TOST (Two One-Sided Tests) de bioequivalencia:
 
 1. Pre-especificar margen δ (ej. δ = 5 mm ATE, o δ = 10% del ATE de referencia de T1).
 2. Probar H_lower: μ_M − μ_R > −δ y H_upper: μ_M − μ_R < δ simultáneamente.
@@ -148,26 +148,26 @@ El diseño actual usa:
 
 | Auditoría | Fortalezas | Debilidades |
 |-----------|------------|-------------|
-| **Audit 1** | Estructura en dos etapas correcta; diseño T1/T2/T3 con bloques CW/CCW/MIX bien justificado; 60 s estáticos; tabla de variables de confusión. | YuMi repeatability vs. volumetric accuracy no resuelto para ATE; trayectorias cortas (150–300 mm) vs. 10–100 m típicos; ground truth: ¿comandado vs. ejecutado? (blending en esquinas). |
-| **Audit 2** | Diseño de ground truth bien pensado; sync y hand-eye no son afterthoughts; variables de confusión controladas; diseño de trayectorias rico. | Objetivos numéricos de sync no fijados; sin protocolo para rechazar sesiones por deriva ambiental; tiempo de robot alto (~32 h). |
+| Audit 1 | Estructura en dos etapas correcta; diseño T1/T2/T3 con bloques CW/CCW/MIX bien justificado; 60 s estáticos; tabla de variables de confusión. | YuMi repeatability vs. volumetric accuracy no resuelto para ATE; trayectorias cortas (150–300 mm) vs. 10–100 m típicos; ground truth: ¿comandado vs. ejecutado? (blending en esquinas). |
+| Audit 2 | Diseño de ground truth bien pensado; sync y hand-eye no son afterthoughts; variables de confusión controladas; diseño de trayectorias rico. | Objetivos numéricos de sync no fijados; sin protocolo para rechazar sesiones por deriva ambiental; tiempo de robot alto (~32 h). |
 
 ### Repeatability vs. accuracy del YuMi
 
-- **Repeatability ±0.02 mm:** Consistencia al volver a la misma pose desde la misma dirección.
-- **Volumetric / path-following accuracy:** Error sistemático entre pose comandada y pose real en un frame absoluto. Incluye errores de encoders, flexión estructural bajo carga, blending geométrico en esquinas.
-- **Estimación:** Path-following accuracy típicamente 0.1–0.5 mm (5–25× mayor que repeatability).
-- **Implicación:** ATE es métrica absoluta; si el ground truth tiene ±0.5 mm de incertidumbre sistemática, afirmaciones de diferencias de pocos mm pueden ser inválidas.
+- Repeatability ±0.02 mm: Consistencia al volver a la misma pose desde la misma dirección.
+- Volumetric / path-following accuracy: Error sistemático entre pose comandada y pose real en un frame absoluto. Incluye errores de encoders, flexión estructural bajo carga, blending geométrico en esquinas.
+- Estimación: Path-following accuracy típicamente 0.1–0.5 mm (5–25× mayor que repeatability).
+- Implicación: ATE es métrica absoluta; si el ground truth tiene ±0.5 mm de incertidumbre sistemática, afirmaciones de diferencias de pocos mm pueden ser inválidas.
 
 ### Sincronización temporal
 
 - Cálculo: 10 ms a 100 mm/s ≈ 1 mm de error espacial.
-- **Gap:** No se declara un objetivo numérico (ej. |Δt| ≤ 3 ms con PTP, ≤ 5 ms con NTP).
-- **PTP vs. NTP:** Capacidad del IRC5 como PTP grandmaster/slave debe confirmarse con documentación ABB.
+- Gap: no se declara un objetivo numérico (ej. |Δt| ≤ 3 ms con PTP, ≤ 5 ms con NTP).
+- PTP vs. NTP: Capacidad del IRC5 como PTP grandmaster/slave debe confirmarse con documentación ABB.
 
 ### Acciones recomendadas
 
 - [ ] Cuantificar path-following accuracy del YuMi (documentación ABB o medición empírica); incluir en presupuesto de incertidumbre §2.4.
-- [ ] Aclarar si el ground truth usa trayectoria **comandada** o **ejecutada** (encoder state); si es comandada, documentar el efecto del blending en T3.
+- [ ] Aclarar si el ground truth usa trayectoria comandada o ejecutada (encoder state); si es comandada, documentar el efecto del blending en T3.
 - [ ] Fijar objetivos numéricos de sync: ej. "|Δt| ≤ 3 ms (PTP) o ≤ 5 ms (NTP) antes de aceptar sesión".
 - [ ] Añadir checklist de "criterios de aceptación de sesión" en `EXPERIMENTAL_DESIGN.md` (ATE floor, deriva de temperatura, sync, residual hand-eye).
 - [ ] Definir protocolo para rechazar/anotar sesiones si temperatura o iluminación exceden umbral.
@@ -193,15 +193,15 @@ $$
 
 | Auditoría | Fortalezas | Debilidades |
 |-----------|------------|-------------|
-| **Audit 1** | Motivación física buena; estrategia de cross-validation (fit T1+T2, eval T3) correcta. | **Inconsistencia dimensional:** sumar σ² (unidades²) con ||ω|| (unidades) requiere definición explícita de c_v, c_a, c_j por sensor; **riesgo de σ² < 0** si coeficientes negativos; **anisotropía ignorada** (MEMS es axis-dependent); **identificabilidad** de 6 parámetros con O(9) muestras no abordada. |
-| **Audit 2** | M1–M3 sólidos; M4 anclado en literatura; generalización T3 pre-planeada. | Identificabilidad y acoplamiento de coeficientes no abordados; modelo de cámara hand-wavy; LiDAR sin tratamiento explícito de bias. |
+| Audit 1 | Motivación física buena; estrategia de cross-validation (fit T1+T2, eval T3) correcta. | Inconsistencia dimensional: sumar σ² (unidades²) con ||ω|| (unidades) requiere definición explícita de c_v, c_a, c_j por sensor; riesgo de σ² < 0 si coeficientes negativos; anisotropía ignorada (MEMS es axis-dependent); identificabilidad de 6 parámetros con O(9) muestras no abordada. |
+| Audit 2 | M1–M3 sólidos; M4 anclado en literatura; generalización T3 pre-planeada. | Identificabilidad y acoplamiento de coeficientes no abordados; modelo de cámara hand-wavy; LiDAR sin tratamiento explícito de bias. |
 
 ### Problemas técnicos específicos
 
-1. **Dimensionalidad:** Para IMU giroscopio [unidades (rad/s)²], c_v necesitaría [(rad/s)²/(rad/s)] = [rad/s]. Debe declararse por sensor y eje.
-2. **No-negatividad:** Forma lineal permite σ² < 0 si los datos requieren coeficientes negativos. Alternativa multiplicativa: σ²(t) = σ²_static × (1 + c_v||ω|| + c_a||a|| + c_j||ȧ||) garantiza positividad.
-3. **Colinealidad:** En T2, ||ω||, ||a||, ||ȧ|| están correlacionados; c_v, c_a, c_j pueden ser individualmente no identificables.
-4. **Anisotropía:** Ruido MEMS es axis-dependent (g-sensitivity, coeficiente térmico); un único σ² para todos los ejes es simplificación que puede enmascarar efectos relevantes para H2.
+1. Dimensionalidad: Para IMU giroscopio [unidades (rad/s)²], c_v necesitaría [(rad/s)²/(rad/s)] = [rad/s]. Debe declararse por sensor y eje.
+2. No-negatividad: Forma lineal permite σ² < 0 si los datos requieren coeficientes negativos. Alternativa multiplicativa: σ²(t) = σ²_static × (1 + c_v||ω|| + c_a||a|| + c_j||ȧ||) garantiza positividad.
+3. Colinealidad: En T2, ||ω||, ||a||, ||ȧ|| están correlacionados; c_v, c_a, c_j pueden ser individualmente no identificables.
+4. Anisotropía: Ruido MEMS es axis-dependent (g-sensitivity, coeficiente térmico); un único σ² para todos los ejes es simplificación que puede enmascarar efectos relevantes para H2.
 
 ### Acciones recomendadas
 
@@ -225,15 +225,15 @@ $$
 
 | Auditoría | Fortalezas | Debilidades |
 |-----------|------------|-------------|
-| **Audit 1** | Pipeline Shapiro-Wilk → paramétrico/no-paramétrico; efecto (Cohen's d, rank-biserial); Bonferroni presente. | **Error fundamental:** criterio H0 (p > 0.05) no proporciona evidencia de equivalencia; Bonferroni cubre 12 comparaciones pero la matriz completa puede tener ~216; n = 9 da ~35% potencia para d = 0.5; TOST requiere n ≥ 20–30. |
-| **Audit 2** | Test selection y effect sizes correctos; Bonferroni sobre 12 comparaciones apropiado; incertidumbre ground truth ligada a interpretación. | Tamaño muestral y potencia no abordados; sin plan para estructura jerárquica (repeticiones dentro de bloque dentro de sesión); ATE/RPE tratados como escalares pero backends y trayectorias multiplican comparaciones. |
+| Audit 1 | Pipeline Shapiro-Wilk → paramétrico/no-paramétrico; efecto (Cohen's d, rank-biserial); Bonferroni presente. | Error fundamental: criterio H0 (p > 0.05) no proporciona evidencia de equivalencia; Bonferroni cubre 12 comparaciones pero la matriz completa puede tener ~216; n = 9 da ~35% potencia para d = 0.5; TOST requiere n ≥ 20–30. |
+| Audit 2 | Test selection y effect sizes correctos; Bonferroni sobre 12 comparaciones apropiado; incertidumbre ground truth ligada a interpretación. | Tamaño muestral y potencia no abordados; sin plan para estructura jerárquica (repeticiones dentro de bloque dentro de sesión); ATE/RPE tratados como escalares pero backends y trayectorias multiplican comparaciones. |
 
 ### Matriz de comparaciones
 
 - Diseño actual: 4 sesiones × 3 trayectorias = 12 comparaciones primarias.
 - Matriz completa: 4 × 3 × (2–3 backends) × 3 CFG × 2 métricas (ATE/RPE) ≈ 216 comparaciones.
 - Bonferroni con α/12 es optimista por factor ~18 para la matriz completa.
-- **Recomendación:** Pre-especificar comparaciones primarias (con Bonferroni) y marcar el resto como exploratorias (reportar sin corrección pero señaladas).
+- Recomendación: Pre-especificar comparaciones primarias (con Bonferroni) y marcar el resto como exploratorias (reportar sin corrección pero señaladas).
 
 ### Acciones recomendadas
 
@@ -256,15 +256,15 @@ $$
 
 | Auditoría | Fortalezas | Debilidades |
 |-----------|------------|-------------|
-| **Audit 1** | Cobertura paradigmática excelente; configuración congelada correcta; exclusión de LIO-SAM justificada. | Session A "IMU preintegration" no es backend SLAM (es dead reckoning abierto); GLIM requiere GPU (reproducibilidad); Session C (2D LiDAR) menos interesante científicamente. |
-| **Audit 2** | Cobertura ejemplar; estrategia "frozen configuration" sólida; LIO-SAM excluido con justificación. | Riesgo de sobre-complejidad; backends visual pueden tener problemas de madurez ROS2; sin validación previa en EuRoC/TUM-VI. |
+| Audit 1 | Cobertura paradigmática excelente; configuración congelada correcta; exclusión de LIO-SAM justificada. | Session A "IMU preintegration" no es backend SLAM (es dead reckoning abierto); GLIM requiere GPU (reproducibilidad); Session C (2D LiDAR) menos interesante científicamente. |
+| Audit 2 | Cobertura ejemplar; estrategia "frozen configuration" sólida; LIO-SAM excluido con justificación. | Riesgo de sobre-complejidad; backends visual pueden tener problemas de madurez ROS2; sin validación previa en EuRoC/TUM-VI. |
 
 ### Puntos específicos
 
-1. **Session A — IMU preintegration:** Es integración abierta sin observaciones; drift O(t³). Debe enmarcarse como "benchmark de drift IMU abierto" no como "backend SLAM".
-2. **GLIM:** Solo GPU (CUDA); labs sin NVIDIA no pueden replicar. Declarar como limitación; considerar alternativa CPU (ej. HDL-Graph-SLAM).
-3. **Session C (2D LiDAR):** Tecnología madura; incertidumbre H0 baja. Candidata a reducir a resultado baseline breve si hay que recortar scope.
-4. **Validación previa:** Planificar ejecución de cada backend en EuRoC/TUM-VI/Newer College antes de usarlo como "instrumento de medida".
+1. Session A — IMU preintegration: Es integración abierta sin observaciones; drift O(t³). Debe enmarcarse como "benchmark de drift IMU abierto" no como "backend SLAM".
+2. GLIM: Solo GPU (CUDA); labs sin NVIDIA no pueden replicar. Declarar como limitación; considerar alternativa CPU (ej. HDL-Graph-SLAM).
+3. Session C (2D LiDAR): Tecnología madura; incertidumbre H0 baja. Candidata a reducir a resultado baseline breve si hay que recortar scope.
+4. Validación previa: Planificar ejecución de cada backend en EuRoC/TUM-VI/Newer College antes de usarlo como "instrumento de medida".
 
 ### Acciones recomendadas
 
@@ -287,16 +287,16 @@ $$
 
 | Auditoría | Fortalezas | Debilidades |
 |-----------|------------|-------------|
-| **Audit 1** | Intenciones explícitas: dataset público, plugin Gazebo, scripts Allan, pipeline evo; PROGRESS_LOG ejemplar. | "Planned for release" insuficiente sin: (a) DOI, (b) formato de datos, (c) metadata; plugin Rosetta **no iniciado** — es deliverable crítico. |
-| **Audit 2** | Intenciones open-source claras; documentación organizada; detalle metodológico alto. | Dataset no planificado concretamente; scripts de análisis no scoped; sin licencia de datos. |
+| Audit 1 | Intenciones explícitas: dataset público, plugin Gazebo, scripts Allan, pipeline evo; PROGRESS_LOG ejemplar. | "Planned for release" insuficiente sin: (a) DOI, (b) formato de datos, (c) metadata; plugin Rosetta no iniciado — es deliverable crítico. |
+| Audit 2 | Intenciones open-source claras; documentación organizada; detalle metodológico alto. | Dataset no planificado concretamente; scripts de análisis no scoped; sin licencia de datos. |
 
 ### Gaps de especificación
 
-- **DOI:** Zenodo o IEEE DataPort estándar para datasets de robótica.
-- **Formato:** ROS2 bags MCAP vs. ASCII KITTI/TUM; cuál se publicará.
-- **Metadata:** Archivos de calibración (formato kalibr), offsets de sincronización medidos, geometría del entorno, logs de temperatura.
-- **Plugin Gazebo Rosetta:** Implementar integración temporal del patrón Rosetta en Gazebo; tarea no trivial. Sin esto, la validación metrológica para LiDAR no es posible.
-- **Licencia de datos:** Ej. CC-BY 4.0; no declarada.
+- DOI: Zenodo o IEEE DataPort estándar para datasets de robótica.
+- Formato: ROS2 bags MCAP vs. ASCII KITTI/TUM; cuál se publicará.
+- Metadata: Archivos de calibración (formato kalibr), offsets de sincronización medidos, geometría del entorno, logs de temperatura.
+- Plugin Gazebo Rosetta: Implementar integración temporal del patrón Rosetta en Gazebo; tarea no trivial. Sin esto, la validación metrológica para LiDAR no es posible.
+- Licencia de datos: Ej. CC-BY 4.0; no declarada.
 
 ### Acciones recomendadas
 
@@ -317,7 +317,7 @@ $$
 
 ### Hallazgos de la auditoría
 
-**Discrepancia importante:** Audit 1 puntúa 3/10 (backends no citados → riesgo desk reject); Audit 2 puntúa 8/10 (cobertura rica para TIM/Measurement).
+Discrepancia importante: Audit 1 puntúa 3/10 (backends no citados → riesgo desk reject); Audit 2 puntúa 8/10 (cobertura rica para TIM/Measurement).
 
 ### Citas obligatorias faltantes (Audit 1)
 
@@ -340,7 +340,7 @@ $$
 
 ### Posible error de atribución
 
-- Six-Position Test: Referido como "IEEE Std 952" en algún lugar; el estándar correcto para la metodología es **IEEE Std 1293 (1998, reaffirmed)**. Verificar y corregir.
+- Six-Position Test: Referido como "IEEE Std 952" en algún lugar; el estándar correcto para la metodología es IEEE Std 1293 (1998, reaffirmed). Verificar y corregir.
 
 ### Acciones recomendadas
 
@@ -363,14 +363,14 @@ $$
 
 | Auditoría | Fortalezas | Debilidades |
 |-----------|------------|-------------|
-| **Audit 1** | Scope Phase I correcto; MPU definido (static + Session D + M4 parcial); blockers priorizados. | Payload Session D en 70% (Mid-360 ~350 g + cables); PTP/NTP no resuelto; timeline agresivo; plugin no iniciado. |
-| **Audit 2** | Blockers explícitos; timeline realista si todo va bien; scope disciplinado. | Riesgo de ejecución alto; MPU no definido nítidamente; fallback YuMi (Mitsubishi) poco desarrollado. |
+| Audit 1 | Scope Phase I correcto; MPU definido (static + Session D + M4 parcial); blockers priorizados. | Payload Session D en 70% (Mid-360 ~350 g + cables); PTP/NTP no resuelto; timeline agresivo; plugin no iniciado. |
+| Audit 2 | Blockers explícitos; timeline realista si todo va bien; scope disciplinado. | Riesgo de ejecución alto; MPU no definido nítidamente; fallback YuMi (Mitsubishi) poco desarrollado. |
 
 ### Bloqueadores críticos
 
-1. **Payload Session D:** Mid-360 ~350 g + cables USB/Ethernet ~30–50 g → 380–400 g. A 80% de 500 g, rendimiento dinámico YuMi se reduce; vibración en T3 puede violar criterio de settling.
-2. **Sincronización PTP/NTP:** Capacidad del IRC5 como PTP grandmaster/slave debe confirmarse. NTP típicamente 1–10 ms jitter → hasta 1 mm espacial a velocidades T2.
-3. **Plugin Gazebo:** No iniciado; en ruta crítica.
+1. Payload Session D: Mid-360 ~350 g + cables USB/Ethernet ~30–50 g → 380–400 g. A 80% de 500 g, rendimiento dinámico YuMi se reduce; vibración en T3 puede violar criterio de settling.
+2. Sincronización PTP/NTP: Capacidad del IRC5 como PTP grandmaster/slave debe confirmarse. NTP típicamente 1–10 ms jitter → hasta 1 mm espacial a velocidades T2.
+3. Plugin Gazebo: No iniciado; en ruta crítica.
 
 ### Acciones recomendadas
 
@@ -386,11 +386,11 @@ $$
 
 | # | Problema | Por qué causa rechazo | Acción específica |
 |---|----------|------------------------|-------------------|
-| **1** | **Error de equivalencia estadística** | p > 0.05 no demuestra equivalencia; revisores metrológicos rechazarán. | Implementar TOST con margen δ predefinido; actualizar `METHODOLOGY.md` §3.4; recalcular n. |
-| **2** | **Backends SLAM sin citar** | Desk reject o major revision en Q1. | Añadir Xu, Koide, Campos, Hess, Vizzo, He, Geneva, Grupp a `RESEARCH_PLAN.md` §9. |
-| **3** | **YuMi repeatability ≠ accuracy para ATE** | Revisor metrológico distinguirá; claims de significancia invalidadas si ground truth ±0.5 mm. | Cuantificar path-following accuracy; incluir en presupuesto §2.4; o medir con laser tracker/Vicon. |
-| **4** | **Identificabilidad y consistencia M4** | Revisor de modelado sensorial planteará los tres puntos (dimensional, no-negatividad, colinealidad). | Reescribir fórmula multiplicativa o añadir restricciones; VIF; regularización; en `METHODOLOGY.md` §5.3. |
-| **5** | **Tamaño muestral insuficiente** | n = 9 da ~35% potencia; TOST requiere n ≥ 20–30. | Análisis de potencia formal; aumentar repeticiones o reducir comparaciones primarias. |
+| 1 | Error de equivalencia estadística | p > 0.05 no demuestra equivalencia; revisores metrológicos rechazarán. | Implementar TOST con margen δ predefinido; actualizar `METHODOLOGY.md` §3.4; recalcular n. |
+| 2 | Backends SLAM sin citar | Desk reject o major revision en Q1. | Añadir Xu, Koide, Campos, Hess, Vizzo, He, Geneva, Grupp a `RESEARCH_PLAN.md` §9. |
+| 3 | YuMi repeatability ≠ accuracy para ATE | Revisor metrológico distinguirá; claims de significancia invalidadas si ground truth ±0.5 mm. | Cuantificar path-following accuracy; incluir en presupuesto §2.4; o medir con laser tracker/Vicon. |
+| 4 | Identificabilidad y consistencia M4 | Revisor de modelado sensorial planteará los tres puntos (dimensional, no-negatividad, colinealidad). | Reescribir fórmula multiplicativa o añadir restricciones; VIF; regularización; en `METHODOLOGY.md` §5.3. |
+| 5 | Tamaño muestral insuficiente | n = 9 da ~35% potencia; TOST requiere n ≥ 20–30. | Análisis de potencia formal; aumentar repeticiones o reducir comparaciones primarias. |
 
 ---
 
@@ -398,22 +398,22 @@ $$
 
 ### Expansion A — LiDAR repetitivo (spinning)
 
-- **Nuevas preguntas:** Comportamiento de M4 para LiDAR spinning vs. solid-state; sensibilidad por backend (LIO-SAM); degeneración comparativa.
-- **Backends adicionales:** LIO-SAM, LIO-SAM2, LeGO-LOAM.
+- Nuevas preguntas: Comportamiento de M4 para LiDAR spinning vs. solid-state; sensibilidad por backend (LIO-SAM); degeneración comparativa.
+- Backends adicionales: LIO-SAM, LIO-SAM2, LeGO-LOAM.
 - **Esfuerzo:** Sesión estática + dinámica (~8 h YuMi); plugin Gazebo para spinning; análisis M4 extendido.
-- **Bloqueador:** Payload — spinning 16-beam típicamente 800–900 g; YuMi 500 g. Probablemente requiere Mitsubishi u otro robot.
+- Bloqueador: Payload — spinning 16-beam típicamente 800–900 g; YuMi 500 g. Probablemente requiere Mitsubishi u otro robot.
 
 ### Expansion B — Visual-LiDAR-Inertial multimodal
 
 - **Valor:** Consistencia cross-modal de M4; robustez de fusión a gaps por sensor.
-- **Necesidad:** Sesión dedicada multi-sensor (Mid-360 + D455 co-montados); no basta reutilizar B y D por separado.
-- **Bloqueadores:** Payload combinado ~625 g + mount excede 500 g YuMi; sincronización de tres relojes; complejidad de análisis.
+- Necesidad: Sesión dedicada multi-sensor (Mid-360 + D455 co-montados); no basta reutilizar B y D por separado.
+- Bloqueadores: Payload combinado ~625 g + mount excede 500 g YuMi; sincronización de tres relojes; complejidad de análisis.
 
 ### Expansion A+B combinada
 
 - **Escala:** Realísticamente nivel PhD o multi-año.
-- **Para bachelor/master:** No realista como deliverable único.
-- **Enfoque pragmático:** Phase I → TIM/Measurement; Expansiones A/B como Phase II/III (tesis master o PhD).
+- Para bachelor/master: No realista como deliverable único.
+- Enfoque pragmático: Phase I → TIM/Measurement; Expansiones A/B como Phase II/III (tesis master o PhD).
 
 ---
 
@@ -421,10 +421,10 @@ $$
 
 | Revista | Puntuación | Veredicto |
 |--------|-----------|-----------|
-| **IEEE TIM** | 6→8/10 con correcciones | Objetivo primario realista. Requiere TOST, power analysis, plan de datos. |
-| **Measurement** | 7/10 | Muy buen encaje. Algo más flexible en SLAM. |
-| **RA-L** | 4/10 | Stretch. Requiere expansión o insights más centrados en robótica. |
-| **T-RO** | 3/10 | Muy ambicioso. Requiere contribución teórica profunda o benchmark excepcional. |
+| IEEE TIM | 6→8/10 con correcciones | Objetivo primario realista. Requiere TOST, power analysis, plan de datos. |
+| Measurement | 7/10 | Muy buen encaje. Algo más flexible en SLAM. |
+| RA-L | 4/10 | Stretch. Requiere expansión o insights más centrados en robótica. |
+| T-RO | 3/10 | Muy ambicioso. Requiere contribución teórica profunda o benchmark excepcional. |
 
 ---
 

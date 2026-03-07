@@ -17,18 +17,18 @@ This study asks a very concrete question:
 > *If we take sensor modelling as seriously as metrology does — using a calibrated robot arm as ground truth and detailed noise models — how close can simulation really get to real sensors?*
 
 This is important for two reasons:
-- **For practice:** Labs and companies make design decisions (sensors, algorithms, parameter tuning) based on simulation. If the sensor models are naïve, those decisions can be systematically biased.
-- **For research:** Many Sim2Real papers study algorithms and environments, but far fewer quantify the role of **sensor model fidelity itself** in the Reality Gap.
+- For practice: labs and companies make design decisions (sensors, algorithms, parameter tuning) based on simulation. If the sensor models are naïve, those decisions can be systematically biased.
+- For research: many Sim2Real papers study algorithms and environments, but far fewer quantify the role of sensor model fidelity itself in the Reality Gap.
 
 Several works already cover individual pieces of this puzzle:
-- **IMUs:** [Furrer et al., 2016](docs/RESEARCH_PLAN.md#9-references) showed that you must derive Allan Variance coefficients from real logs, not datasheets, to match inertial drift in simulation.
-- **LiDARs:** [Liu & Zhang, 2021](docs/RESEARCH_PLAN.md#9-references) analysed the degeneracy risks of solid‑state Livox sensors and their non‑repetitive scan patterns.
-- **Dynamic metrology:** [Lin et al., 2022 (*Measurement*)](docs/RESEARCH_PLAN.md#9-references) validated dynamic measurement systems with a laser tracker as ground truth, using Allan analysis and fault‑tolerant sensor fusion.
+- IMUs: [Furrer et al., 2016](docs/RESEARCH_PLAN.md#9-references) showed that you must derive Allan Variance coefficients from real logs, not datasheets, to match inertial drift in simulation.
+- LiDARs: [Liu & Zhang, 2021](docs/RESEARCH_PLAN.md#9-references) analysed the degeneracy risks of solid‑state Livox sensors and their non‑repetitive scan patterns.
+- Dynamic metrology: [Lin et al., 2022 (*Measurement*)](docs/RESEARCH_PLAN.md#9-references) validated dynamic measurement systems with a laser tracker as ground truth, using Allan analysis and fault‑tolerant sensor fusion.
 
-What is missing — and what this study contributes — is a **single, metrologically grounded framework** that:
+What is missing — and what this study contributes — is a single, metrologically grounded framework that:
 1. Uses a sub‑millimetre industrial robot (ABB YuMi) as kinematic ground truth.
-2. Builds **state‑dependent sensor noise models** whose variance changes with time since power‑on and with the sensor’s motion.
-3. Tests those models across **multiple tight‑coupled SLAM backends**, comparing real sensors, standard simulation and metrological simulation under the same trajectories.
+2. Builds state‑dependent sensor noise models whose variance changes with time since power‑on and with the sensor’s motion.
+3. Tests those models across multiple tight‑coupled SLAM backends, comparing real sensors, standard simulation and metrological simulation under the same trajectories.
 
 The core theoretical contribution is an explicit covariance formula [(model M4)](https://github.com/Narcis-Abella/slam-sensor-metrological-validation?tab=readme-ov-file#51-key-contribution-kinematic-state-dependent-covariance-model-m4) where the noise variance depends both on thermal state and on kinematic state; the formula and its intuition are kept in this README, while the full derivation and justification live in the technical documents under `docs/`.
 
@@ -36,20 +36,20 @@ The core theoretical contribution is an explicit covariance formula [(model M4)]
 
 ## 1. What this project is about
 
-This repository contains the design of a **stand‑alone metrological study** on Visual–LiDAR SLAM. Its goal is simple to state:
+This repository contains the design of a stand‑alone metrological study on Visual–LiDAR SLAM. Its goal is simple to state:
 
 > Quantitatively measure how close a simulator can get to real sensors if we model their noise and scanning behaviour with the same level of care used in instrumentation and metrology.
 
 Concretely:
-- We use an **ABB YuMi** collaborative robot as kinematic ground truth (±0.02 mm repeatability) and RobotStudio as an independent trajectory predictor.
-- We characterise three sensor families: **IMUs**, **LiDARs** (2D mechanical and 3D solid‑state Livox Mid‑360) and an **RGB‑D camera** (RealSense D455).
-- We build a family of **sensor noise models** whose variance depends on:
+- We use an ABB YuMi collaborative robot as kinematic ground truth (±0.02 mm repeatability) and RobotStudio as an independent trajectory predictor.
+- We characterise three sensor families: IMUs, LiDARs (2D mechanical and 3D solid‑state Livox Mid‑360) and an RGB‑D camera (RealSense D455).
+- We build a family of sensor noise models whose variance depends on:
   - time since power‑on (thermal state), and
   - kinematic state of the sensor (velocity, acceleration, jerk).
 - We then compare, for multiple SLAM systems, three kinds of data:
-  1. **Real hardware logs** on the YuMi,
-  2. **Standard simulation** (Gazebo defaults / manufacturer specs),
-  3. **Metrological simulation** (our noise + scanning models).
+  1. Real hardware logs on the YuMi,
+  2. Standard simulation (Gazebo defaults / manufacturer specs),
+  3. Metrological simulation (our noise + scanning models).
 
  
 
@@ -59,8 +59,8 @@ The detailed scientific rationale and hypotheses live in [`docs/RESEARCH_PLAN.md
 
 ## 2. Scope and possible extensions
 
-This study was originally conceived as the **sensor‑level step** of a broader research line on Sim‑to‑Real Visual–LiDAR SLAM (with possible extensions to a mobile‑platform Reality Gap benchmark and large‑scale SLAM optimisation in simulation).  
-In the context of this degree project, however, **only the metrological validation with YuMi ground truth is in scope**. Any mobile‑platform benchmark or automatic optimisation stage is treated strictly as **possible future work**, not as a commitment of this project.
+This study was originally conceived as the sensor‑level step of a broader research line on Sim‑to‑Real Visual–LiDAR SLAM (with possible extensions to a mobile‑platform Reality Gap benchmark and large‑scale SLAM optimisation in simulation).  
+In the context of this degree project, however, only the metrological validation with YuMi ground truth is in scope. Any mobile‑platform benchmark or automatic optimisation stage is treated strictly as possible future work, not as a commitment of this project.
 
 For a compact overview of the current study’s goals and contributions, see [`docs/RESEARCH_PLAN.md`](docs/RESEARCH_PLAN.md), sections 1–2 and 6.
 
@@ -68,12 +68,12 @@ For a compact overview of the current study’s goals and contributions, see [`d
 
 ## 3. Hardware and ground truth at a glance
 
-**Ground truth platform**
+Ground truth platform
 - ABB YuMi IRC5 dual‑arm cobot  
 - Repeatability: ±0.02 mm  
 - Trajectories programmed in RobotStudio and exported as time‑stamped poses.
 
-**Sensors under test**
+Sensors under test
 
 | ID | Sensor | Type | Role |
 |----|--------|------|------|
@@ -93,11 +93,11 @@ The experimental design has two stages; full details live in [`docs/EXPERIMENTAL
 ### 4.1 Stage 1 — Static characterisation
 
 Performed without the robot arm:
-- **IMUs:** 10–12 h static logs per IMU. Allan Variance (ARW, Bias Instability, RRW) + Six‑Position Test (IEEE Std 1293).
-- **LiDARs:** sensor facing a flat wall. We track how point‑to‑plane residuals drift over time (thermal ToF drift).
-- **Camera:** RealSense D455 observing a static AprilTag board for several hours. We quantify pose drift of the board (thermal deformation of intrinsics and FPN).
+- IMUs: 10–12 h static logs per IMU. Allan Variance (ARW, Bias Instability, RRW) + Six‑Position Test (IEEE Std 1293).
+- LiDARs: sensor facing a flat wall. We track how point‑to‑plane residuals drift over time (thermal ToF drift).
+- Camera: RealSense D455 observing a static AprilTag board for several hours. We quantify pose drift of the board (thermal deformation of intrinsics and FPN).
 
-These logs feed the **static** parts of the noise models (manufacturer vs. long‑term Allan vs. in‑session static).
+These logs feed the static parts of the noise models (manufacturer vs. long‑term Allan vs. in‑session static).
 
 ### 4.2 Stage 2 — Dynamic sessions on YuMi
 
@@ -111,10 +111,10 @@ Four sessions, one per sensor configuration:
 | D | Livox Mid‑360 | 3D | 3D LiDAR‑IMU with Rosetta pattern |
 
 Each session follows the same pattern:
-- 60 s static → **Block MIX** (CW/CCW/CW) → cooldown → **Block CW** → cooldown → **Block CCW** → 60 s static.
+- 60 s static → Block MIX (CW/CCW/CW) → cooldown → Block CW → cooldown → Block CCW → 60 s static.
 - Three trajectory profiles (smooth / moderate / aggressive) per session (T1/T2/T3), re‑used across sensors.
 
-The static 60 s segments inside dynamic runs are also used to characterise **thermal behaviour in working conditions**.
+The static 60 s segments inside dynamic runs are also used to characterise thermal behaviour in working conditions.
 
 ---
 
@@ -131,7 +131,7 @@ The simulator will be run under four noise model configurations (see [`docs/SLAM
 4. **M4 — Kinematic‑Residual + Thermal:**  
    - First, we reconstruct the true kinematics of the sensor from YuMi ground truth (splines + derivatives + hand‑eye).  
    - Then we compute residuals (measured − true) for IMU, LiDAR and camera.  
-   - Finally, we fit a model where the noise variance depends on **time since power‑on** and on **kinematic state**:
+   - Finally, we fit a model where the noise variance depends on time since power‑on and on kinematic state:
      - IMU: rotation, acceleration and jerk (g‑sensitivity, vibration).  
      - LiDAR: Time‑of‑Flight drift and spread under high rotational speed / acceleration.  
      - Camera: thermal drift of intrinsics and motion‑blur‑induced degradation.
@@ -166,16 +166,16 @@ The model is grounded in validated practice: static Allan Variance [\[1\]](docs/
 
 ## 6. SLAM backends and comparison logic
 
-SLAM algorithms are treated as **measuring instruments**: we use several per modality to avoid conclusions that depend on a single implementation. The full list and matrix are in [`docs/SLAM_BACKENDS.md`](docs/SLAM_BACKENDS.md); in resumen:
+SLAM algorithms are treated as measuring instruments: we use several per modality to avoid conclusions that depend on a single implementation. The full list and matrix are in [`docs/SLAM_BACKENDS.md`](docs/SLAM_BACKENDS.md); in resumen:
 
-- **Cross‑modal baseline:** `GLIM` (factor graph, GPU, tight‑coupled LiDAR+IMU and visual‑inertial).
-- **LiDAR 3D (Mid‑360):** `FAST-LIO2`, `Point-LIO`, `GLIM`.
-- **LiDAR 2D (RPLiDAR):** `Cartographer 2D`, `KISS-ICP 2D`, `GLIM` (planar 3D, experimental).
-- **Visual / Visual–inertial (D455):** `ORB-SLAM3`, `GLIM`, `OpenVINS`. (R3LIVE excluded — camera+LiDAR fusion out of scope for Session B.)
-- **Loose‑coupled baseline (opcional):** `RTAB-Map` en 2D, 3D y RGB‑D para contrastar tight vs. loose coupling.
+- Cross‑modal baseline: `GLIM` (factor graph, GPU, tight‑coupled LiDAR+IMU and visual‑inertial).
+- LiDAR 3D (Mid‑360): `FAST-LIO2`, `Point-LIO`, `GLIM`.
+- LiDAR 2D (RPLiDAR): `Cartographer 2D`, `KISS-ICP 2D`, `GLIM` (planar 3D, experimental).
+- Visual / Visual–inertial (D455): `ORB-SLAM3`, `GLIM`, `OpenVINS`. (R3LIVE excluded — camera+LiDAR fusion out of scope for Session B.)
+- Loose‑coupled baseline (opcional): `RTAB-Map` en 2D, 3D y RGB‑D para contrastar tight vs. loose coupling.
 
 Para cada backend:
-- Ajustamos una configuración **nominal** en datos reales (con M2/M3) y la congelamos.
+- Ajustamos una configuración nominal en datos reales (con M2/M3) y la congelamos.
 - Derivamos dos variantes de sensibilidad (LOW/HIGH) escalando covarianzas clave.
 - Ejecutamos todas estas configuraciones sobre:
   - datos reales (YuMi), y  
@@ -187,22 +187,22 @@ Las trayectorias se comparan contra el YuMi usando `evo` (ATE/RPE con alineació
 
 ## 7. How to read this repository
 
-- **Quick understanding of the idea:**  
+- Quick understanding of the idea:  
   - This `README.md`  
   - [`docs/RESEARCH_PLAN.md`](docs/RESEARCH_PLAN.md) — sections 1–2, 3.6 (M4 justification), and 6  
-- **Exact experimental protocol (qué se hace con el YuMi):**  
+- Exact experimental protocol (qué se hace con el YuMi):  
   - [`docs/EXPERIMENTAL_DESIGN.md`](docs/EXPERIMENTAL_DESIGN.md)  
-- **Mathematical/statistical detail (Allan, residuales, tests):**  
+- Mathematical/statistical detail (Allan, residuales, tests):  
   - [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md)  
-- **Which SLAMs and noise models are tested and how:**  
+- Which SLAMs and noise models are tested and how:  
   - [`docs/SLAM_BACKENDS.md`](docs/SLAM_BACKENDS.md)  
-- **Hardware constraints and payload analysis:**  
+- Hardware constraints and payload analysis:  
   - [`docs/HARDWARE_PAYLOAD.md`](docs/HARDWARE_PAYLOAD.md)  
-- **Current status and decisions taken so far:**  
+- Current status and decisions taken so far:  
   - [`PROGRESS_LOG.md`](PROGRESS_LOG.md)
-- **Consolidated audit review (all audited points for future revision):**  
+- Consolidated audit review (all audited points for future revision):  
   - [`docs/AUDIT_CONSOLIDATED_REVIEW.md`](docs/AUDIT_CONSOLIDATED_REVIEW.md)
-- **Extended reference pool (for manuscript and experimentation):**  
+- Extended reference pool (for manuscript and experimentation):  
   - [`docs/REFERENCES_POOL.md`](docs/REFERENCES_POOL.md)
 
 ---
@@ -212,17 +212,17 @@ Las trayectorias se comparan contra el YuMi usando `evo` (ATE/RPE con alineació
 | Period | Milestone |
 |--------|-----------|
 | Until June 2026 | Stage 1 (static characterisation); preparation (mounts, sync, hand-eye protocol). |
-| **June 2026** | YuMi dynamic sessions A–D (after exams). Order of sessions at author’s discretion. |
-| **From July 2026** | M4 model fitting, Gazebo plugin development (incl. non-repetitive scan pattern), SLAM evaluation matrix. |
+| June 2026 | YuMi dynamic sessions A–D (after exams). Order of sessions at author’s discretion. |
+| From July 2026 | M4 model fitting, Gazebo plugin development (incl. non-repetitive scan pattern), SLAM evaluation matrix. |
 | Q4 2026 – Q1 2027 | Statistical analysis, manuscript submission to *Measurement* / IEEE TIM. |
 
 ---
 
 ## 9. Known limitations
 
-- **Ground truth bound:** YuMi repeatability (±0.02 mm) bounds the lower limit of ground truth confidence; absolute volumetric accuracy is not characterised.
-- **No spinning mechanical LiDAR:** LIO-SAM and similar algorithms optimised for repetitive-pattern LiDARs are not included; extension possible if a Velodyne/Ouster becomes available.
-- **Thermal model scope:** Thermal models assume quasi-steady-state operation; cold-start transients &lt;5 min (typical MEMS warm-up) are not fully modelled.
+- Ground truth bound: YuMi repeatability (±0.02 mm) bounds the lower limit of ground truth confidence; absolute volumetric accuracy is not characterised.
+- No spinning mechanical LiDAR: LIO-SAM and similar algorithms optimised for repetitive-pattern LiDARs are not included; extension possible if a Velodyne/Ouster becomes available.
+- Thermal model scope: Thermal models assume quasi-steady-state operation; cold-start transients &lt;5 min (typical MEMS warm-up) are not fully modelled.
 
 ---
 

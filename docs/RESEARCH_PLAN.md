@@ -30,13 +30,13 @@ In MEMS IMUs, **Angle Random Walk (ARW)** and **Bias Instability** determine how
 
 Furrer et al. (2016) showed that Allan Variance-derived coefficients — not datasheet values — are required to replicate IMU drift in simulation. Liu & Zhang (2021) characterized the degeneracy risks of Livox-type sensors. Filipenko & Afanasyev (2018) found that overly optimistic sensor models in simulation produce systems that appear robust until deployed on hardware.
 
-What remains poorly characterized is the **combined** effect: sensor model fidelity on end-to-end SLAM performance, measured across hardware and simulation simultaneously, under a controlled kinematic reference. Most studies treat sensor modeling and sim-to-real gap as separate problems, and few use an industrial manipulator as the trajectory reference. This study addresses both gaps in a single experimental framework — from static Allan Variance characterization to dynamic validation on YuMi arm trajectories, comparing real hardware, standard Gazebo simulation, and a metrological plugin in the same pipeline.
+What remains poorly characterized is the combined effect: sensor model fidelity on end-to-end SLAM performance, measured across hardware and simulation simultaneously, under a controlled kinematic reference. Most studies treat sensor modeling and sim-to-real gap as separate problems, and few use an industrial manipulator as the trajectory reference. This study addresses both gaps in a single experimental framework — from static Allan Variance characterization to dynamic validation on YuMi arm trajectories, comparing real hardware, standard Gazebo simulation, and a metrological plugin in the same pipeline.
 
 ---
 
 ## 2. Scope and Strategic Reorientation
 
-The original three-phase proposal (Abella, 2026) covered: (I) metrological sensor validation, (II) sim-to-real gap benchmarking on a mobile platform, and (III) massive-scale autonomous SLAM optimization. Based on supervisor feedback (A.G. Salazar, February 2026), this work is **deliberately scoped to Phase I only**.
+The original three-phase proposal (Abella, 2026) covered: (I) metrological sensor validation, (II) sim-to-real gap benchmarking on a mobile platform, and (III) massive-scale autonomous SLAM optimization. Based on supervisor feedback (A.G. Salazar, February 2026), this work is deliberately scoped to Phase I only.
 
 Three reasons support keeping the scope to Phase I only.
 
@@ -56,9 +56,9 @@ To be explicit about scope: this study characterizes each sensor statically (noi
 
 The IEEE standard for IMU noise characterization (e.g. IEEE Std 647) defines Allan Variance (or Allan Deviation, ADEV) as the primary tool for identifying stochastic noise processes in inertial sensors. The three key parameters are:
 
-- **ARW (Angle Random Walk):** white noise floor of the gyroscope; identified by the slope of $-1/2$ on the log-log ADEV curve.
-- **Bias Instability:** minimum of the ADEV curve; the best achievable gyroscope bias stability.
-- **RRW (Rate Random Walk):** low-frequency drift; identified by slope $+1/2$. Not always identifiable from short logs; 10–12 h static recordings are required for robust estimation.
+- ARW (Angle Random Walk): white noise floor of the gyroscope; identified by the slope of $-1/2$ on the log-log ADEV curve.
+- Bias Instability: minimum of the ADEV curve; the best achievable gyroscope bias stability.
+- RRW (Rate Random Walk): low-frequency drift; identified by slope $+1/2$. Not always identifiable from short logs; 10–12 h static recordings are required for robust estimation.
 
 Furrer et al. (2016) established the simulation standard for inertial sensors in the RotorS framework, demonstrating that ARW and Bias Instability must be derived empirically from hardware logs — not assumed from datasheets — to produce drift predictions that match real flight data.
 
@@ -95,25 +95,25 @@ The M4 model rests on established foundations: (i) **Allan Variance** (IEEE stan
 
 ### 3.7. Summary and Novelty Statement
 
-- **Gap:** No prior work combines (a) kinematic-state-dependent IMU noise models, (b) multi-backend SLAM evaluation, and (c) sub-millimetre robotic ground truth.
-- **Our contribution:** Phase I fills this gap by providing metrological characterisation and simulation models that are validated against real hardware and multiple SLAM backends.
-- **Explicit novelty:** Prior work has characterised IMU noise via Allan Variance in static conditions (Furrer et al., 2016) or LiDAR accuracy in controlled environments (Liu & Zhang, 2021), and some studies have validated IMU dynamic performance with laser trackers (Lin et al., 2022, *Measurement*). No study has combined: (1) kinematic-state-dependent noise models derived from dynamic ground truth, (2) validation across multiple tight-coupled SLAM backends, and (3) statistical comparison against a sub-millimetre industrial manipulator reference. This combination is the novelty of Phase I.
+- Gap: No prior work combines (a) kinematic-state-dependent IMU noise models, (b) multi-backend SLAM evaluation, and (c) sub-millimetre robotic ground truth.
+- Our contribution: Phase I fills this gap by providing metrological characterisation and simulation models that are validated against real hardware and multiple SLAM backends.
+- Explicit novelty: Prior work has characterised IMU noise via Allan Variance in static conditions (Furrer et al., 2016) or LiDAR accuracy in controlled environments (Liu & Zhang, 2021), and some studies have validated IMU dynamic performance with laser trackers (Lin et al., 2022, *Measurement*). No study has combined: (1) kinematic-state-dependent noise models derived from dynamic ground truth, (2) validation across multiple tight-coupled SLAM backends, and (3) statistical comparison against a sub-millimetre industrial manipulator reference. This combination is the novelty of Phase I.
 
 ---
 
 ## 4. Research Hypothesis
 
-**Primary hypothesis (H0):**
-> A simulation plugin that injects empirically derived Allan Variance coefficients (ARW, Bias Instability, RRW) and enforces the correct Livox Rosetta scanning topology will produce sensor output — and resulting SLAM trajectory estimates — that are **statistically indistinguishable** from real hardware, as measured by ATE and RPE against the YuMi kinematic reference.
+Primary hypothesis (H0):
+> A simulation plugin that injects empirically derived Allan Variance coefficients (ARW, Bias Instability, RRW) and enforces the correct Livox Rosetta scanning topology will produce sensor output — and resulting SLAM trajectory estimates — that are statistically indistinguishable from real hardware, as measured by ATE and RPE against the YuMi kinematic reference.
 
 Formal test: paired t-test or Wilcoxon signed-rank test (selected based on normality assessment), significance level $\alpha = 0.05$.
 
-**Success criterion:** The ATE distribution of the metrological simulation does not differ significantly from the real hardware ATE distribution (p > 0.05), while the standard simulation ATE distribution does differ significantly (p < 0.05).
+Success criterion: The ATE distribution of the metrological simulation does not differ significantly from the real hardware ATE distribution (p > 0.05), while the standard simulation ATE distribution does differ significantly (p < 0.05).
 
-**Secondary hypothesis (H1):**
+Secondary hypothesis (H1):
 > The quality of the IMU (ARW, Bias Instability) has a measurable and systematic effect on tight-coupling SLAM performance (ATE/RPE), quantifiable across three IMUs of different quality grades under identical dynamic conditions.
 
-**Secondary hypothesis (H2):**
+Secondary hypothesis (H2):
 > Systematic CW/CCW asymmetry is observable in gyroscope bias — i.e., bias drift differs between clockwise and counter-clockwise rotation at identical angular velocities — and this asymmetry is captured more accurately by the metrological model than by standard simulation.
 
 ---
@@ -128,7 +128,7 @@ Formal test: paired t-test or Wilcoxon signed-rank test (selected based on norma
 - Programming: RobotStudio (offline trajectory definition and playback)
 - Reference frame: mechanical flange — requires hand-eye calibration to sensor optical/inertial center (see [METHODOLOGY.md](METHODOLOGY.md))
 
-> **Important distinction:** The YuMi's ±0.02 mm figure is *repeatability*, not *volumetric accuracy*. The lower bound of our ground truth confidence is bounded by repeatability, not absolute accuracy. This must be stated explicitly in any publication.
+> Important distinction: The YuMi's ±0.02 mm figure is *repeatability*, not *volumetric accuracy*. The lower bound of our ground truth confidence is bounded by repeatability, not absolute accuracy. This must be stated explicitly in any publication.
 
 RobotStudio provides the executed trajectory as the independent predictor of robot motion, separate from any SLAM estimate. This dual role — kinematic ground truth *and* independent simulation reference — is a key methodological strength of this setup.
 
@@ -143,7 +143,7 @@ See [`docs/HARDWARE_PAYLOAD.md`](HARDWARE_PAYLOAD.md) for full specification, we
 | S3 | Livox Mid-360 | ICM40609 | 200 Hz | Solid-state, 360° | D |
 | S4 | RPLiDAR A2M12 | — | — | Mechanical 2D, 360° | C |
 
-**IMU quality ranking (reference for H1 analysis):**
+IMU quality ranking (reference for H1 analysis):
 1. WitMotion WT901C (MPU9250) — mid-high grade; literature-characterized chip; reference IMU of the study
 2. Livox Mid-360 (ICM40609) — mid grade; factory-calibrated LiDAR-IMU extrinsics
 3. RealSense D455 (BMI055) — low-mid grade; notoriously noisy for standalone navigation; factory-calibrated camera-IMU extrinsics
@@ -197,10 +197,10 @@ Upon completion, Phase I will produce the following verifiable outputs:
 
 Phase I is not a benchmark of SLAM algorithms per se, but SLAM backends are required as \"measuring instruments\" to evaluate sensor model fidelity. To avoid conclusions that depend on a single estimator, multiple backends are used per modality:
 
-- **Cross-modal baseline:** GLIM (factor-graph, GPU-accelerated, tight-coupled LiDAR+IMU and visual-inertial).
-- **LiDAR 3D (Mid-360):** FAST-LIO2 (IESKF, LiDAR+IMU), Point-LIO (dense point-based), GLIM.
-- **LiDAR 2D (RPLiDAR):** Cartographer 2D (graph-based SLAM), KISS-ICP 2D (odometry), GLIM in planar 3D mode where feasible.
-- **Visual / Visual-inertial (RealSense D455):** ORB-SLAM3 (feature-based VIO), GLIM (visual-inertial), OpenVINS (EKF-based VIO). R3LIVE is excluded (camera+LiDAR fusion; Session B is RGB-D+IMU only).
+- Cross-modal baseline: GLIM (factor-graph, GPU-accelerated, tight-coupled LiDAR+IMU and visual-inertial).
+- LiDAR 3D (Mid-360): FAST-LIO2 (IESKF, LiDAR+IMU), Point-LIO (dense point-based), GLIM.
+- LiDAR 2D (RPLiDAR): Cartographer 2D (graph-based SLAM), KISS-ICP 2D (odometry), GLIM in planar 3D mode where feasible.
+- Visual / Visual-inertial (RealSense D455): ORB-SLAM3 (feature-based VIO), GLIM (visual-inertial), OpenVINS (EKF-based VIO). R3LIVE is excluded (camera+LiDAR fusion; Session B is RGB-D+IMU only).
 - **Loose-coupled baseline (optional):** RTAB-Map (2D, 3D LiDAR, RGB-D) in a reduced subset of experiments to contrast tight vs. loose coupling.
 
 Noise injected in simulation follows four configurations (see `SLAM_BACKENDS.md`): M1 (manufacturer), M2 (static Allan), M3 (in-session static Allan), M4 (kinematic-residual). For each SLAM backend, a nominal configuration is tuned once on real YuMi data and then frozen; low/high sensitivity variants (scaled covariances) are used for robustness checks.
@@ -215,7 +215,7 @@ The goal is to show that the conclusions about sensor model fidelity — particu
 
 ## 8. Possible Future Work (outside this project)
 
-The experimental design and software architecture in this plan were originally inspired by a **broader three-phase research line** (metrological validation, mobile-platform Reality Gap benchmark, and large-scale SLAM optimisation). In the context of this degree project, however, **only the metrological validation with YuMi ground truth is in scope**. Any mobile-platform benchmark or automatic optimisation stage should be understood strictly as **potential future work** that could build on the outputs of this study — not as a commitment that will be executed within this project.
+The experimental design and software architecture in this plan were originally inspired by a **broader three-phase research line** (metrological validation, mobile-platform Reality Gap benchmark, and large-scale SLAM optimisation). In the context of this degree project, however, only the metrological validation with YuMi ground truth is in scope. Any mobile-platform benchmark or automatic optimisation stage should be understood strictly as potential future work that could build on the outputs of this study — not as a commitment that will be executed within this project.
 
 ---
 
