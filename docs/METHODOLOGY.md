@@ -254,6 +254,10 @@ This model is then used in the Gazebo plugins so that the injected sensor noise 
 - **LiDAR:** $\sigma^2_{\mathrm{static}}(t_{\mathrm{on}})$ and a time-varying range bias model drift in Time-of-Flight; coefficients $c_v, c_a$ capture increased spread of point-to-plane residuals under high rotational speed and acceleration.
 - **Camera (RGB-D):** $\sigma^2_{\mathrm{static}}(t_{\mathrm{on}})$ approximates thermal drift of intrinsics and depth noise; $c_v$ captures effective degradation due to motion blur, modeled as increased pose/depth variance with angular speed.
 
+### 5.5 M4 Generalization Check (held-out trajectory)
+
+To demonstrate that M4 does not overfit to the specific trajectories used for fitting, coefficients $c_v, c_a, c_j$ (and thermal parameters) are **fitted using only T1 (smooth) and T2 (moderate)** data. The model is then evaluated on **T3 (aggressive) as a held-out set**. If M4 improves ATE/RPE on T3 relative to M1–M3, the model generalizes beyond the fitting regime. This protocol is reported explicitly; if generalization fails, the limitation is stated in the manuscript.
+
 ---
 
 ## 6. Three-Condition Comparison Pipeline

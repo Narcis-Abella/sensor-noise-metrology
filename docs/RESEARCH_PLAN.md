@@ -185,10 +185,11 @@ Upon completion, Phase I will produce the following verifiable outputs:
 
 ### 6.4 Open-Source Software
 
+- **Gazebo plugin for non-repetitive scan patterns:** One of the expected contributions is a Gazebo plugin that models **non-repetitive scanning topology** (Livox Mid-360 Rosetta pattern, and optionally Mid-70) so that simulation can reproduce the temporal integration and point-cloud statistics of solid-state Livox sensors. This complements the existing IMU/LiDAR noise injection and is required for a faithful comparison in Session D.
 - Metrological Gazebo plugin: custom IMU noise injection (ARW + BI + RRW) and Livox Rosetta scanning topology emulation, extended with state-dependent variance as a function of time since power-on and kinematic state (velocity, acceleration, jerk).
 - Allan Variance processing scripts (compatible with `imu_utils` and `kalibr`)
 - `evo`-based comparison pipeline with reproducible configuration
-- SLAM evaluation matrix across multiple backends (GLIM, FAST-LIO2, ORB-SLAM3, Cartographer, KISS-ICP, Point-LIO, optional RTAB-Map / R3LIVE) under four noise model configurations (manufacturer, static Allan, in-session static, kinematic-residual with explicit thermal dependence) and three SLAM parameter regimes (low/nominal/high).
+- SLAM evaluation matrix across multiple backends (GLIM, FAST-LIO2, ORB-SLAM3, Cartographer, KISS-ICP, Point-LIO, OpenVINS; optional RTAB-Map) under four noise model configurations (manufacturer, static Allan, in-session static, kinematic-residual with explicit thermal dependence) and three SLAM parameter regimes (low/nominal/high).
 
 ---
 
@@ -199,7 +200,7 @@ Phase I is not a benchmark of SLAM algorithms per se, but SLAM backends are requ
 - **Cross-modal baseline:** GLIM (factor-graph, GPU-accelerated, tight-coupled LiDAR+IMU and visual-inertial).
 - **LiDAR 3D (Mid-360):** FAST-LIO2 (IESKF, LiDAR+IMU), Point-LIO (dense point-based), GLIM.
 - **LiDAR 2D (RPLiDAR):** Cartographer 2D (graph-based SLAM), KISS-ICP 2D (odometry), GLIM in planar 3D mode where feasible.
-- **Visual / Visual-inertial (RealSense D455):** ORB-SLAM3 (feature-based VIO), GLIM (visual-inertial), and R3LIVE where compute and sensor support permit.
+- **Visual / Visual-inertial (RealSense D455):** ORB-SLAM3 (feature-based VIO), GLIM (visual-inertial), OpenVINS (EKF-based VIO). R3LIVE is excluded (camera+LiDAR fusion; Session B is RGB-D+IMU only).
 - **Loose-coupled baseline (optional):** RTAB-Map (2D, 3D LiDAR, RGB-D) in a reduced subset of experiments to contrast tight vs. loose coupling.
 
 Noise injected in simulation follows four configurations (see `SLAM_BACKENDS.md`): M1 (manufacturer), M2 (static Allan), M3 (in-session static Allan), M4 (kinematic-residual). For each SLAM backend, a nominal configuration is tuned once on real YuMi data and then frozen; low/high sensitivity variants (scaled covariances) are used for robustness checks.

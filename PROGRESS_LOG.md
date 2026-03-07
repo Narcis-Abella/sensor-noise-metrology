@@ -20,7 +20,7 @@
 | Static characterization | ❌ Not started | Pending hardware availability |
 | Dynamic sessions | ❌ Not started | Pending: weight verification + YuMi booking |
 | Simulation plugin | ❌ Not started | Pending: static characterization results |
-| FAST-LIO2 baseline | ❌ Not started | Pending: real sensor availability |
+| FAST-LIO2 baseline | ❌ Not started | Pending: real sensor availability (Mid-360 confirmed) |
 | Statistical analysis | ❌ Not started | Pending: data collection |
 | Publication draft | ❌ Not started | Pending: results |
 | GitHub repository | ✅ Pushed | [github.com/Narcis-Abella/slam-sensor-metrological-validation](https://github.com/Narcis-Abella/slam-sensor-metrological-validation) |
@@ -46,15 +46,16 @@
 
 > Sorted by priority. Check off when resolved and add entry to log.
 >
-> **Hard prereqs for YuMi booking:** weight verification, sync method defined, mounts designed, supervisor sign-off on protocol. **Can run in parallel:** static characterization (no YuMi), documentation review, FAST-LIO2 sanity check (if sensor available).
+> **Hard prereqs for YuMi booking:** weight verification, sync method defined, mounts designed, supervisor sign-off on protocol. **Can run in parallel:** static characterization (no YuMi), documentation review, FAST-LIO2 sanity check. **Planned:** YuMi dynamic sessions in June (after exams); simulation and plugin development from July onwards. Session order is at the author’s discretion.
 
+- [x] **[BLOCKER — HIGH]** Confirm Livox Mid-360 availability. *(Done — Mid-360 confirmed for Session D.)*
 - [ ] **[BLOCKER — HIGH]** Verify actual sensor + mount weights with physical scale. Session D (Mid-360) is at 70% payload margin based on estimates — must confirm before booking YuMi.
-- [ ] **[BLOCKER — HIGH]** Confirm Livox Mid-360 availability (pending supervisor / Raúl purchase decision).
+- [ ] **[MEDIUM — optional extension]** Secure access to an **industry-standard repetitive (spinning) 360° LiDAR** (e.g. Velodyne VLP-16/32, Ouster OS0/OS1, Hesai) — widely cited in SLAM, navigation and mapping literature. Would enable extension of the study with LIO-SAM and similar backends; not a blocker for the current scope.
 - [ ] **[HIGH]** Supervisor review of v0.3 documents (RESEARCH_PLAN, EXPERIMENTAL_DESIGN, METHODOLOGY, HARDWARE_PAYLOAD). Implement feedback → v1.0.
 - [ ] **[HIGH]** Define temporal synchronization method: PTP IEEE 1588 vs. NTP. Assess IRC5 network capabilities.
 - [ ] **[MEDIUM]** Design and 3D-print sensor mounts for each session. Mount design must be done before any dynamic session.
 - [ ] **[MEDIUM]** Identify and book a suitable YuMi session slot (pending weight verification and supervisor sign-off on protocol).
-- [ ] **[MEDIUM]** Verify FAST-LIO2 operation with real Livox Mid-360 data. Must establish real-hardware baseline before simulation comparison.
+- [ ] **[MEDIUM]** Verify FAST-LIO2 operation with real Livox Mid-360 data (sensor confirmed). Must establish real-hardware baseline before simulation comparison.
 - [ ] **[MEDIUM]** Assess availability of metrology or optics laboratory at IQS for static characterization sessions (better temperature control).
 - [ ] **[LOW]** Decide waypoint strategy for T3 3D aggressive trajectory: fixed set vs. pseudo-random with fixed seed. Confirm with supervisor.
 - [x] **[LOW]** Push repository to GitHub remote (create public repo under github.com/Narcis-Abella). *(Done — repo at github.com/Narcis-Abella/slam-sensor-metrological-validation)*
@@ -148,6 +149,27 @@
 - SLAM_BACKENDS: Justification column per backend; §7 extension table for repetitive 360° LiDAR.
 - HARDWARE_PAYLOAD, EXPERIMENTAL_DESIGN, SLAM_BACKENDS: Colloquial/vague language replaced with neutral formulations.
 - PROGRESS_LOG: Documentation milestones table added; hard prereqs vs parallel tasks clarified in Open Items.
+
+---
+
+### 2026-03-07 — DECISION: Mid-360 confirmed; R3LIVE excluded; M4 hold-out; timeline; plugin contribution
+
+**Hardware & scope:**
+- Livox Mid-360 confirmed available for Session D. Open item "Confirm Mid-360 availability" marked done.
+- Repetitive (spinning) 360° LiDAR added as optional extension: target industry-standard, widely cited (Velodyne, Ouster, Hesai) for possible future extension; not a blocker.
+
+**Methodology:**
+- METHODOLOGY §5.5: M4 generalization check — fit on T1+T2, evaluate on T3 (held-out) to demonstrate no overfitting.
+
+**Session B backends:**
+- R3LIVE excluded from this study: ideally would test camera+LiDAR fusion, but Session B is RGB-D+IMU only; R3LIVE expects LiDAR+camera and has limited ROS 2 fit. Noted as future extension.
+- B3 replacement: **OpenVINS** (EKF-based VIO, tight-coupled, ROS 2, distinct from ORB-SLAM3 and GLIM). SLAM_BACKENDS §4.4 and RESEARCH_PLAN §7 updated; README §6 updated.
+
+**Timeline:**
+- YuMi dynamic sessions planned for June 2026 (after exams). Simulation and plugin work from July 2026. Session order at author’s discretion. README §8 and Open Items updated.
+
+**Contributions:**
+- RESEARCH_PLAN §6.4: Explicit contribution added — Gazebo plugin for **non-repetitive scan pattern** (Mid-360 Rosetta, optionally Mid-70) as part of expected open-source output.
 
 ---
 

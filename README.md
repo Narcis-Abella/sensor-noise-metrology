@@ -171,7 +171,7 @@ SLAM algorithms are treated as **measuring instruments**: we use several per mod
 - **Cross‑modal baseline:** `GLIM` (factor graph, GPU, tight‑coupled LiDAR+IMU and visual‑inertial).
 - **LiDAR 3D (Mid‑360):** `FAST-LIO2`, `Point-LIO`, `GLIM`.
 - **LiDAR 2D (RPLiDAR):** `Cartographer 2D`, `KISS-ICP 2D`, `GLIM` (planar 3D, experimental).
-- **Visual / Visual–inertial (D455):** `ORB-SLAM3`, `GLIM`, `R3LIVE` (donde sea viable).
+- **Visual / Visual–inertial (D455):** `ORB-SLAM3`, `GLIM`, `OpenVINS`. (R3LIVE excluded — camera+LiDAR fusion out of scope for Session B.)
 - **Loose‑coupled baseline (opcional):** `RTAB-Map` en 2D, 3D y RGB‑D para contrastar tight vs. loose coupling.
 
 Para cada backend:
@@ -209,10 +209,10 @@ Las trayectorias se comparan contra el YuMi usando `evo` (ATE/RPE con alineació
 
 | Period | Milestone |
 |--------|-----------|
-| Q2 2026 | Stage 1 (static characterisation) + YuMi trajectory validation |
-| Q3 2026 | Dynamic sessions A–D data collection |
-| Q4 2026 | M4 model fitting + SLAM evaluation matrix |
-| Q1 2027 | Manuscript submission to *Measurement* / IEEE TIM |
+| Until June 2026 | Stage 1 (static characterisation); preparation (mounts, sync, hand-eye protocol). |
+| **June 2026** | YuMi dynamic sessions A–D (after exams). Order of sessions at author’s discretion. |
+| **From July 2026** | M4 model fitting, Gazebo plugin development (incl. non-repetitive scan pattern), SLAM evaluation matrix. |
+| Q4 2026 – Q1 2027 | Statistical analysis, manuscript submission to *Measurement* / IEEE TIM. |
 
 ---
 
