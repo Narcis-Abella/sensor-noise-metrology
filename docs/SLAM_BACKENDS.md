@@ -70,9 +70,11 @@ The aim is not to benchmark INS algorithms but to quantify how IMU noise models 
 
 | ID | Backend | Coupling | ROS2 | Justification |
 |----|---------|----------|------|---------------|
-| C1 | **Cartographer 2D** | Tight SLAM (scan + pose graph) | Yes (cartographer_ros2) | **Why:** De facto standard for 2D LiDAR; submap + pose graph gives loop closure and map consistency. Different paradigm from pure odometry (C2), so sensor model impact can be compared across graph-based vs incremental. |
-| C2 | **KISS-ICP 2D** | Odom only (ICP) | Yes | **Why:** Lightweight, no loop closure; highly sensitive to scan noise and motion blur. Acts as a lower-complexity baseline — if M4 improves consistency here, the effect is attributable to better scan/odom modelling rather than graph optimization. |
-| C3 | **GLIM (experimental)** | Tight (LiDAR) | Planned | **Why:** Cross-modal baseline; if 2D scans can be injected as planar 3D, enables same pipeline as Session D with a simpler sensor. Optional; only if feasible without diverting effort from core sessions. |
+| C1 | **Cartographer 2D** | Tight SLAM (scan + pose graph) | Yes (cartographer_ros2) | **Why:** De facto standard for 2D LiDAR; submap + pose graph gives loop closure and map consistency. Represents the **graph-based SLAM** paradigm — optimizes over submaps and loop closures. Highly sensitive to scan consistency; sensor model fidelity directly affects graph quality. |
+| C2 | **KISS-ICP 2D** | Odom only (ICP) | Yes | **Why:** Pure **incremental odometry** — no loop closure, no graph. Frame-to-frame ICP only. Maximally sensitive to scan noise and motion blur; if M4 improves consistency here, the effect is attributable to better scan modelling rather than graph optimization. Complements Cartographer (graph) and GLIM (factor graph). |
+| C3 | **GLIM (experimental)** | Tight (LiDAR) | Planned | **Why:** Cross-modal baseline; if 2D scans can be injected as planar 3D, enables **factor-graph smoothing** on the same pipeline as Session D. Optional; only if feasible without diverting effort from core sessions. |
+
+**Paradigm coverage (2D LiDAR):** With Cartographer 2D + KISS-ICP 2D + GLIM we cover three distinct paradigms: **graph-based SLAM** (submap + pose graph), **incremental odometry** (frame-to-frame ICP), and **factor-graph smoothing** (GPU-accelerated). Conclusions about sensor model fidelity are thus not tied to a single architecture.
 
 RTAB-Map 2D (loose-coupled) may be added as an optional baseline if time permits; **rationale:** contrast tight vs loose on the same 2D data.
 
@@ -80,9 +82,11 @@ RTAB-Map 2D (loose-coupled) may be added as an optional baseline if time permits
 
 | ID | Backend | Coupling | ROS2 | Justification |
 |----|---------|----------|------|---------------|
-| D1 | **FAST-LIO2** | Tight (IESKF, LiDAR+IMU) | Yes | **Why:** Established LiDAR-inertial baseline (commonly used in LIO benchmarks); IESKF (iterated EKF) is the classical filter-based paradigm. Native support for Livox (including Mid-360). Ensures conclusions hold for the most common family of LIO algorithms. |
-| D2 | **Point-LIO** | Tight (dense points, no features) | Yes | **Why:** Dense point-based, no explicit feature extraction; evaluates how the Mid-360 non-repetitive (Rosetta) pattern affects registration when the algorithm does not rely on repeatable structure. Complements FAST-LIO2 (filter) and GLIM (factor graph). |
-| D3 | **GLIM** | Tight (factor graph, LiDAR+IMU) | Yes | **Why:** Cross-modal baseline; factor-graph + GPU, native Mid-360 support. Represents the modern non-filter family; same pipeline can be used in Session B (visual-inertial), so sensor model conclusions are comparable across modalities. |
+| D1 | **FAST-LIO2** | Tight (IESKF, LiDAR+IMU) | Yes | **Why:** Established LiDAR-inertial baseline (commonly used in LIO benchmarks). **IESKF (iterated extended Kalman filter)** — the classical **filter-based** paradigm for LIO. Native Livox (incl. Mid-360) support. Ensures conclusions hold for the dominant family of LIO algorithms in industry and research. |
+| D2 | **Point-LIO** | Tight (dense points, no features) | Yes | **Why:** **Dense point-based** — no explicit feature extraction (edges, planes). Evaluates how the Mid-360 non-repetitive (Rosetta) pattern affects registration when the algorithm relies on raw point clouds. Architecturally distinct from filter (FAST-LIO2) and factor graph (GLIM); complements both. |
+| D3 | **GLIM** | Tight (factor graph, LiDAR+IMU) | Yes | **Why:** **Factor-graph smoothing** with GPU-accelerated scan-matching factors. Native Mid-360 support. Represents the modern non-filter family; same pipeline used in Session B (visual-inertial), so sensor model conclusions are comparable across modalities. |
+
+**Paradigm coverage (3D LiDAR):** With FAST-LIO2 + Point-LIO + GLIM we cover three distinct paradigms: **filter-based LIO** (IESKF), **dense point-based** (no features), and **factor-graph smoothing** (GPU). Conclusions about sensor model fidelity are thus not tied to a single architecture.
 
 LIO-SAM is **not** included in Phase I because it is optimized for **repetitive-pattern** (spinning) LiDARs; the Mid-360 has a non-repetitive Rosetta pattern and LIO-SAM has limited ROS 2 support for Livox. See **§7** for backends to consider if a 360° spinning LiDAR becomes available.
 
@@ -92,9 +96,12 @@ RTAB-Map 3D (loose-coupled) can be used in a reduced subset of experiments to co
 
 | ID | Backend | Coupling | ROS2 | Justification |
 |----|---------|----------|------|---------------|
-| B1 | **ORB-SLAM3** | Tight visual / visual-inertial | Community ports | **Why:** De facto standard feature-based RGB-D/VIO; keyframe BA + IMU preintegration. Native RGB-D support. Sensitive to motion blur and texture — good stress test for M4 (motion-dependent noise). Ensures results are comparable to the most cited visual SLAM. |
-| B2 | **GLIM** | Tight visual-inertial | Yes | **Why:** Same cross-modal baseline as Sessions C/D; factor-graph, GPU. Allows comparing sensor model impact across visual vs LiDAR with one consistent backend. |
-| B3 | **R3LIVE** (target) | Tight visual-LiDAR-IMU | ROS/ROS2 forks | **Why:** Tight visual-depth-IMU (and optional LiDAR); different architecture (depth + photometric). Included where compute allows; also relevant for future extension with spinning LiDAR. |
+| B1 | **ORB-SLAM3** | Tight visual / visual-inertial | Community ports | **Why:** De facto standard feature-based RGB-D/VIO. **Keyframe bundle adjustment** — optimizes over a pose graph with keyframes and IMU preintegration. Native RGB-D support. Sensitive to motion blur and texture; good stress test for M4. Ensures results are comparable to the most cited visual SLAM. |
+| B2 | **GLIM** | Tight visual-inertial | Yes | **Why:** **Factor-graph smoothing** with GPU-accelerated visual factors. Same cross-modal baseline as Sessions C/D; allows comparing sensor model impact across visual vs LiDAR with one consistent backend. |
+| B3 | **OpenVINS** | Tight visual-inertial (EKF) | ROS/ROS2 | **Why:** **EKF-based VIO** (MSCKF-style) — recursive filter, not keyframe BA. Architecturally distinct from ORB-SLAM3 (graph) and GLIM (factor graph). Widely cited research platform; tight-coupled; ROS 2 compatible. |
+| — | **R3LIVE** | Tight visual-LiDAR-IMU | ROS/ROS2 forks | **Excluded from this study.** Ideally one would run a camera+LiDAR fusion test; however, Session B uses RGB-D+IMU only (no LiDAR on arm). R3LIVE expects simultaneous LiDAR+camera and has limited ROS 2 support for this configuration. Reserved for future extension if a multi-sensor session is added. |
+
+**Paradigm coverage (Visual / VIO):** With ORB-SLAM3 + OpenVINS + GLIM we cover three distinct paradigms: **keyframe bundle adjustment** (ORB-SLAM3), **EKF VIO** (OpenVINS), and **factor-graph smoothing** (GLIM). Conclusions about sensor model fidelity are thus not tied to a single architecture.
 
 RTAB-Map RGB-D (loose-coupled) may be run on selected trajectories; **rationale:** only loose-coupled baseline for Session B, contrasts with B1/B2/B3.
 
