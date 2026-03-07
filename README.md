@@ -166,22 +166,22 @@ The model is grounded in validated practice: static Allan Variance [\[1\]](docs/
 
 ## 6. SLAM backends and comparison logic
 
-SLAM algorithms are treated as measuring instruments: we use several per modality to avoid conclusions that depend on a single implementation. The full list and matrix are in [`docs/SLAM_BACKENDS.md`](docs/SLAM_BACKENDS.md); in resumen:
+SLAM algorithms are treated as measuring instruments: we use several per modality to avoid conclusions that depend on a single implementation. The full list and matrix are in [`docs/SLAM_BACKENDS.md`](docs/SLAM_BACKENDS.md); in summary:
 
 - Cross‑modal baseline: `GLIM` (factor graph, GPU, tight‑coupled LiDAR+IMU and visual‑inertial).
 - LiDAR 3D (Mid‑360): `FAST-LIO2`, `Point-LIO`, `GLIM`.
 - LiDAR 2D (RPLiDAR): `Cartographer 2D`, `KISS-ICP 2D`, `GLIM` (planar 3D, experimental).
 - Visual / Visual–inertial (D455): `ORB-SLAM3`, `GLIM`, `OpenVINS`. (R3LIVE excluded — camera+LiDAR fusion out of scope for Session B.)
-- Loose‑coupled baseline (opcional): `RTAB-Map` en 2D, 3D y RGB‑D para contrastar tight vs. loose coupling.
+- Loose‑coupled baseline (optional): `RTAB-Map` in 2D, 3D and RGB‑D to contrast tight vs. loose coupling.
 
-Para cada backend:
-- Ajustamos una configuración nominal en datos reales (con M2/M3) y la congelamos.
-- Derivamos dos variantes de sensibilidad (LOW/HIGH) escalando covarianzas clave.
-- Ejecutamos todas estas configuraciones sobre:
-  - datos reales (YuMi), y  
-  - simulaciones con M1–M4.
+For each backend:
+- We tune a nominal configuration on real data (with M2/M3) and freeze it.
+- We derive two sensitivity variants (LOW/HIGH) by scaling key covariances.
+- We run all these configurations on:
+  - real data (YuMi), and  
+  - simulations with M1–M4.
 
-Las trayectorias se comparan contra el YuMi usando `evo` (ATE/RPE con alineación de Umeyama). El diseño estadístico (tests, corrección de Bonferroni, tamaños de efecto) está en [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) §2–3.
+Trajectories are compared against the YuMi using `evo` (ATE/RPE with Umeyama alignment). The statistical design (tests, Bonferroni correction, effect sizes) is in [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) §2–3.
 
 ---
 
@@ -190,9 +190,9 @@ Las trayectorias se comparan contra el YuMi usando `evo` (ATE/RPE con alineació
 - Quick understanding of the idea:  
   - This `README.md`  
   - [`docs/RESEARCH_PLAN.md`](docs/RESEARCH_PLAN.md) — sections 1–2, 3.6 (M4 justification), and 6  
-- Exact experimental protocol (qué se hace con el YuMi):  
+- Exact experimental protocol (what is done with the YuMi):  
   - [`docs/EXPERIMENTAL_DESIGN.md`](docs/EXPERIMENTAL_DESIGN.md)  
-- Mathematical/statistical detail (Allan, residuales, tests):  
+- Mathematical/statistical detail (Allan, residuals, tests):  
   - [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md)  
 - Which SLAMs and noise models are tested and how:  
   - [`docs/SLAM_BACKENDS.md`](docs/SLAM_BACKENDS.md)  
@@ -200,8 +200,6 @@ Las trayectorias se comparan contra el YuMi usando `evo` (ATE/RPE con alineació
   - [`docs/HARDWARE_PAYLOAD.md`](docs/HARDWARE_PAYLOAD.md)  
 - Current status and decisions taken so far:  
   - [`PROGRESS_LOG.md`](PROGRESS_LOG.md)
-- Consolidated audit review (all audited points for future revision):  
-  - [`docs/AUDIT_CONSOLIDATED_REVIEW.md`](docs/AUDIT_CONSOLIDATED_REVIEW.md)
 - Extended reference pool (for manuscript and experimentation):  
   - [`docs/REFERENCES_POOL.md`](docs/REFERENCES_POOL.md)
 
