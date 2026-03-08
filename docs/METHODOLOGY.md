@@ -114,7 +114,9 @@ The ground truth trajectory against which ATE/RPE are computed is not perfect. I
 
 | Source | Type | Magnitude (design / typical) | Notes |
 |--------|------|------------------------------|--------|
-| **YuMi repeatability** | Random (per pose) | ±0.02 mm | ABB specification; repeatability, not volumetric accuracy. Dominant mechanical term. See [HARDWARE_PAYLOAD.md §1](HARDWARE_PAYLOAD.md) and RESEARCH_PLAN References [16]. |
+| **YuMi pose repeatability (RP)** | Random (per pose) | $\pm0.02$ mm | ABB ISO 9283 specification. Applies only to static points (start/end of trajectories, waypoints in T3). |
+| **YuMi linear path accuracy (AT)** | Systematic (trajectory) | $1.36$ mm (worst-case ISO condition) | ABB ISO 9283 specification for actual vs programmed path. Tested at max speed (1.5 m/s) and max load. Defines the absolute bounds of volumetric accuracy. Since our trajectories max out at 0.1 m/s, the practical AT will be significantly lower, but this bounds the worst-case. |
+| **YuMi linear path repeatability (RT)** | Random (trajectory) | $0.10$ mm | ABB ISO 9283 specification. Consistency when repeating the same path. More relevant for block repetition comparisons. |
 | **Hand-eye calibration** | Systematic (constant offset per session) | &lt; 0.5 mm translation, &lt; 0.5° rotation | AX=XB (Tsai-Lenz or equivalent); re-done per session. See [EXPERIMENTAL_DESIGN.md §10](EXPERIMENTAL_DESIGN.md). Translation error propagates as systematic bias in position comparison. |
 | **Temporal synchronization** | Random / systematic (time offset) | \( \Delta x \approx v_{\max} \times \Delta t \) | At ~100 mm/s, 10 ms offset → ~1 mm spatial error. PTP (IEEE 1588) preferred; NTP fallback with jitter documented. The **measured** offset and jitter must be reported; \( \Delta t \) is the measured or conservative bound. See [EXPERIMENTAL_DESIGN.md §9](EXPERIMENTAL_DESIGN.md). |
 | **Forward kinematics / timestamp interpolation** | Negligible if documented | Sub-mm for typical interpolation | RobotStudio export + FK; interpolation of poses to sensor timestamps. Assume negligible if timestamps are aligned and interpolation is linear or spline-based over short intervals. |
@@ -158,20 +160,17 @@ Report effect size alongside p-value:
 
 ### 3.4 Equivalence Testing for H0 (TOST)
 
-**Why not p > 0.05?** A non-significant result (p > 0.05) does **not** demonstrate equivalence. "Absence of evidence is not evidence of absence." With limited sample size (n = 9), failure to reject the null may simply indicate insufficient statistical power to detect a real difference. Metrology-oriented journals (e.g. IEEE TIM, *Measurement*) expect equivalence to be demonstrated explicitly, not inferred from non-significance [Schuirmann, 1987; Lakens, 2017].
+A non-significant result (p > 0.05) in a standard hypothesis test does not demonstrate equivalence. "Absence of evidence is not evidence of absence." With limited sample size, failure to reject the null may simply indicate insufficient statistical power to detect a real difference. Metrology-oriented journals expect equivalence to be demonstrated explicitly [Schuirmann, 1987; Lakens, 2017].
 
-**TOST procedure:** The Two One-Sided Tests procedure [Schuirmann, 1987] tests whether the mean difference $\mu_M - \mu_R$ lies within a pre-specified equivalence margin $[-\delta, +\delta]$. Equivalence is declared if **both** one-sided tests reject:
+**TOST procedure:** The Two One-Sided Tests procedure tests whether the mean difference $\mu_M - \mu_R$ lies within a pre-specified equivalence margin $[-\delta, +\delta]$. Equivalence is declared if **both** one-sided tests reject:
 - $H_{01}$: $\mu_M - \mu_R \leq -\delta$ (test that difference is not below $-\delta$)
 - $H_{02}$: $\mu_M - \mu_R \geq +\delta$ (test that difference is not above $+\delta$)
 
 Equivalently: construct a 90% confidence interval for $\mu_M - \mu_R$; if it lies entirely within $[-\delta, +\delta]$, equivalence is declared.
 
-**Equivalence margin $\delta$:** Pre-specified before data collection. Recommended options (to be fixed in the experimental protocol):
-- **Option A:** $\delta = 5$ mm ATE RMSE (absolute margin; conservative for sub-centimetre trajectories).
-- **Option B:** $\delta = 10\%$ of the reference ATE from Real hardware on the same (session, trajectory) — e.g. $\delta = 0.1 \times \mathrm{ATE}_{\mathrm{Real}}^{\mathrm{T3}}$ for the most demanding trajectory.
-- **Option C:** $\delta = \max(5\,\mathrm{mm},\, 0.1 \times \mathrm{ATE}_{\mathrm{Real}})$ — whichever is larger.
+**Equivalence margin $\delta$:** The margin is defined in units of Absolute Trajectory Error (ATE). To ensure clinical/practical relevance, the margin is set to 10% of the reference ATE from Real hardware on the most demanding trajectory (T3). For example, if the real hardware accumulates 50 mm ATE RMSE on T3, the equivalence margin is $\pm 5$ mm. This anchors the margin to the specific sensor and trajectory context rather than an arbitrary absolute value.
 
-The chosen margin and rationale must be documented in the pre-registration or methods section.
+**Power analysis and sample size:** To achieve 80% power in a TOST design, $n = 9$ (3 blocks × 3 repetitions) is generally insufficient unless the true difference is nearly zero and variance is extremely low. The design requires $n \geq 20-30$ to reliably detect equivalence within a 10% margin. Therefore, the experimental protocol is updated to include **5-10 repetitions per block**, increasing $n$ to $15-30$ per trajectory type. The exact number will be determined after a pilot run to estimate trajectory variance.
 
 **Success criterion (H0):**
 
@@ -180,19 +179,25 @@ The chosen margin and rationale must be documented in the pre-registration or me
 | Metrological sim vs. Real | TOST with margin $\delta$ | 90% CI for $\mu_M - \mu_R$ within $[-\delta, +\delta]$ | Metrological model **equivalent** to hardware within margin ✓ |
 | Standard sim vs. Real | NHST (t-test / Wilcoxon) | p < 0.05, medium/large effect | Standard model significantly inferior — validates need for metrological approach ✓ |
 
-**If TOST fails (equivalence not declared):** This is a publishable result — it indicates that even empirically derived noise parameters are insufficient to match real hardware within the chosen margin, which has important implications for the field and motivates Phase II.
+**If TOST fails (equivalence not declared):** This is a publishable result — it indicates that even empirically derived noise parameters are insufficient to match real hardware within the chosen margin, which has important implications for the field and motivates Phase II. Negative results will be reported explicitly.
 
 **References:** Schuirmann (1987) [RESEARCH_PLAN Ref. 31]; Lakens (2017) [RESEARCH_PLAN Ref. 32].
 
-### 3.5 Multiple Comparisons
+### 3.5 Primary and Exploratory Endpoints
 
-With 4 sessions × 3 trajectories = 12 primary comparisons, apply Bonferroni correction to the family-wise error rate:
+To mitigate the multiple comparisons problem (with over 200 possible comparisons across trajectories, sensors, and backends), the study defines a strict hierarchy of endpoints:
 
-$\alpha_{\mathrm{corrected}} = 0.05 / 12 \approx 0.004$
+**Primary endpoints (subject to TOST and Holm-Bonferroni correction):**
+- ATE RMSE under FAST-LIO2 for Session D (Mid-360) on Trajectory T2
+- ATE RMSE under ORB-SLAM3 for Session B (D455) on Trajectory T2
+- ATE RMSE under GLIM for Session D (Mid-360) on Trajectory T2
 
-- **For the control test (S vs. R):** Report both uncorrected and Bonferroni-corrected p-values. The primary conclusion should be based on corrected values.
-- **For TOST (M vs. R):** Each equivalence test uses a 90% CI. For family-wise control across 12 TOST comparisons, use a $(1 - 0.10/12) \approx 99.2\%$ CI per comparison, or apply Holm–Bonferroni to the two one-sided p-values. The chosen procedure must be pre-specified in the analysis plan.
-- Uncorrected values are reported for reference and comparison with other works.
+**Exploratory endpoints (reported without correction, flagged as exploratory):**
+- All T1 and T3 comparisons
+- RPE metrics
+- Secondary SLAM backends (Point-LIO, Cartographer, etc.)
+
+This focuses statistical power on the most representative moderate dynamic conditions (T2) using the most established backends, while still exploring limits (T3) and baselines (T1).
 
 ---
 

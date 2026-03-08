@@ -42,7 +42,7 @@ Three reasons support keeping the scope to Phase I only.
 
 First, a complete metrological validation of sensor models — with rigorous statistical testing against a sub-millimeter ground truth — is a contribution that stands on its own. Bundling it with a sim-to-real gap benchmark or a parameter optimization study would dilute the metrological result rather than strengthen it.
 
-Second, the YuMi arm is the right tool for this specific question. Controlled trajectories, known kinematics, and ±0.02 mm repeatability are not replicable on a mobile base. That clean experimental setting is precisely what makes the sensor-level comparison credible.
+Second, the YuMi arm is the right tool for this specific question. Controlled trajectories, known kinematics, and sub-millimeter path repeatability (0.10 mm per ISO 9283) are not replicable on a mobile base. That clean experimental setting is precisely what makes the sensor-level comparison credible.
 
 Third, Phases II and III introduce additional variables — platform dynamics, uncontrolled environments, thousands of simulation runs — that each deserve their own experimental design. They are future work, not omissions.
 
@@ -85,13 +85,21 @@ Kadian et al. (2019) introduced "Sim2Real Predictivity" as a formal metric, inve
 
 Our approach differs: rather than evaluating SLAM system performance across environments, we evaluate **sensor model fidelity** at the signal level — comparing raw IMU streams, point cloud statistics, and estimated trajectories between three conditions: (i) real hardware, (ii) standard Gazebo simulation, (iii) metrological simulation with empirically derived parameters.
 
-### 3.5. Related Work with Laser-Tracker Ground Truth
+### 3.5. Ground Truth Quality in SLAM Benchmarks
 
-Lin et al. (2022, *Measurement*) validated a 6-DOF dynamic measurement system using a laser tracker as ground truth, with IMU error analysis via Allan Variance and a fault-tolerant Kalman filter for sensor fusion [Lin et al., 2022](https://www.sciencedirect.com/science/article/pii/S0263224122012489). Their work focuses on large-scale metrology and single-axis/turntable calibration, without LiDAR or visual sensors, and does not model kinematic-state-dependent noise for SLAM evaluation.
+Standard SLAM benchmarks provide high-quality reference trajectories. For instance, the EuRoC MAV dataset [33] and the TUM-VI benchmark [34] use optical motion capture systems (Vicon/OptiTrack), while the Hilti Challenge [35] and the Newer College Dataset [36] employ survey-grade laser trackers or structured ICP maps. TUM-VI explicitly characterizes IMU noise via Allan Variance prior to data collection.
+
+However, these datasets are recorded on mobile platforms or hand-held rigs. In such setups, the true kinematic state (velocity, acceleration, jerk) must be derived by numerically differentiating the ground truth pose, which amplifies noise. In contrast, an industrial manipulator like the YuMi provides a direct, analytically differentiable kinematic reference programmed in advance. This isolates the sensor noise from ground-truth differentiation artifacts.
+
+Regarding dynamic ground truth for metrology, Lin et al. (2022, *Measurement*) [7] validated a 6-DOF dynamic measurement system using a laser tracker as ground truth, with IMU error analysis via Allan Variance and a fault-tolerant Kalman filter for sensor fusion. Their work focuses on large-scale metrology and single-axis/turntable calibration, without LiDAR or visual sensors, and does not model kinematic-state-dependent noise for SLAM evaluation.
 
 ### 3.6. Justification and differentiation of the M4 covariance model
 
-The M4 model rests on established foundations: (i) **Allan Variance** (IEEE standard; Furrer et al., 2016) provides the static baseline — ARW, Bias Instability, RRW — that must be taken from empirical logs rather than datasheets for faithful simulation; (ii) **thermal drift** of IMU biases and variance is well documented (Joerger et al., 2021; MDPI Sensors, 2020), and exponential settling with a time constant $\tau_T$ is a standard way to model warm-up from cold start to steady state in inertial sensors; (iii) g-sensitivity and motion-dependent noise in MEMS (vibration, acceleration, angular rate) are known to affect bias and effective variance, so expressing terms proportional to $\|v\|$, $\|\omega\|$, $\|a\|$, $\|\dot{\omega}\|$, $\|\dot{a}\|$ is a direct parametrisation (some coefficients fixed to 0 per sensor — e.g. $c_v = 0$ for IMU; see [METHODOLOGY.md](METHODOLOGY.md#541-sensor-specific-coefficient-pruning) §5.4.1); (iv) residual-based identification (measured minus true, with ground truth from a high-precision reference) is the standard approach in calibration and in data-driven covariance tuning (e.g. Cheng et al., 2025, bi-level estimator-in-the-loop). Validation using a robot arm as ground truth for orientation and trajectory has been demonstrated (Kuti et al., 2024, *Sensors*). What is new is the combination: a single, explicit formula that adds a thermal term $\sigma^2_{\mathrm{static}}(t_{\mathrm{on}})$ and kinematic terms, with coefficients fitted from residuals under dynamic motion on a sub-millimetre repeatability manipulator (YuMi), and then used to drive SLAM sensor simulation. No prior work in the literature presents this unified, state-dependent covariance model for IMU/LiDAR/camera in the context of multi-backend SLAM evaluation.
+The M4 model rests on established foundations: (i) **Allan Variance** (IEEE standard; Furrer et al., 2016) provides the static baseline — ARW, Bias Instability, RRW — that must be taken from empirical logs rather than datasheets for faithful simulation; (ii) **thermal drift** of IMU biases and variance is well documented (Joerger et al., 2021; MDPI Sensors, 2020), and exponential settling with a time constant $\tau_T$ is a standard way to model warm-up from cold start to steady state in inertial sensors; (iii) g-sensitivity and motion-dependent noise in MEMS (vibration, acceleration, angular rate) are known to affect bias and effective variance, so expressing terms proportional to $\|v\|$, $\|\omega\|$, $\|a\|$, $\|\dot{\omega}\|$, $\|\dot{a}\|$ is a direct parametrisation (some coefficients fixed to 0 per sensor — e.g. $c_v = 0$ for IMU; see [METHODOLOGY.md](METHODOLOGY.md#541-sensor-specific-coefficient-pruning) §5.4.1); (iv) residual-based identification (measured minus true, with ground truth from a high-precision reference) is the standard approach in calibration and in data-driven covariance tuning (e.g. Cheng et al., 2025, bi-level estimator-in-the-loop). Validation using a robot arm as ground truth for orientation and trajectory has been demonstrated (Kuti et al., 2024, *Sensors*).
+
+It is important to distinguish this modeling effort from continuous-time calibration frameworks like Kalibr. Furgale et al. [37] and Rehder et al. [38] established a robust methodology to optimize spatial and temporal extrinsics alongside IMU biases using a continuous-time spline representation. While they model biases using random walks and optimize parameters against visual ground truth, they assume a constant measurement noise covariance. Our M4 model goes a step further: it aims to capture how the *variance* of the noise itself scales with the kinematic state, rather than just estimating the bias states or fixed extrinsics.
+
+What is new is the combination: a single, explicit formula that adds a thermal term $\sigma^2_{\mathrm{static}}(t_{\mathrm{on}})$ and kinematic terms, with coefficients fitted from residuals under dynamic motion on a sub-millimetre repeatability manipulator (YuMi), and then used to drive SLAM sensor simulation. No prior work in the literature presents this unified, state-dependent covariance model for IMU/LiDAR/camera in the context of multi-backend SLAM evaluation.
 
 ### 3.7. Summary and Novelty Statement
 
@@ -123,12 +131,14 @@ Secondary hypothesis (H2):
 ### 5.1 Ground Truth System
 
 **ABB YuMi IRC5** (dual-arm collaborative robot):
-- Repeatability: ±0.02 mm
+- Pose repeatability: $\pm0.02$ mm (ISO 9283 RP)
+- Linear path repeatability: $0.10$ mm (ISO 9283 RT)
+- Linear path accuracy: $1.36$ mm (ISO 9283 AT, worst-case at 1.5 m/s)
 - Payload capacity: ~500 g per arm
 - Programming: RobotStudio (offline trajectory definition and playback)
 - Reference frame: mechanical flange — requires hand-eye calibration to sensor optical/inertial center (see [METHODOLOGY.md](METHODOLOGY.md))
 
-> Important distinction: The YuMi's ±0.02 mm figure is *repeatability*, not *volumetric accuracy*. The lower bound of our ground truth confidence is bounded by repeatability, not absolute accuracy. This must be stated explicitly in any publication.
+> Important distinction: The YuMi's $\pm0.02$ mm figure is *pose repeatability*, not *path accuracy*. For dynamic trajectory comparisons (ATE), the bounding mechanical uncertainty is the path repeatability (0.10 mm) and path accuracy (bounded by 1.36 mm at maximum speed, though lower at our 0.1 m/s velocities). This must be stated explicitly in any publication.
 
 RobotStudio provides the executed trajectory as the independent predictor of robot motion, separate from any SLAM estimate. This dual role — kinematic ground truth *and* independent simulation reference — is a key methodological strength of this setup.
 
@@ -247,7 +257,7 @@ The experimental design and software architecture in this plan were originally i
 
 [13] D. Cheng, J. Kang, and X. Xiong, "Simultaneous Calibration of Noise Covariance and Kinematics for State Estimation of Legged Robots via Bi-level Optimization," arXiv:2510.11539, 2025. [https://arxiv.org/abs/2510.11539](https://arxiv.org/html/2510.11539v1)
 
-[14] Six-Position Test for IMU calibration — see IEEE calibration standards (e.g. IEEE Std 952) or Joerger et al. [11] for MEMS procedures.
+[14] Six-Position Test for IMU calibration — see IEEE calibration standards (e.g. IEEE Std 1293) or Joerger et al. [11] for MEMS procedures.
 
 [15] S. Umeyama, "Least-squares estimation of transformation parameters between two point patterns," *IEEE Transactions on Pattern Analysis and Machine Intelligence*, vol. 13, no. 4, pp. 376–380, 1991.
 
@@ -288,3 +298,17 @@ The experimental design and software architecture in this plan were originally i
 [31] D. J. Schuirmann, "A comparison of the Two One-Sided Tests Procedure and the Power Approach for assessing the equivalence of average bioavailability," *Journal of Pharmacokinetics and Biopharmaceutics*, vol. 15, no. 6, pp. 657–680, 1987. [DOI: 10.1007/BF01068419](https://doi.org/10.1007/BF01068419) *(Foundational TOST procedure; standard in bioequivalence and adopted for measurement equivalence.)*
 
 [32] D. Lakens, "Equivalence Tests: A Practical Primer for t Tests, Correlations, and Meta-Analyses," *Social Psychological and Personality Science*, vol. 8, no. 4, pp. 355–362, 2017. [DOI: 10.1177/1948550617697177](https://doi.org/10.1177/1948550617697177) *(Practical primer on equivalence testing; explains why p > 0.05 does not demonstrate equivalence.)*
+
+**Datasets and Calibration:**
+
+[33] M. Burri et al., "The EuRoC micro aerial vehicle datasets," *The International Journal of Robotics Research*, vol. 35, no. 10, pp. 1157–1163, 2016.
+
+[34] D. Schubert et al., "The TUM VI Benchmark for Evaluating Visual-Inertial Odometry," in *Proc. IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*, 2018.
+
+[35] M. Helmberger et al., "The Hilti SLAM Challenge Dataset," *IEEE Robotics and Automation Letters*, vol. 7, no. 3, pp. 7518–7525, 2022.
+
+[36] M. Ramezani et al., "The Newer College Dataset for Visual-LiDAR Egocentric Mapping," in *Proc. IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*, 2020.
+
+[37] P. Furgale, J. Rehder, and R. Siegwart, "Unified Temporal and Spatial Calibration for Multi-Sensor Systems," in *Proc. IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*, 2013.
+
+[38] J. Rehder, J. Nikolic, T. Schneider, T. Hinzmann, and R. Siegwart, "Extending kalibr: Calibrating the extrinsics of multiple IMUs and of individual axes," in *Proc. IEEE International Conference on Robotics and Automation (ICRA)*, 2016.

@@ -114,13 +114,15 @@ Total: ~7–8 h per session
 
 ### Block Structure
 
-Each block contains **3 trajectory repetitions** in the following pattern:
+Each block lasts approximately 2 hours. To satisfy the high statistical power required by equivalence testing (TOST, see `METHODOLOGY.md` §3.4) without extending laboratory time, the YuMi will execute the trajectory in a continuous loop pattern rather than a small fixed number of repetitions. 
 
-| Block | Repetition order |
-|-------|-----------------|
-| MIX | CW, CCW, CW |
-| CW | CW, CW, CW |
-| CCW | CCW, CCW, CCW |
+For a typical 1–2 minute trajectory flanked by 60 s static periods, a 2-hour block yields **$n \approx 30–40$ independent trajectory repetitions**. The sequence logic is:
+
+| Block | Repetition pattern (continuous loop for ~2 h) |
+|-------|-----------------------------------------------|
+| MIX | CW, CCW, CW, CCW, CW, CCW... |
+| CW | CW, CW, CW, CW... |
+| CCW | CCW, CCW, CCW, CCW... |
 
 **Purpose of this design:**
 - **MIX block:** Captures alternating asymmetry and provides mixed-direction baseline

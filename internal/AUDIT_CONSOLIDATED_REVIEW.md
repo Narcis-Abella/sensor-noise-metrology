@@ -82,8 +82,8 @@ Revisar en cada hito (pre-supervisor, pre-sesiones dinámicas, pre-manuscrito) y
 
 ### Acciones recomendadas
 
-- [ ] Añadir citas a EuRoC, TUM-VI, Hilti SLAM Challenge; indicar qué ground truth usan (motion capture / laser tracker) vs. YuMi.
-- [ ] Citar y distinguir de Rehder et al. (2016) y Furgale et al. (2013) en kalibr.
+- [x] Añadir citas a EuRoC, TUM-VI, Hilti SLAM Challenge; indicar qué ground truth usan (motion capture / laser tracker) vs. YuMi.
+- [x] Citar y distinguir de Rehder et al. (2016) y Furgale et al. (2013) en kalibr.
 - [ ] Añadir tabla de novedad (2×4: trabajo previo vs. este trabajo en cuatro dimensiones: tipo de sensor, fuente de ground truth, modelo de ruido dinámico, evaluación multi-backend).
 - [ ] Reforzar el argumento físico por sensor para M4 en `RESEARCH_PLAN.md` §3.6.
 - [ ] Posicionar explícitamente el dataset como contribución en `RESEARCH_PLAN.md` §6.2–6.3 y `README.md`.
@@ -128,11 +128,11 @@ Solución: TOST (Two One-Sided Tests) de bioequivalencia:
 
 ### Acciones recomendadas
 
-- [ ] Sustituir el criterio de éxito de H0 por TOST con margen δ predefinido.
-- [ ] Definir δ en unidades de ATE (ej. δ = 10% del peor ATE real de T3).
-- [ ] Realizar análisis de potencia formal para justificar n = 9 o aumentar n (típicamente n ≥ 20–30 para TOST con 80% potencia).
-- [ ] Definir endpoints primarios vs. exploratorios; H1 y H2 pueden mantener tests direccionales estándar.
-- [ ] Declarar explícitamente que resultados negativos son aceptables y se reportarán.
+- [x] Sustituir el criterio de éxito de H0 por TOST con margen δ predefinido.
+- [x] Definir δ en unidades de ATE (ej. δ = 10% del peor ATE real de T3).
+- [x] Realizar análisis de potencia formal para justificar n = 9 o aumentar n (típicamente n ≥ 20–30 para TOST con 80% potencia).
+- [x] Definir endpoints primarios vs. exploratorios; H1 y H2 pueden mantener tests direccionales estándar.
+- [x] Declarar explícitamente que resultados negativos son aceptables y se reportarán.
 
 ---
 
@@ -166,7 +166,7 @@ Solución: TOST (Two One-Sided Tests) de bioequivalencia:
 
 ### Acciones recomendadas
 
-- [ ] Cuantificar path-following accuracy del YuMi (documentación ABB o medición empírica); incluir en presupuesto de incertidumbre §2.4.
+- [x] Cuantificar path-following accuracy del YuMi (documentación ABB o medición empírica); incluir en presupuesto de incertidumbre §2.4.
 - [ ] Aclarar si el ground truth usa trayectoria comandada o ejecutada (encoder state); si es comandada, documentar el efecto del blending en T3.
 - [ ] Fijar objetivos numéricos de sync: ej. "|Δt| ≤ 3 ms (PTP) o ≤ 5 ms (NTP) antes de aceptar sesión".
 - [ ] Añadir checklist de "criterios de aceptación de sesión" en `EXPERIMENTAL_DESIGN.md` (ATE floor, deriva de temperatura, sync, residual hand-eye).
@@ -205,13 +205,13 @@ $$
 
 ### Acciones recomendadas
 
-- [ ] Reescribir fórmula como multiplicativa o añadir restricción de no-negatividad en el ajuste.
-- [ ] Definir unidades de c_v, c_a, c_j explícitamente por tipo de sensor y eje.
-- [ ] Añadir subsección de identificabilidad en `METHODOLOGY.md` §5: VIF, número de condición de la matriz de diseño.
-- [ ] Considerar regularización (ridge L2) si el ajuste está mal condicionado.
-- [ ] Declarar limitación de anisotropía; para H2 considerar análisis por eje.
-- [ ] Separar conceptualmente variance vs. bias en LiDAR; en cámara, distinguir drift térmico (sistemático) vs. motion blur (aleatorio).
-- [ ] Permitir sensor-specific pruning: ej. "Para LiDAR solo c_v; c_j no identificable, fijado a 0."
+- [x] Reescribir fórmula como multiplicativa o añadir restricción de no-negatividad en el ajuste.
+- [x] Definir unidades de c_v, c_a, c_j explícitamente por tipo de sensor y eje.
+- [x] Añadir subsección de identificabilidad en `METHODOLOGY.md` §5: VIF, número de condición de la matriz de diseño.
+- [x] Considerar regularización (ridge L2) si el ajuste está mal condicionado.
+- [x] Declarar limitación de anisotropía; para H2 considerar análisis por eje.
+- [x] Separar conceptualmente variance vs. bias en LiDAR; en cámara, distinguir drift térmico (sistemático) vs. motion blur (aleatorio).
+- [x] Permitir sensor-specific pruning: ej. "Para LiDAR solo c_v; c_j no identificable, fijado a 0."
 
 ---
 
@@ -237,12 +237,12 @@ $$
 
 ### Acciones recomendadas
 
-- [ ] Implementar TOST para H0 (ver Dimensión 2).
-- [ ] Realizar y documentar análisis de potencia en `METHODOLOGY.md` §3.
-- [ ] Aumentar n (5–10 repeticiones por bloque) o reducir comparaciones primarias si la potencia es insuficiente.
-- [ ] Definir conjunto de endpoints primarios (ej. ATE RMSE bajo FAST-LIO2 Session D T2, ORB-SLAM3 Session B T2); resto exploratorio.
+- [x] Implementar TOST para H0 (ver Dimensión 2).
+- [x] Realizar y documentar análisis de potencia en `METHODOLOGY.md` §3.
+- [x] Aumentar n (5–10 repeticiones por bloque) o reducir comparaciones primarias si la potencia es insuficiente.
+- [x] Definir conjunto de endpoints primarios (ej. ATE RMSE bajo FAST-LIO2 Session D T2, ORB-SLAM3 Session B T2); resto exploratorio.
 - [ ] Considerar modelo de efectos mixtos para el manuscrito final (random effects por trayectoria/bloque).
-- [ ] Usar Holm-Bonferroni o Benjamini-Hochberg si se reporta la matriz completa.
+- [x] Usar Holm-Bonferroni o Benjamini-Hochberg si se reporta la matriz completa.
 
 ---
 
@@ -344,10 +344,10 @@ Discrepancia importante: Audit 1 puntúa 3/10 (backends no citados → riesgo de
 
 ### Acciones recomendadas
 
-- [ ] Añadir las 8 citas de backends a `RESEARCH_PLAN.md` §9 y al manuscrito.
-- [ ] Añadir 3–4 referencias de benchmarks (Hilti, Newer College, EuRoC, TUM-VI).
-- [ ] Verificar y corregir estándar Six-Position Test (1293 vs. 952).
-- [ ] Citar Furgale et al. (2013) para kalibr.
+- [x] Añadir las 8 citas de backends a `RESEARCH_PLAN.md` §9 y al manuscrito.
+- [x] Añadir 3–4 referencias de benchmarks (Hilti, Newer College, EuRoC, TUM-VI).
+- [x] Verificar y corregir estándar Six-Position Test (1293 vs. 952).
+- [x] Citar Furgale et al. (2013) para kalibr.
 
 ---
 
@@ -432,27 +432,27 @@ Discrepancia importante: Audit 1 puntúa 3/10 (backends no citados → riesgo de
 
 ### Pre-revisión supervisor (v1.0)
 
-- [ ] TOST y margen δ definidos en METHODOLOGY
-- [ ] Citas de backends añadidas a RESEARCH_PLAN §9
+- [x] TOST y margen δ definidos en METHODOLOGY
+- [x] Citas de backends añadidas a RESEARCH_PLAN §9
 - [ ] Phase I-core definido en RESEARCH_PLAN §6
-- [ ] Path-following accuracy YuMi documentada o en presupuesto
-- [ ] Estándar IEEE 1293 vs. 952 verificado
+- [x] Path-following accuracy YuMi documentada o en presupuesto
+- [x] Estándar IEEE 1293 vs. 952 verificado
 
 ### Pre-sesiones dinámicas
 
 - [ ] Peso verificado con báscula
 - [ ] Método de sincronización (PTP/NTP) definido y documentado
 - [ ] Criterios de aceptación de sesión en EXPERIMENTAL_DESIGN
-- [ ] Análisis de potencia documentado
+- [x] Análisis de potencia documentado
 - [ ] Montajes diseñados y validados
 
 ### Pre-manuscrito
 
 - [ ] Plan de datos (DOI, formato, licencia) en README y RESEARCH_PLAN
-- [ ] Identificabilidad M4 documentada en METHODOLOGY
+- [x] Identificabilidad M4 documentada en METHODOLOGY
 - [ ] Plugin Gazebo Rosetta funcional o estado documentado
-- [ ] Endpoints primarios vs. exploratorios claramente declarados
-- [ ] Referencias de benchmarks añadidas
+- [x] Endpoints primarios vs. exploratorios claramente declarados
+- [x] Referencias de benchmarks añadidas
 
 ---
 
