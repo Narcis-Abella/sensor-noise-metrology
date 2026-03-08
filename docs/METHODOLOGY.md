@@ -1,7 +1,7 @@
 # Methodology — Phase I
 
-**Version:** 0.3  
-**Date:** 2026-03-06  
+**Version:** 0.4  
+**Date:** 2026-03-08  
 **Status:** Pending supervisor review
 
 ---

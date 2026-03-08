@@ -3,8 +3,8 @@
 **Author:** Narcís Abella  
 **Supervisor:** Dr. Antonio Gabino Salazar Martín  
 **Institution:** IQS School of Engineering (Universitat Ramon Llull), Barcelona  
-**Version:** 0.3 — Design phase, pending supervisor review  
-**Date:** 2026-03-06
+**Version:** 0.4 — Design phase, pending supervisor review  
+**Date:** 2026-03-08
 
 ---
 
@@ -113,6 +113,8 @@ Primary hypothesis (H0):
 Formal test: **TOST (Two One-Sided Tests)** for equivalence [Schuirmann, 1987; Lakens, 2017 — see References 31–32]. The margin $\delta$ (e.g. 5 mm ATE or 10% of reference ATE) is pre-specified before data collection. Equivalence is declared if the 90% confidence interval for the mean difference (Metrological sim − Real) lies entirely within $[-\delta, +\delta]$.
 
 Success criterion: (i) **Equivalence:** TOST declares Metrological sim equivalent to Real within margin $\delta$. (ii) **Control:** Standard simulation differs significantly from Real (p < 0.05 via paired t-test or Wilcoxon), confirming that the metrological approach is necessary. If equivalence is not declared, this is also publishable — it indicates that even empirically derived parameters are insufficient.
+
+**Pre-registration (Session D):** Session D (RealSense D455, visual-inertial) is expected to show the largest Reality Gap of all sessions, due to visual SLAM's dependence on texture and illumination that standard Gazebo does not capture. This outcome is expected and publishable — it quantifies the limitation that motivates Phase II.
 
 Secondary hypothesis (H1):
 > The quality of the IMU (ARW, Bias Instability) has a measurable and systematic effect on tight-coupling SLAM performance (ATE/RPE), quantifiable across three IMUs of different quality grades under identical dynamic conditions.
