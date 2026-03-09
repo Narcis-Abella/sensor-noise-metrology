@@ -278,35 +278,37 @@ The YuMi working area must be prepared to minimize uncontrolled variables that w
 
 | Variable | Requirement | Method |
 |----------|-------------|--------|
-| Geometry | Known, stable, planar surfaces within ~2 m | Foam panels of known dimensions mounted on frame |
+| Geometry | Known, stable, planar surfaces within ~2–3 m (desirable but secondary) | Foam/PVC panels of known dimensions mounted on a simple frame when available; otherwise document approximate lab geometry and treat missing panels as a limitation. |
 | Illumination | Stable, diffuse, temperature-stable | LED panel (constant current driver, warm-up ≥ 30 min before session) |
 | Temperature | Documented, stable | Calibrated thermometer, logged at 1 h intervals; HVAC not switched during session |
 | Vibration | Minimized | No mechanical activity in adjacent rooms during static characterization |
 | Magnetic field | Documented | WitMotion magnetometer logs during static (cross-reference for bias); avoid metal objects being moved near sensor |
 
-**Preferred location:** If a metrology or optics laboratory with better-controlled conditions is available at IQS, it should be prioritized at least for the static characterization sessions. If not available, this is declared as an explicit limitation and documented as motivation for a controlled-environment follow-up.
+In practical terms, access to full geometric enclosures (foam panels or a white fabric tent) may be limited in the IQS laboratory. In this work the priority is a visually controlled environment for Session D (RealSense D455) — i.e., stable illumination and simple, high-contrast patterns (AprilTag boards and mostly uniform backgrounds) that can be replicated in simulation. A more elaborate geometric enclosure for Session C (Mid-360) — for example, a complete cage of panels around the YuMi — is desirable but not required for the core metrological results; if only partial panels are available, this is documented explicitly as a limitation in the dynamic LiDAR range (≈0.4–3 m) and in the Discussion.
+
+Preferred location: If a metrology or optics laboratory with better-controlled conditions is available at IQS, it should be prioritized at least for the static characterization sessions. If not available, this is declared as an explicit limitation and documented as motivation for a controlled-environment follow-up.
 
 ---
 
 ## 9. Temporal Synchronization Protocol
 
-At ~100 mm/s linear velocity, a **10 ms clock offset** between the YuMi IRC5 controller and the ROS PC introduces ~1 mm of artificial spatial error. This is non-negligible relative to the YuMi's path repeatability (0.10 mm) and must be explicitly addressed before any trajectory comparison is considered valid.
+At ~100 mm/s linear velocity, a 10 ms clock offset between the YuMi IRC5 controller and the ROS PC introduces ~1 mm of artificial spatial error. This is non-negligible relative to the YuMi's path repeatability (0.10 mm) and must be explicitly addressed before any trajectory comparison is considered valid.
 
-**Preferred method:** PTP (IEEE 1588 Precision Time Protocol) between YuMi IRC5 and ROS PC, if supported by the network configuration.
+Preferred method: PTP (IEEE 1588 Precision Time Protocol) between YuMi IRC5 and ROS PC, if supported by the network configuration.
 
-**Fallback:** NTP synchronization with explicit jitter measurement and documentation.
+Fallback: NTP synchronization with explicit jitter measurement and documentation.
 
-**In all cases:** The synchronization method used, the measured time offset, and the measured jitter must be reported. The spatial error contribution from timing uncertainty (v_max × Δt) must be computed and included in the ground truth uncertainty budget.
+In all cases, the synchronization method used, the measured time offset, and the measured jitter must be reported. The spatial error contribution from timing uncertainty (v_max × Δt) must be computed and included in the ground truth uncertainty budget.
 
-**Reviewers will flag this** if not addressed explicitly.
+Reviewers are likely to flag this if it is not addressed explicitly.
 
 ---
 
 ## 10. Hand-Eye Calibration Protocol
 
-RobotStudio provides the pose of the **mechanical flange** of the YuMi. SLAM algorithms operate from the **sensor's optical or inertial center**. Without explicit hand-eye calibration, the ground truth comparison has a systematic offset that invalidates all error metrics.
+RobotStudio provides the pose of the mechanical flange of the YuMi. SLAM algorithms operate from the sensor's optical or inertial center. Without explicit hand-eye calibration, the ground truth comparison has a systematic offset that invalidates all error metrics.
 
-**Method:** AX = XB calibration (Tsai-Lenz or equivalent)  
+Method: AX = XB calibration (Tsai-Lenz or equivalent)  
 **Procedure:**
 1. Mount sensor on flange
 2. Move robot through ≥ 15 distinct poses covering a range of orientations

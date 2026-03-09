@@ -244,7 +244,7 @@ R_a(t) = a_{\mathrm{measured}}(t) - a_{\mathrm{true}}(t), \quad
 R_\omega(t) = \omega_{\mathrm{measured}}(t) - \omega_{\mathrm{true}}(t).
 $$
 
-For LiDAR and camera, analogous residuals are obtained by projecting measurements into a static reference map (for LiDAR) or reference pose (for AprilTags) using ground truth poses and measuring deviations.
+For LiDAR and camera, analogous residuals are obtained by projecting measurements into a static reference map (for LiDAR) or reference pose (for AprilTags) using ground truth poses and measuring deviations. For LiDAR specifically, points belonging to the YuMi structure itself are removed before residual computation using a self-filter based on the robot’s geometric model (URDF + meshes); this prevents the arm’s motion from contaminating statistics that are meant to characterise the external environment.
 
 ### 5.2 Kinematic Segmentation
 
@@ -307,6 +307,8 @@ LiDAR / Camera: Start with the full set; prune only after checking identifiabili
 ### 5.6 M4 Generalization Check (held-out trajectory)
 
 To demonstrate that M4 does not overfit to the specific trajectories used for fitting, kinematic coefficients (and thermal parameters) are fitted using only T1 (smooth) and T2 (moderate) data. The model is then evaluated on T3 (aggressive) as a held-out set. If M4 improves ATE/RPE on T3 relative to M1–M3, the model generalizes beyond the fitting regime. This protocol is reported explicitly; if generalization fails, the limitation is stated in the manuscript.
+
+The YuMi geometric model used in the LiDAR self-filter and for any optional simulation of the manipulator is taken from publicly available ROS description packages, such as `abb_irb14000_description` (KTH) [GitHub](https://github.com/kth-ros-pkg/abb_irb14000_description), which provide URDF and mesh files for the IRB 14000. This ensures that the same approximate link geometry is available in both the real-data self-filter and any Gazebo/Fortress configuration where the robot is visualised.
 
 ---
 

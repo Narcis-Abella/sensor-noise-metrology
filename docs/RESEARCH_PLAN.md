@@ -77,9 +77,9 @@ Monitoring 6-DOF pose estimation of a static AprilTag pattern over several hours
 
 ### 3.4 Sim-to-Real Validation Framework
 
-Kadian et al. (2019) introduced "Sim2Real Predictivity" as a formal metric, investigating whether simulation performance correlates with real-world performance. Wang et al. (2020) used the TartanAir dataset to argue that the Reality Gap remains significant for visual odometry algorithms dependent on fine-grained texture features.
+Kadian et al. (2019) introduced "Sim2Real Predictivity" as a formal metric, investigating whether simulation performance correlates with real-world performance. Wang et al. (2020) used the TartanAir dataset to argue that the Reality Gap remains significant for visual odometry algorithms dependent on fine-grained texture features. In parallel, a large body of work on **domain randomization** for perception and control shows that aggressively varying textures, lighting, object materials and camera parameters in simulation can improve sim-to-real robustness — for instance in depth sensing for grasping [23] and agile visual navigation [39].
 
-Our approach differs: rather than evaluating SLAM system performance across environments, we evaluate **sensor model fidelity** at the signal level — comparing raw IMU streams, point cloud statistics, and estimated trajectories between three conditions: (i) real hardware, (ii) standard Gazebo simulation, (iii) metrological simulation with empirically derived parameters.
+In this work we deliberately do not adopt domain randomization. Instead, we control the environment (especially in Session D) so that real and simulated scenes share simple, well-characterised patterns (for example, AprilTag boards and mostly uniform backgrounds) and focus exclusively on sensor model fidelity at the signal level — comparing raw IMU streams, point cloud statistics, and estimated trajectories between three conditions: (i) real hardware, (ii) standard Gazebo simulation, (iii) metrological simulation with empirically derived parameters. This avoids conflating environment-level variation (textures/lighting) with the core question of how far careful sensor modelling alone can close the Reality Gap.
 
 ### 3.5. Ground Truth Quality in SLAM Benchmarks
 
@@ -100,8 +100,8 @@ What is new is the combination: a single, explicit formula that adds a thermal t
 ### 3.7. Summary and Novelty Statement
 
 - Gap: No prior work combines (a) kinematic-state-dependent IMU noise models, (b) multi-backend SLAM evaluation, and (c) sub-millimetre robotic ground truth.
-- Our contribution: Phase I fills this gap by providing metrological characterisation and simulation models that are validated against real hardware and multiple SLAM backends.
-- Explicit novelty: Prior work has characterised IMU noise via Allan Variance in static conditions (Furrer et al., 2016) or LiDAR accuracy in controlled environments (Liu & Zhang, 2021), and some studies have validated IMU dynamic performance with laser trackers (Lin et al., 2022, *Measurement*). No study has combined: (1) kinematic-state-dependent noise models derived from dynamic ground truth, (2) validation across multiple tight-coupled SLAM backends, and (3) statistical comparison against a sub-millimetre industrial manipulator reference. This combination is the novelty of Phase I.
+- Contribution: this study fills this gap by providing metrological characterisation and simulation models that are validated against real hardware and multiple SLAM backends.
+- Explicit novelty: Prior work has characterised IMU noise via Allan Variance in static conditions (Furrer et al., 2016) or LiDAR accuracy in controlled environments (Liu & Zhang, 2021), and some studies have validated IMU dynamic performance with laser trackers (Lin et al., 2022, *Measurement*). No study has combined: (1) kinematic-state-dependent noise models derived from dynamic ground truth, (2) validation across multiple tight-coupled SLAM backends, and (3) statistical comparison against a sub-millimetre industrial manipulator reference. This combination is the novelty of the present work.
 
 ---
 
@@ -312,3 +312,5 @@ The experimental design and software architecture in this plan were originally i
 [37] P. Furgale, J. Rehder, and R. Siegwart, "Unified Temporal and Spatial Calibration for Multi-Sensor Systems," in *Proc. IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*, 2013.
 
 [38] J. Rehder, J. Nikolic, T. Schneider, T. Hinzmann, and R. Siegwart, "Extending kalibr: Calibrating the extrinsics of multiple IMUs and of individual axes," in *Proc. IEEE International Conference on Robotics and Automation (ICRA)*, 2016.
+
+[39] A. Loquercio, E. Kaufmann, R. Ranftl, A. Dosovitskiy, V. Koltun, and D. Scaramuzza, "Deep Drone Racing: From Simulation to Reality with Domain Randomization," *IEEE Transactions on Robotics*, vol. 36, no. 1, pp. 1–14, 2020. [Preprint](https://rpg.ifi.uzh.ch/docs/TRO19_Loquercio.pdf)
