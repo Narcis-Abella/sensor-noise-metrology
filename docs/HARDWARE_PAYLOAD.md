@@ -136,6 +136,7 @@ Sessions A–D follow modality order: IMU-only → 2D LiDAR → 3D LiDAR → vis
 | Quality grade | Consumer-grade 2D LiDAR |
 
 **Notes:** Session B is 2D-only (Z fixed). The A2M12 provides a planar SLAM baseline established in the literature and commonly used in 2D benchmarks, with no geometric degeneracy risk in properly structured environments. It serves as the minimal-complexity comparison baseline before evaluating the 3D sensors.
+**Warm-up:** The Mid-360 requires a minimum 20-minute powered warm-up before any static characterization log or dynamic session begins, due to internal self-heating of the ToF detector. See EXPERIMENTAL_DESIGN.md §2.3.
 
 ---
 
@@ -150,7 +151,7 @@ Sessions A–D follow modality order: IMU-only → 2D LiDAR → 3D LiDAR → vis
 | C | 250 g | 100 g | **350 g** | No | At 70% capacity; priority to verify |
 | D | 195 g | 80 g | **275 g** | No | Camera mount needs cable management |
 
-**Cable weight:** Not included in estimates above. USB 3.0 + power cables for each sensor add ~20–50 g. Include in final verified weight.
+**Cable weight:** Not included in estimates above. USB 3.0 + power cables for each sensor add ~20–50 g. Include in final verified weight. Cable routing along the YuMi arm is also required for dynamic sessions (T2/T3) to avoid variable external forces on the flange contaminating ground truth — see EXPERIMENTAL_DESIGN.md §3 for the cable management protocol.
 
 ---
 
@@ -222,3 +223,5 @@ Before scheduling any dynamic session, complete the following:
 - [ ] Confirm all sessions ≤ 500 g (hard limit) and ≤ 350 g (safety target)
 - [ ] Update `HARDWARE_PAYLOAD.md` Session table with verified weights
 - [ ] Update `PROGRESS_LOG.md` with verification date and results
+- [ ] Verify cable routing feasibility for each sensor along YuMi arm (cable chain compatibility with flange mounting)
+- [ ] Confirm Mid-360 20-minute warm-up protocol is documented in session planning
