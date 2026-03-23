@@ -9,7 +9,7 @@
 
 ## Current Status Summary
 
-> Updated: 2026-03-07
+> Updated: 2026-03-23
 
 | Area | Status | Next action |
 |------|--------|-------------|
@@ -24,6 +24,7 @@
 | Statistical analysis | ❌ Not started | Pending: data collection |
 | Publication draft | ❌ Not started | Pending: results |
 | GitHub repository | ✅ Pushed | [github.com/Narcis-Abella/slam-sensor-metrological-validation](https://github.com/Narcis-Abella/slam-sensor-metrological-validation) |
+| Research framing | Done | v0.5 post-audit reframe complete |
 
 ---
 
@@ -170,6 +171,40 @@
 
 **Contributions:**
 - RESEARCH_PLAN §6.4: Explicit contribution added — Gazebo plugin for **non-repetitive scan pattern** (Mid-360 Rosetta, optionally Mid-70) as part of expected open-source output.
+
+---
+
+### 2026-03-23 — DECISION: Research reframing — TOST as primary contribution; M4 as enabler; Fortress plugin as standalone deliverable
+
+**Context:** Extended literature audit conducted (adversarial novelty search across IEEE Xplore, arXiv, Semantic Scholar, Google Scholar) covering ~80+ papers across sim-to-real, state-dependent covariance, robot arm ground truth, Livox simulation, and vibration-induced LiDAR noise.
+
+**Key findings from audit:**
+- State-dependent covariance (M4 concept) has substantial prior art: VIO-DualProNet (2024), AirIMU (2023). M4 is not the primary novelty.
+- Robot arm as dynamic sensor reference has direct precedent: Kuti et al. (2024), Ferguson et al. (2023).
+- Livox Mid-360 Gazebo Classic plugins exist (5+). Gazebo Fortress plugin with Rosetta pattern: confirmed absent. Gap documented via gz-sim issue #1958 (open since April 2023).
+- TOST applied to sim-to-real in robotics: no prior work found. Confirmed as primary novel contribution.
+- Vibration characterization of Mid-360 range noise: no prior work found. Schlager et al. (2022) tested Ouster only; Brazeal et al. (2021) simulated Risley prism misalignment but did not validate experimentally.
+
+**Decisions taken:**
+1. **Reframe primary contribution:** TOST-based equivalence testing framework is the lead contribution, not M4. M4 is repositioned as a necessary enabler of the TOST pipeline.
+2. **Fortress plugin as standalone deliverable:** Added explicitly to RESEARCH_PLAN §6.2 and README §8 timeline. To be released on GitHub before paper submission.
+3. **M4 prior art acknowledged:** VIO-DualProNet and AirIMU cited in RESEARCH_PLAN §3.6 and §3.7. M4 differentiated as parametric + interpretable + temperature+kinematics combined — not conceptually new but methodologically rigorous.
+4. **Three protocol gaps added to EXPERIMENTAL_DESIGN:**
+   - Cable drag mitigation protocol (§3 Cable Management)
+   - Mid-360 20-minute warm-up requirement (§2.3)
+   - Cross-session hand-eye verification procedure (§10)
+5. **New references added:** [40]–[48] in RESEARCH_PLAN §9, including VIO-DualProNet, AirIMU, Ferguson 2023, Jongeneel 2024, Vultaggio 2023, Schlager 2021, Brazeal 2021, gz-sim #1958, Wellek 2010.
+6. **Future direction noted:** F/T sensor metrological validation identified as natural P2 extension using same YuMi + TOST framework. Added to RESEARCH_PLAN §8 as possible future work without commitment.
+
+**Documents updated this session:**
+- README.md — §0 rewritten, §5.1 reframed, §6 reordered, §8 plugin added, §9 three new limitations
+- docs/RESEARCH_PLAN.md — §1, §3.4, §3.6, §3.7 rewritten; §4 TOST motivation added; §6 reordered; §8 F/T future work; §9 refs [40]–[48]
+- docs/METHODOLOGY.md — §3.4 motivation paragraph; §4 M4 note; §5.4.1 LiDAR vibration caveat; §6 pipeline updated; §9 TOST tooling
+- docs/EXPERIMENTAL_DESIGN.md — §2.3 warm-up; §3 cable management; §6 T3 vibration gap; §8 table cable row; §10 cross-session verification
+- docs/SLAM_BACKENDS.md — §1 TOST argument; §2 M4 note; §6 last paragraph replaced
+- docs/HARDWARE_PAYLOAD.md — §3.3 warm-up note; §4 cable note; §8 two checklist items
+
+**Version bump:** All docs moved from v0.4 → v0.5.
 
 ---
 
