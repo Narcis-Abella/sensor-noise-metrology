@@ -33,8 +33,6 @@ real gap. No existing study applies formal equivalence testing with
 pre-specified margins to sensor model validation in robotics. This 
 study does.
 
-The study does not assume that M4 is necessary. The four noise model configurations (M1–M4) form an epistemic ladder: from current practice (M1, datasheet) to metrologically correct but low-cost (M2, static Allan) to operationally refined (M3, in-session static) to fully state-dependent (M4, kinematic-residual and thermal). The TOST is applied at every rung. If M2 already achieves statistical equivalence within δ, that is the primary result: it means that a rigorous static Allan characterisation — accessible to any laboratory with a vibration-isolated bench and a 10–12 hour log — resolves a problem the community has spent decades either ignoring or over-complicating. M4 then serves as a positive control: without it, a passing result at M2 could be an artefact of the SLAM backends' insensitivity to high-frequency noise rather than genuine sensor model fidelity. The hierarchy is not redundant — it is what makes any result at any rung interpretable.
-
 This matters for two reasons:
 - **For practice:** labs and companies make design decisions (sensor 
   selection, algorithm tuning, parameter choices) based on simulation. 
@@ -92,6 +90,8 @@ precision, TOST cannot distinguish a good simulator from a bad one
 within margins that are meaningful for system design. The formula, 
 candidate formulations, and physical justification are in 
 [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) §5.
+
+The study does not assume that M4 is necessary. The four noise model configurations (M1–M4) form an epistemic ladder: from current practice (M1, datasheet) to metrologically correct but low-cost (M2, static Allan) to operationally refined (M3, in-session static) to fully state-dependent (M4, kinematic-residual and thermal). The TOST is applied at every rung. If M2 already achieves statistical equivalence within δ, that is the primary result: it means that a rigorous static Allan characterisation — accessible to any laboratory with a vibration-isolated bench and a 10–12 hour log — resolves a problem the community has spent decades either ignoring or over-complicating. M4 then serves as a positive control: without it, a passing result at M2 could be an artefact of the SLAM backends' insensitivity to high-frequency noise rather than genuine sensor model fidelity. The hierarchy is not redundant — it is what makes any result at any rung interpretable.
 
 ---
 
