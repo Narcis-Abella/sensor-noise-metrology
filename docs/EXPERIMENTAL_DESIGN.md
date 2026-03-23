@@ -1,7 +1,7 @@
 # Experimental Design — Phase I
 
-**Version:** 0.4  
-**Date:** 2026-03-08  
+**Version:** 0.5  
+**Date:** 2026-03-23  
 **Status:** Pending supervisor review and payload weight confirmation (physical scale)
 
 ---
@@ -89,6 +89,8 @@ Because the reference plane is fixed at t=0 and never updated, any apparent disp
 
 **Do not** measure absolute distances. The goal is temporal variation, not calibration of the range measurement.
 
+**Warm-up requirement (Mid-360):** The Mid-360 must be powered on for a minimum of **20 minutes** before the static characterization log begins. During this warm-up period the sensor operates normally but data is not recorded for analysis. This ensures that the internal detector temperature has reached approximate thermal steady-state, so that the static thermal model $\sigma^2_{\mathrm{static}}(T)$ captures operational conditions rather than cold-start transients. The warm-up start time and ambient temperature are logged. The same 20-minute warm-up applies to all dynamic sessions (Session C).
+
 ---
 
 ### 2.4 Camera Static Characterization (RealSense D455)
@@ -116,7 +118,7 @@ Total: ~7–8 h per session
 
 ### Block Structure
 
-Each block lasts approximately 2 hours. To satisfy the high statistical power required by equivalence testing (TOST, see `METHODOLOGY.md` §3.4) without extending laboratory time, the YuMi will execute the trajectory in a continuous loop pattern rather than a small fixed number of repetitions. 
+Each block lasts approximately 2 hours. To satisfy the high statistical power required by equivalence testing (TOST, see `METHODOLOGY.md` §3.4) without extending laboratory time, the YuMi will execute the trajectory in a continuous loop pattern rather than a small fixed number of repetitions.
 
 Each repetition is **[60 s static] → [trajectory execution, ~1–2 min] → [60 s static]**. For a ~1–2 min trajectory, a 2 h block yields **$n \approx 40$–60 independent repetitions** per block. The three blocks (MIX, CW, CCW) together give **$n \approx 120$–180 repetitions per trajectory type** (T1, T2, or T3); CW and CCW runs both count as repetitions of the same trajectory type for equivalence testing (M vs R). The sequence logic is:
 
@@ -152,13 +154,23 @@ The 60 s static periods at start and end of each repetition serve to:
 
 During cooling periods: log IMU and LiDAR continuously (static). **Temperature $T$** should be logged (thermometer or hardware topic) throughout the session so that the M4 thermal model $\sigma^2_{\mathrm{static}}(T)$ can be fitted. This data is useful for cross-referencing with the static characterization results.
 
+### Cable Management During Dynamic Sessions
+
+USB 3.0 (RealSense D455) and Ethernet (Livox Mid-360) cables must be routed along the YuMi arm using cable chain or equivalent strain-relief before each session begins. Free-hanging cables introduce variable external forces on the flange during T2/T3 trajectories that are not part of the RobotStudio kinematic model and contaminate the ground truth. This effect is documented as a known limitation and included in the ground truth uncertainty budget (see [METHODOLOGY.md §2.4](METHODOLOGY.md)).
+
+**Protocol:**
+- Route cables along the arm before the hand-eye verification check.
+- Photograph the cable configuration from two angles and archive in the session log.
+- Do not modify cable routing between blocks within the same session.
+- If cable routing changes between sessions (e.g. different sensor, different cable length), document the change explicitly.
+
 ### Settling Time Verification (T3 — Aggressive Only)
 
 In T3 (aggressive trajectory), inter-waypoint pauses are 2 s. Before accepting these measurements as valid ground truth comparisons, we verify that the YuMi has settled mechanically:
 
 **Method:** During a test run, record the IMU power spectral density (PSD) during the 2 s pause. If residual vibration at the structural resonance frequency of the arm has not decayed to noise floor, the pause duration must be increased.
 
-**Criterion:** Vibration amplitude at pause end &lt; 2× noise floor of static IMU log (conservative threshold to ensure mechanical settling before ground truth comparison).
+**Criterion:** Vibration amplitude at pause end < 2× noise floor of static IMU log (conservative threshold to ensure mechanical settling before ground truth comparison).
 
 ---
 
@@ -214,7 +226,8 @@ Same profiles as Sessions C and D (smooth spherical spiral / figure-8 with Z sin
 ## 6. Session C — Livox Mid-360 (3D)
 
 **Working volume:** ~400×400×300 mm around YuMi end-effector center  
-**DOF:** Full 3D — translation in XYZ, rotation in roll, pitch, yaw
+**DOF:** Full 3D — translation in XYZ, rotation in roll, pitch, yaw  
+**Warm-up:** Minimum 20 minutes powered-on before session start (see §2.3).
 
 The Mid-360's internal IMU (ICM40609, 200 Hz) has factory-calibrated LiDAR-IMU extrinsics. This enables tight-coupling LiDAR+IMU in FAST-LIO2 and GLIM without additional extrinsic calibration, which reduces setup and calibration effort.
 
@@ -254,7 +267,7 @@ The Mid-360's internal IMU (ICM40609, 200 Hz) has factory-calibrated LiDAR-IMU e
 - *Option A — Fixed set:* Predefined waypoints covering the working volume. Fully reproducible but limited coverage.
 - *Option B — Pseudo-random with fixed seed:* Random waypoints generated from a fixed RNG seed. Broader coverage of motion space while maintaining reproducibility across sessions.
 
-**Purpose:** Maximum angular velocity stress test. Evaluates ARW accumulation under high-rate rotation, tests geometric degeneracy resistance of the Mid-360 Rosetta pattern under rapid reorientation.
+**Purpose:** Maximum angular velocity stress test. Evaluates ARW accumulation under high-rate rotation, tests geometric degeneracy resistance of the Mid-360 Rosetta pattern under rapid reorientation. Also provides the primary dataset for empirical characterization of whether Mid-360 range noise statistics change under mechanical vibration and kinematic stress — a gap confirmed absent in the literature (see [RESEARCH_PLAN.md §3.2](RESEARCH_PLAN.md)).
 
 ---
 
@@ -283,6 +296,7 @@ The YuMi working area must be prepared to minimize uncontrolled variables that w
 | Temperature | Documented, stable | Calibrated thermometer, logged at 1 h intervals; HVAC not switched during session |
 | Vibration | Minimized | No mechanical activity in adjacent rooms during static characterization |
 | Magnetic field | Documented | WitMotion magnetometer logs during static (cross-reference for bias); avoid metal objects being moved near sensor |
+| Cable routing | Documented, strain-relieved | Cable chain along arm; photographed before each session; free-hanging cables not permitted during T2/T3 |
 
 In practical terms, access to full geometric enclosures (foam panels or a white fabric tent) may be limited in the IQS laboratory. In this work the priority is a visually controlled environment for Session D (RealSense D455) — i.e., stable illumination and simple, high-contrast patterns (AprilTag boards and mostly uniform backgrounds) that can be replicated in simulation. A more elaborate geometric enclosure for Session C (Mid-360) — for example, a complete cage of panels around the YuMi — is desirable but not required for the core metrological results; if only partial panels are available, this is documented explicitly as a limitation in the dynamic LiDAR range (≈0.4–3 m) and in the Discussion.
 
@@ -320,3 +334,16 @@ Method: AX = XB calibration (Tsai-Lenz or equivalent)
 **Expected accuracy:** < 0.5 mm translation, < 0.5° rotation. For dynamic trajectory comparison the ground truth floor is set by path repeatability (0.10 mm) and path accuracy (up to 1.36 mm); hand-eye error is secondary but must remain below this so as not to dominate the budget.
 
 Hand-eye calibration must be **re-done for each session** (each sensor mounted separately). Results archived in `data/calibration/`.
+
+### Cross-Session Verification Protocol
+
+Hand-eye calibration is redone per session, but microscopic mount displacement between sessions — from dismounting and remounting the sensor — cannot be fully excluded and would introduce a systematic bias not captured by repeating the AX=XB procedure.
+
+**Verification procedure:** At the start of each dynamic session, before any trajectory data is recorded, the following acceptance check is performed:
+
+1. Move the YuMi to a fixed, pre-defined verification pose (stored in RobotStudio as a named target, identical across all sessions).
+2. Record the sensor's estimated pose of the reference AprilTag board fixed in the environment (same board used for hand-eye calibration).
+3. Compare against the expected pose derived from the hand-eye transform.
+4. **Acceptance criterion:** Reprojection error < 1.0 mm translation, < 0.5° rotation. If the criterion is not met, remount the sensor, redo AX=XB calibration, and repeat the verification.
+
+Results of the verification check (pass/fail, measured reprojection error) are logged in the session record and archived in `data/calibration/`. This provides a documented audit trail for reviewers assessing ground truth integrity between sessions.
