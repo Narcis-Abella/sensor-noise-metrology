@@ -31,7 +31,7 @@
 
 - **Definición única:** Cada bloque (MIX, CW, CCW) dura ~2 h. Cada repetición: [60 s estático] → [trayectoria 1–2 min] → [60 s estático]. Eso da **n ≈ 40–60 por bloque** y **n ≈ 120–180 por tipo de trayectoria** (T1, T2 o T3). CW y CCW cuentan como repeticiones del mismo tipo de trayectoria para el TOST (M vs R).
 - **Dónde está:** METHODOLOGY §3.1 (Step 1) y §3.4 (Power analysis); EXPERIMENTAL_DESIGN §3 (Block structure). Sin restos de n=9 en la metodología activa.
-- **Nota:** En `internal/AUDIT_CONSOLIDATED_REVIEW.md` las menciones a n=9 se mantienen como **histórico** del problema detectado; se añadió una nota de actualización (n≈120–180 y σ²_static(T)) en la sección de fórmula M4 para no contradecir METHODOLOGY.
+- **Nota de mantenimiento (2026-03-23):** El antiguo archivo interno de auditoría consolidada fue retirado. La referencia histórica se considera cerrada y la fuente activa para n y M4 es `docs/METHODOLOGY.md` + `docs/EXPERIMENTAL_DESIGN.md`.
 
 ---
 
@@ -46,7 +46,7 @@
 ## 5. Modelo térmico M4 (temperatura T)
 
 - **Cambio:** $\sigma^2_{\mathrm{static}}(t_{\mathrm{on}})$ sustituido por $\sigma^2_{\mathrm{static}}(T)$ con **temperatura medida** $T(t)$. Idealmente T se registra con termómetro calibrado o topics de temperatura del sensor (Mid-360, D455) durante caracterización estática y sesiones YuMi.
-- **Dónde está:** METHODOLOGY §5.3 (objetivo, fórmula, medición de T), §5.4 (combinación con término cinemático), §5.5 (instanciación por sensor); README §5.1 (fórmula y texto); RESEARCH_PLAN (§3.6 novedad, §6.4 plugin); EXPERIMENTAL_DESIGN §3 (cooling: registrar T para M4); SLAM_BACKENDS §2 (M4 dependiente de T); internal/AUDIT (fórmula M4 actualizada a T y nota post-auditoría).
+- **Dónde está:** METHODOLOGY §5.3 (objetivo, fórmula, medición de T), §5.4 (combinación con término cinemático), §5.5 (instanciación por sensor); README §5.1 (fórmula y texto); RESEARCH_PLAN (§3.6 novedad, §6.4 plugin); EXPERIMENTAL_DESIGN §3 (cooling: registrar T para M4); SLAM_BACKENDS §2 (M4 dependiente de T).
 - **Sin restos de** "time since power-on" o "t_on" en la metodología activa (docs/ y README). Solo queda en el historial del AUDIT, con la aclaración de actualización.
 
 ---
@@ -83,7 +83,7 @@
 | Archivo | Cambio |
 |---------|--------|
 | `docs/REFERENCES_POOL.md` | "Session B (visual/depth)" → "Session D (visual/depth)" para RealSense. |
-| `internal/AUDIT_CONSOLIDATED_REVIEW.md` | Fórmula M4 actualizada a σ²_static(T); nota post-auditoría (n≈120–180, T); hallazgo Audit 1 ajustado (n aumentado, identificabilidad). |
+| `internal/PENDING_REVIEW_2026-03-23.md` | Tracker activo de pendientes tras auditoría externa (P0–P3), incluyendo limpieza de referencias desactualizadas. |
 
 ---
 

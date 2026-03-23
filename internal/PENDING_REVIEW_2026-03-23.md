@@ -1,0 +1,62 @@
+# Pending Review — External Audit Follow-up (2026-03-23)
+
+**Source:** External analysis shared by user (Claude)  
+**Status:** Pending triage and incorporation into v1.0 docs  
+**Owner:** Narcís
+
+---
+
+## Purpose
+
+Track high-impact review findings that should be resolved before supervisor review and before dynamic execution on YuMi.
+
+---
+
+## Critical items (P0)
+
+- [ ] **Equivalence margin delta (\delta) must be non-circular.**  
+      Replace "percentage of measured T2/T3 ATE" as primary definition with a pre-data system requirement anchor.
+
+- [ ] **Metrological feasibility check before execution.**  
+      Estimate expected ATE from literature and verify that chosen \delta is above uncertainty floor with adequate margin.
+
+- [ ] **Formal statistical power analysis.**  
+      Add explicit \(1-\beta\) analysis as function of \delta, assumed \(\sigma\), and planned \(n\).
+
+- [ ] **M4 model identifiability protocol.**  
+      Specify model selection criterion, VIF threshold, and fallback when collinearity remains (e.g., ridge/CV).
+
+- [ ] **FAST-LIO2 real Mid-360 sanity check is a blocker.**  
+      Reclassify as HIGH BLOCKER in planning log and execute before YuMi booking.
+
+---
+
+## High-priority items (P1)
+
+- [ ] **Strengthen physical interpretation of M4 variance terms.**
+- [ ] **Increase hand-eye protocol target to >=30 poses (orientation-diverse).**
+- [ ] **Define warm-up policy for WT901C (MPU9250) and D455 IMU (BMI055).**
+- [ ] **Fix document version consistency (`SLAM_BACKENDS.md` currently v0.2 vs v0.5 set).**
+- [ ] **Reframe H1 as exploratory/conditioned unless isolating design is guaranteed.**
+
+---
+
+## Medium-priority items (P2)
+
+- [ ] Evaluate Gazebo Fortress/Harmonic compatibility strategy for timeline risk.
+- [ ] Specify axis definition for CW/CCW asymmetry analysis (H2).
+- [ ] Confirm exact YuMi model in IQS (IRB 14000 vs IRB 14050) and Absolute Accuracy status.
+
+---
+
+## Low-priority items (P3)
+
+- [ ] Optional style cleanup in `PROGRESS_LOG.md` (emoji/text consistency).
+- [ ] Remove stale references in coherence review docs if any remain.
+
+---
+
+## Notes
+
+- This file is an internal pending-review tracker only.
+- Do not treat all points as accepted blindly; each item should be validated against repository docs and supervisor criteria.

@@ -2,5 +2,7 @@
 
 Documents for personal workflow, not part of the public documentation.
 
-- `AUDIT_CONSOLIDATED_REVIEW.md` — consolidated audit checklist for pre-milestone review.
+- `COHERENCE_REVIEW_2026-03.md` — cross-document coherence review after March updates.
+- `DEEP_AUDIT_REPORT_2026-03.md` — deep transversal audit report (snapshot).
 - `YUMI_DATASHEET_REFERENCE.md` — ABB YuMi specifications (ISO 9283 RP/AP/RT/AT) and model verification notes.
+- `PENDING_REVIEW_2026-03-23.md` — pending follow-up items from external audit analysis (pre-v1.0 triage).

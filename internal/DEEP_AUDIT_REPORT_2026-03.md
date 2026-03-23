@@ -10,7 +10,7 @@
 ## Conclusiones (antes que justificaciones)
 
 1. **Resolución crítica:** TOST, n≈120–180 y ground truth (0.10 mm / 1.36 mm dinámico; ±0.02 mm solo estático) están **correctamente integrados** en METHODOLOGY, RESEARCH_PLAN y EXPERIMENTAL_DESIGN. No quedan referencias a n=9 ni a “equivalencia por p > 0.05” en la metodología activa. Una cita en RESEARCH_PLAN Ref [32] usa “p > 0.05” en el sentido correcto (por qué no demuestra equivalencia).
-2. **Coherencia transversal:** Pesos (100/250/350/275 g), duraciones (~8 h/sesión) y sensores A–D coinciden. Scope (Phase I only; Phase II/III future work) es consistente. **Grieta:** `internal/COHERENCE_REVIEW_2026-03.md` sigue citando `internal/AUDIT_CONSOLIDATED_REVIEW.md`, que **ya no existe** (borrado en commit anterior). Ese internal queda desactualizado.
+2. **Coherencia transversal:** Pesos (100/250/350/275 g), duraciones (~8 h/sesión) y sensores A–D coinciden. Scope (Phase I only; Phase II/III future work) es consistente. **Nota de mantenimiento (2026-03-23):** la grieta detectada (referencias a un archivo interno retirado) fue resuelta en `internal/COHERENCE_REVIEW_2026-03.md`.
 3. **Estilo (HUMANIZED-LLM):** En `docs/` y README no aparecen frases prohibidas (“delve”, “pivotal”, “in conclusion”, “underscore”, etc.). Emojis en documentos técnicos: **0** en `docs/` y README. **Excepción:** `PROGRESS_LOG.md` (raíz, enlazado desde README §7) contiene ✅ y ❌ en tablas; si el estándar es “0 emojis en lo que ve un revisor/supervisor”, debe sustituirse por texto. METHODOLOGY §3.4 tabla tiene dos símbolos “✓” en celdas; opcional sustituir por “Yes” para homogeneidad.
 4. **Estructura y claridad:** El flujo README → RESEARCH_PLAN → EXPERIMENTAL_DESIGN → METHODOLOGY → SLAM_BACKENDS / HARDWARE_PAYLOAD es claro. README §6 ya enlaza TOST a METHODOLOGY §3.4. No se detectan enlaces rotos ni promesas en un doc que estén explícitamente fuera de scope en otro.
 
@@ -43,7 +43,7 @@
 ### 1.4 Referencias a “p > 0.05” y n=9
 
 - **p > 0.05:** METHODOLOGY: (1) §3.1 “If normal (p > 0.05 in Shapiro–Wilk)” — criterio de normalidad; (2) §3.4 “A non-significant result (p > 0.05) … does not demonstrate equivalence” — correcto. RESEARCH_PLAN Ref [32]: “explains why p > 0.05 does not demonstrate equivalence” — cita correcta.
-- **n=9:** No aparece en `docs/` ni README. Solo en `internal/COHERENCE_REVIEW_2026-03.md` como “sin restos de n=9 en la metodología activa” y como “histórico” en un archivo que ya no existe (AUDIT_CONSOLIDATED_REVIEW).
+- **n=9:** No aparece en `docs/` ni README. Solo en `internal/COHERENCE_REVIEW_2026-03.md` como verificación de ausencia en la metodología activa.
 
 ---
 
@@ -67,11 +67,11 @@
 
 No se encontró ningún documento que prometa Phase II/III como entregable del proyecto actual.
 
-### 2.3 Contradicción: internal que cita archivo borrado
+### 2.3 Contradicción detectada en el momento del informe (resuelta)
 
-- **Archivo:** `internal/COHERENCE_REVIEW_2026-03.md`.
-- **Problema:** En §§3, 5 y 9 se menciona `internal/AUDIT_CONSOLIDATED_REVIEW.md` (donde “se mantienen menciones a n=9 como histórico”, “nota de actualización”, “fórmula M4 actualizada”). Ese archivo fue eliminado en el commit de la auditoría de estilo.
-- **Acción recomendada:** Actualizar COHERENCE_REVIEW_2026-03.md eliminando o reescribiendo las referencias a AUDIT_CONSOLIDATED_REVIEW (p. ej. “Nota: el archivo AUDIT_CONSOLIDATED_REVIEW ya no existe; la metodología activa es la de METHODOLOGY y EXPERIMENTAL_DESIGN.”).
+- **Archivo afectado:** `internal/COHERENCE_REVIEW_2026-03.md`.
+- **Problema detectado (estado histórico):** Referencias a un archivo interno retirado tras su borrado.
+- **Estado actual (2026-03-23):** Corregido; referencias reescritas y sustituida la trazabilidad por `internal/PENDING_REVIEW_2026-03-23.md`.
 
 ### 2.4 REFERENCES_POOL y Session D
 
@@ -134,7 +134,7 @@ Scope “Phase I only; Phase II/III future work” aparece en README §2, RESEAR
 
 | Prioridad | Acción |
 |-----------|--------|
-| Alta | Actualizar `internal/COHERENCE_REVIEW_2026-03.md`: quitar o reescribir referencias a `AUDIT_CONSOLIDATED_REVIEW.md` (archivo borrado). |
+| Alta | Verificar que no reaparezcan referencias a archivos internos retirados en futuros documentos internos. |
 | Media | Sustituir ✅/❌ por texto en `PROGRESS_LOG.md` si se exige 0 emojis en todo lo enlazado desde README. |
 | Baja | Opcional: en METHODOLOGY §3.4 tabla, sustituir “✓” por “Yes” en celdas de Interpretation. |
 
