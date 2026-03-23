@@ -237,6 +237,7 @@ For each backend:
 
 Trajectories are compared against the YuMi using `evo` (ATE/RPE with Umeyama alignment). Metrological simulation (M4) is declared equivalent to real hardware only if the 90% confidence interval for 
 the mean ATE difference lies entirely within the pre-specified equivalence margin δ — applied independently per backend and per trajectory type. The statistical design (TOST, Bonferroni correction, effect sizes) is in [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) §2–3.
+
 ---
 
 ## 7. How to read this repository
