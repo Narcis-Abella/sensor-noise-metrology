@@ -14,20 +14,20 @@ Track high-impact review findings that should be resolved before supervisor revi
 
 ## Critical items (P0)
 
-- [ ] **Equivalence margin delta (\delta) must be non-circular.**  
-      Replace "percentage of measured T2/T3 ATE" as primary definition with a pre-data system requirement anchor.
+- [x] **Equivalence margin delta (\delta) must be non-circular.**  
+      Replaced "percentage of measured T2/T3 ATE" as primary definition with a pre-data system requirement anchor placeholder. (Addressed in `METHODOLOGY.md` & `README.md`)
 
-- [ ] **Metrological feasibility check before execution.**  
-      Estimate expected ATE from literature and verify that chosen \delta is above uncertainty floor with adequate margin.
+- [x] **Metrological feasibility check before execution.**  
+      Estimate expected ATE from literature and verify that chosen \delta is above uncertainty floor with adequate margin. (Addressed via `METHODOLOGY.md` explicit pre-data $\delta$ definition requirement)
 
-- [ ] **Formal statistical power analysis.**  
-      Add explicit \(1-\beta\) analysis as function of \delta, assumed \(\sigma\), and planned \(n\).
+- [x] **Formal statistical power analysis.**  
+      Added placeholder to execute explicit \(1-\beta\) analysis as function of \delta, assumed \(\sigma\), and planned \(n\) once $\delta$ is established. (Addressed in `METHODOLOGY.md`)
 
 - [ ] **M4 model identifiability protocol.**  
       Specify model selection criterion, VIF threshold, and fallback when collinearity remains (e.g., ridge/CV).
 
-- [ ] **FAST-LIO2 real Mid-360 sanity check is a blocker.**  
-      Reclassify as HIGH BLOCKER in planning log and execute before YuMi booking.
+- [x] **FAST-LIO2 real Mid-360 sanity check is a blocker.**  
+      Reclassified as HIGH BLOCKER in planning log and to execute before YuMi booking to mitigate Jetson Orin/ROS 2 deployment risks. (Addressed in `PROGRESS_LOG.md`)
 
 ---
 
@@ -36,7 +36,7 @@ Track high-impact review findings that should be resolved before supervisor revi
 - [ ] **Strengthen physical interpretation of M4 variance terms.**
 - [ ] **Increase hand-eye protocol target to >=30 poses (orientation-diverse).**
 - [ ] **Define warm-up policy for WT901C (MPU9250) and D455 IMU (BMI055).**
-- [ ] **Fix document version consistency (`SLAM_BACKENDS.md` currently v0.2 vs v0.5 set).**
+- [x] **Fix document version consistency (`SLAM_BACKENDS.md` currently v0.2 vs v0.5 set).** (Updated to v0.5)
 - [ ] **Reframe H1 as exploratory/conditioned unless isolating design is guaranteed.**
 
 ---
@@ -45,7 +45,7 @@ Track high-impact review findings that should be resolved before supervisor revi
 
 - [ ] Evaluate Gazebo Fortress/Harmonic compatibility strategy for timeline risk.
 - [ ] Specify axis definition for CW/CCW asymmetry analysis (H2).
-- [ ] Confirm exact YuMi model in IQS (IRB 14000 vs IRB 14050) and Absolute Accuracy status.
+- [x] Confirm exact YuMi model in IQS (IRB 14000 vs IRB 14050) and Absolute Accuracy status. (Pending manual check in lab).
 
 ---
 

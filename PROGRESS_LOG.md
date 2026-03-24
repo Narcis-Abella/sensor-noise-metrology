@@ -51,12 +51,12 @@
 
 - [x] **[BLOCKER — HIGH]** Confirm Livox Mid-360 availability. *(Done — Mid-360 confirmed for Session C.)*
 - [ ] **[BLOCKER — HIGH]** Verify actual sensor + mount weights with physical scale. Session C (Mid-360) is at 70% payload margin based on estimates — must confirm before booking YuMi.
+- [ ] **[BLOCKER — HIGH]** Verify FAST-LIO2 operation with real Livox Mid-360 data on Jetson Orin NX (ROS 2 Humble). Must establish logistical and networking viability of the real-hardware baseline before booking the YuMi arm to prevent wasted session time.
 - [ ] **[MEDIUM — optional extension]** Secure access to an **industry-standard repetitive (spinning) 360° LiDAR** (e.g. Velodyne VLP-16/32, Ouster OS0/OS1, Hesai) — widely cited in SLAM, navigation and mapping literature. Would enable extension of the study with LIO-SAM and similar backends; not a blocker for the current scope.
 - [ ] **[HIGH]** Supervisor review of v0.3 documents (RESEARCH_PLAN, EXPERIMENTAL_DESIGN, METHODOLOGY, HARDWARE_PAYLOAD). Implement feedback → v1.0.
 - [ ] **[HIGH]** Define temporal synchronization method: PTP IEEE 1588 vs. NTP. Assess IRC5 network capabilities.
 - [ ] **[MEDIUM]** Design and 3D-print sensor mounts for each session. Mount design must be done before any dynamic session.
 - [ ] **[MEDIUM]** Identify and book a suitable YuMi session slot (pending weight verification and supervisor sign-off on protocol).
-- [ ] **[MEDIUM]** Verify FAST-LIO2 operation with real Livox Mid-360 data (sensor confirmed). Must establish real-hardware baseline before simulation comparison.
 - [ ] **[MEDIUM]** Assess availability of metrology or optics laboratory at IQS for static characterization sessions (better temperature control).
 - [ ] **[LOW]** Decide waypoint strategy for T3 3D aggressive trajectory: fixed set vs. pseudo-random with fixed seed. Confirm with supervisor.
 - [x] **[LOW]** Push repository to GitHub remote (create public repo under github.com/Narcis-Abella). *(Done — repo at github.com/Narcis-Abella/slam-sensor-metrological-validation)*

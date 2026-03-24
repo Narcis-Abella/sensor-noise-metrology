@@ -1,8 +1,8 @@
 # SLAM Backends and Noise Models
 
-**Version:** 0.2  
-**Date:** 2026-03-08  
-**Status:** Design — subject to supervisor review and implementation details
+**Version:** 0.5  
+**Date:** 2026-03-24  
+**Status:** Pending supervisor review
 
 ---
 

@@ -287,8 +287,7 @@ the mean ATE difference lies entirely within the pre-specified equivalence margi
 
 - **Hand-eye cross-session verification:** Hand-eye calibration is redone per session, but microscopic mount displacement between sessions (dismount and remount) cannot be fully excluded. A fixed verification pose at the start of each dynamic session — reprojection error check against a reference AprilTag board fixed in the environment — serves as an acceptance criterion before data collection begins. Results archived in `data/calibration/`.
 
-- **TOST margin selection:** The equivalence margin δ is defined a priori as 10% of the reference ATE on T2 (moderate trajectory) per backend. This choice is grounded in system requirements but 
-  remains a design decision; results are reported for the chosen δ and sensitivity to alternative margins is discussed.
+- **TOST margin selection:** The equivalence margin $\delta$ must be defined *a priori* based on specific system requirements, and agreed upon before any empirical data analysis. Defining $\delta$ after inspecting data (or as a percentage of measured outcomes) would invalidate the statistical test. Results will be reported for the chosen $\delta$ and sensitivity to alternative margins will be discussed.
 
 ---
 
