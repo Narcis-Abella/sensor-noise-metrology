@@ -36,6 +36,22 @@ Track high-impact review findings that should be resolved before supervisor revi
 - [ ] **Strengthen physical interpretation of M4 variance terms.**
 - [ ] **Increase hand-eye protocol target to >=30 poses (orientation-diverse).**
 - [ ] **Define warm-up policy for WT901C (MPU9250) and D455 IMU (BMI055).**
+- [ ] **ATE of SLAM is not a direct measure of sensor model fidelity.**
+      SLAM backends (FAST-LIO2, GLIM, ORB-SLAM3) have internal outlier rejection
+      and correction loops that absorb sensor noise differences. A passing TOST on
+      ATE may reflect estimator robustness, not model equivalence. Consider adding
+      a direct distributional comparison of sensor residuals (pre-estimator) as a
+      supplementary validation layer. Decide whether this becomes a secondary
+      endpoint or a limitation in the manuscript.
+
+- [ ] **Narrow the "nobody validated the datasheet" claim.**
+      The inertial navigation community has characterised IMUs rigorously for
+      decades (IEEE Std 952, Woodman 2007, strapdown literature). The defensible
+      claim is strictly: no prior work applies formal equivalence testing with
+      pre-specified margins to sensor model validation *in the context of SLAM
+      simulation*. The broader claim invites a desk rejection from a reviewer
+      familiar with navigation metrology. Audit all instances in RESEARCH_PLAN
+      and README and narrow accordingly before submission.
 - [x] **Fix document version consistency (`SLAM_BACKENDS.md` currently v0.2 vs v0.5 set).** (Updated to v0.5)
 - [x] **Reframe H1 as exploratory/conditioned unless isolating design is guaranteed.** (Reframed in `RESEARCH_PLAN.md`)
 
