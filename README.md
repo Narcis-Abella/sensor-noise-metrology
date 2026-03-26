@@ -1,12 +1,14 @@
 # Metrological Validation of Visual-LiDAR SLAM Sensors
 
-<p align="justify">
+<div align="justify">
+  
 **Institution:** IQS School of Engineering (Universitat Ramon Llull), Barcelona  
 **Author:** Narcís Abella  
 **Supervisor:** Dr. Antonio Gabino Salazar Martín  
 **Status:** Design phase — pending experimental execution  
 **Last updated:** 2026-03-06
-</p>
+
+</div>
 
 ---
 
