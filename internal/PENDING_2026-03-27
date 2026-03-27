@@ -1,0 +1,161 @@
+# Master Pending List — slam-sensor-metrological-validation
+
+**Date:** 2026-03-27  
+**Status:** Living document — supersedes PENDING_REVIEW_2026-03-23.md for new items  
+**Owner:** Narcís
+
+---
+
+## P0 — Blockers (must resolve before YuMi booking)
+
+- [ ] **Fix δ with an external anchor before any data collection.**  
+  Use arXiv:2409.16573 (task-driven SLAM in hospital world, waypoint error ~50–100 mm) as published anchor. Agree value with Salazar before touching data. Any post-hoc definition invalidates the TOST.
+
+- [ ] **M4 identifiability protocol.**  
+  Specify model selection criterion (AIC/BIC), VIF threshold, and fallback when collinearity persists (ridge regression or coefficient pruning). Add to METHODOLOGY §5.4.
+
+- [ ] **Pilot session (WT901C, Session A, ~3 h) before full booking.**  
+  Verify the complete pipeline end-to-end: sync → hand-eye → RobotStudio export → evo → TOST on small n. Discover integration issues before they cost YuMi time. Not currently in PROGRESS_LOG — add as milestone.
+
+- [ ] **Verify YuMi model at IQS (IRB 14000 vs IRB 14050) and Absolute Accuracy status.**  
+  Affects path accuracy spec used in uncertainty budget. See internal/YUMI_DATASHEET_REFERENCE.md.
+
+- [ ] **FAST-LIO2 + real Mid-360 sanity check on Jetson Orin NX.**  
+  Reclassified HIGH BLOCKER. Must run before YuMi booking to confirm ROS 2 Humble deployment viability.
+
+---
+
+## P1 — High priority (before supervisor review v1.0)
+
+### Metrology standards (writing tasks, no experimental redesign)
+
+- [ ] **Add GUM JCGM 100:2008 to METHODOLOGY §2.4.**  
+  Classify every uncertainty source as Type A (statistical) or Type B (datasheet/calibration). Report combined result as expanded uncertainty U = k·u_c with k=2 (~95% coverage). Currently the table lists magnitudes without combining them or declaring k.
+
+- [ ] **Declare metrological traceability status of YuMi.**  
+  YuMi AT = 1.36 mm is Type B from ABB ISO 9283 spec — not a traceable calibration result. If IQS unit has no current calibration certificate with SI chain, declare this explicitly in METHODOLOGY §2.4 and README §9 Known Limitations. One sentence is enough.
+
+- [ ] **Add IEEE Std 952-2020 to METHODOLOGY §1.1 and RESEARCH_PLAN §9 refs.**  
+  Standard for gyroscope characterization via Allan Variance. Complements IEEE Std 1293 already cited. Required for IEEE TIM submission.
+
+- [ ] **Specify chi-squared CI for AVAR coefficients in METHODOLOGY §1.3.**  
+  AVAR CI comes from the chi-squared distribution of the overlapping estimator, not Gaussian bootstrap. Specify this explicitly. Report k=2.
+
+- [ ] **Add ISO 5725 framing to METHODOLOGY §3.1 and §3.5.**  
+  Declare scope: study measures within-session repeatability and cross-session intermediate precision (ISO 5725-3 term). Not full reproducibility. Two sentences.
+
+- [ ] **Add AVAR lower-bound argument to RESEARCH_PLAN §3.6.**  
+  Static AVAR is a lower bound on operational noise (Lethander & Taylor, 2023 — REFERENCES_POOL ref 2). This is the physical justification for why M2 < M3 < M4 progressively closes the gap. Currently implicit; make it explicit.
+
+- [ ] **Declare scope of validity for M4 in METHODOLOGY §5.6.**  
+  Velocity range (T1–T2 fitting, T3 held-out), temperature range (warm-up steady-state), angular rate range. Extrapolation beyond these ranges is not validated.
+
+### Statistical / methodological
+
+- [ ] **Pre-specify outlier rejection protocol.**  
+  What happens when a SLAM backend diverges during a repetition? Include or exclude? With what criterion? Must be written before data collection. Add to METHODOLOGY §3.1.
+
+- [ ] **Add stationarity verification for IMU static logs.**  
+  AVAR assumes stationarity. If thermal drift during the session breaks this, coefficients are artifacts. Specify ADF or KPSS test as pre-condition before AVAR fitting. Add to METHODOLOGY §1.2.
+
+- [ ] **Formal measurand definition.**  
+  Add one paragraph to RESEARCH_PLAN §1 or METHODOLOGY §3 defining the measurand explicitly: "the mean difference in ATE RMSE between metrological simulation (M) and real hardware (R) under trajectory T2, per backend." Required vocabulary for a metrology journal.
+
+- [ ] **Add waypoint precision as exploratory endpoint in T3.**  
+  ATE is an indirect proxy for navigation performance. Waypoint position error (already feasible with T3 protocol and YuMi waypoints) is a task-relevant secondary metric. Add as exploratory endpoint in METHODOLOGY §3.5.
+
+- [ ] **Strengthen physical interpretation of M4 variance terms.**  
+  Each coefficient (c_ω, c_a, c_j, etc.) needs a physical mechanism sentence. Currently stated as "captures g-sensitivity" without quantitative grounding. Relevant for IEEE TIM reviewers.
+
+- [ ] **Define warm-up policy for WT901C and D455 IMU.**  
+  Mid-360 has a documented 20-min protocol. WT901C and BMI055 warm-up times are not specified. Add to EXPERIMENTAL_DESIGN §2.1.
+
+- [ ] **Increase hand-eye calibration to ≥30 poses (orientation-diverse).**  
+  Current protocol specifies ≥15 poses. 30+ with full orientation diversity reduces systematic hand-eye residual. Update EXPERIMENTAL_DESIGN §10.
+
+---
+
+## P2 — Medium priority (before manuscript draft)
+
+- [ ] **Add verification vs validation distinction to RESEARCH_PLAN §1.**  
+  The study performs *validation* (does the model represent reality?) not *verification* (is the model implemented correctly?). Use this vocabulary — it is standard in simulator V&V literature (AIAA G-010, DoD VV&A framework) and makes the contribution clearer to reviewers outside robotics.
+
+- [ ] **Specify axis definition for CW/CCW asymmetry analysis (H2).**  
+  Which axis defines CW vs CCW? Must be fixed before sessions run. Add to EXPERIMENTAL_DESIGN §7.
+
+- [ ] **Gazebo Fortress/Harmonic compatibility strategy.**  
+  Fortress is the ROS 2 Humble standard but Harmonic is the current LTS (supported to 2028). Decide before plugin development begins whether to target Fortress only or both. Add timeline risk note to PROGRESS_LOG.
+
+- [ ] **Publish Mid-360 Fortress plugin on GitHub before paper submission.**  
+  This is the most replicable contribution and the one at risk of independent publication. Release plugin with minimal README as soon as it is functional, before the paper is ready. This establishes priority on the software contribution independently of the paper timeline.
+
+---
+
+## P3 — Low priority (before submission)
+
+- [ ] Style cleanup in PROGRESS_LOG.md — replace ✅/❌ with text for supervisor-facing consistency.
+- [ ] Confirm Mitsubishi robot access conditions (backup ground truth).
+- [ ] Spinning 360° LiDAR access for optional extension (Velodyne/Ouster/Hesai).
+
+---
+
+## External expert review (new — high value)
+
+### Metrology expert
+
+**Goal:** Review METHODOLOGY §2.4 (uncertainty budget), §1 (Allan Variance protocol), and §3.4 (TOST margins) before YuMi sessions begin.
+
+**Target contacts:**
+- **CEM (Centro Español de Metrología, Madrid)** — national metrology institute, researchers active in sensor metrology. Salazar email to CEM asking for protocol review has realistic response probability.
+- **UPM or UC3M metrology group** — publish in *Measurement* and IEEE TIM regularly.
+
+**Ask:** Not full tutoring. One protocol review session (2 h) + written feedback. Offer acknowledgement or co-authorship depending on contribution depth. Frame as: "reviewing before submission prevents one revision round."
+
+### Robotics / SLAM expert
+
+**Goal:** Review RESEARCH_PLAN §3 (related work) and §6 (contributions), and SLAM_BACKENDS backend selection before sessions begin. Confirm the M1→M4 comparison logic is sound from a SLAM community perspective.
+
+**Target contacts (in order of actionability):**
+- **Michael Grupp** (author of `evo`, your primary evaluation tool) — natural connection. You use his software as a core component. Low-barrier email.
+- **Cyrill Stachniss** (University of Bonn, author of KISS-ICP, in your backend list) — same logic. You cite and use his work.
+- **Joan Solà** (PAL Robotics, Barcelona) — ORB-SLAM3 co-author, local, has collaborated externally before.
+
+**Email framing (for Salazar to send or for direct contact):**
+> "We are conducting a metrological validation study of sensor noise models for LiDAR-inertial SLAM simulation, using TOST-based equivalence testing against YuMi robot ground truth. The study evaluates [their algorithm/tool] as one of the primary backends. We would value a brief review of our experimental protocol before data collection begins. We would be glad to include you in acknowledgements or discuss co-authorship if the contribution justifies it."
+
+**Timing:** Before YuMi sessions (June 2026). After pilot session confirms pipeline works.
+
+---
+
+## Macro repository update (post-supervisor review)
+
+After v1.0 is agreed with Salazar, do one full pass across all docs with the following goals. Do not do this piecemeal — do it in one session to maintain coherence.
+
+**Scope:**
+
+- **README.md §0** — Rewrite opening paragraph to lead with Muratore/Aljalbout sim-exploitation argument (see previous audit notes). Currently too generic.
+- **RESEARCH_PLAN §1** — Add 2 bullets on Aljalbout and Muratore. Add measurand definition paragraph. Add verification vs validation framing.
+- **RESEARCH_PLAN §3.4** — Rewrite domain randomisation paragraph to name Simulation Optimization Bias explicitly.
+- **RESEARCH_PLAN §3.7** — Add 1 line differentiating from Ngo et al. (closest prior art).
+- **METHODOLOGY §2.4** — Rewrite table to add Type A/B column and combined U = k·u_c row.
+- **METHODOLOGY §1.3** — Add chi-squared CI specification and k=2 reporting standard.
+- **METHODOLOGY §3.4** — Add Wu et al. 2025 (TOST in ADAS) sentence to TOST motivation paragraph.
+- **METHODOLOGY §3.5** — Add waypoint precision as exploratory endpoint.
+- **All docs** — Prune any remaining verbose explanations. Target: no section longer than it needs to be. Every paragraph either defines something, justifies something, or specifies a protocol step.
+
+**Tone pass:**
+- Remove any remaining hedging language ("it may be", "could potentially").
+- Ensure all claims are either cited or declared as study contributions.
+- Confirm no em-dashes remain (LaTeX CV convention applies here too).
+
+---
+
+## IP / priority protection
+
+- [ ] The GitHub repo with public commits is current priority evidence. Do not close it.
+- [ ] **Publish the Mid-360 Fortress plugin as a standalone GitHub release before the paper** — this is the most replicable deliverable and the one most at risk of independent publication. Community demand has been documented since April 2023 (gz-sim issue #1958). Act first.
+- [ ] The TOST methodology applied to sensor models is novel and requires the full experimental stack (YuMi + sensors + ROS 2) to replicate. Not at immediate risk of being scooped on the method itself.
+
+---
+
+*Document generated 2026-03-27. Cross-reference: PENDING_REVIEW_2026-03-23.md (earlier items), METROLOGY_AUDIT_2026-03.md (metrology standards detail), DEEP_AUDIT_REPORT_2026-03.md (coherence review).*
