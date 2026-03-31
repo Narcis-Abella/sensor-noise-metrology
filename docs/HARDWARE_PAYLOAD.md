@@ -1,8 +1,8 @@
 # Hardware and Payload Analysis
 
-**Version:** 0.6 (pending supervisor review)  
-**Date:** 2026-03-06  
-**Status:** Weight figures are estimates - **must be verified with physical scale before scheduling YuMi arm time**
+* **Version:** 0.6 (pending supervisor review)  
+* **Date:** 2026-03-06  
+* **Status:** Weight figures are estimates - **must be verified with physical scale before scheduling YuMi arm time**
 
 ---
 
