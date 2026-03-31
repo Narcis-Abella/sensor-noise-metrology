@@ -127,6 +127,21 @@ Interpretation: Residual differences between conditions (real vs. simulated unde
 
 ## 3. Statistical Test Design
 
+```mermaid
+flowchart TD
+    A["Residual pairs per sensor/session/trajectory"] --> B["Step 1: Shapiro-Wilk normality"]
+    B --> C{"Normal in both conditions?"}
+    C -- "Yes" --> D["Step 2: Paired t-test family"]
+    C -- "No" --> E["Step 2: Wilcoxon family"]
+    D --> F["Step 3a: TOST (M vs R) with preset delta"]
+    E --> F
+    D --> G["Step 3b: NHST (S vs R) expected p < 0.05"]
+    E --> G
+    F --> H{"90% CI within [-delta, +delta]?"}
+    H -- "Yes" --> I["Equivalence declared"]
+    H -- "No" --> J["Equivalence not declared (publishable)"]
+```
+
 ### 3.1 Test Selection
 
 The primary statistical comparison is between sensor residual distributions under two conditions:
@@ -386,6 +401,25 @@ The YuMi geometric model used in the LiDAR self-filter is taken from publicly av
 ## 6. Residual Comparison Pipeline (Primary)
 
 The primary comparison pipeline for each session operates entirely at the sensor residual level. No SLAM estimation step is required.
+
+```mermaid
+flowchart TD
+    A["Step 1: Real hardware data collection"] --> A1["YuMi sessions T1/T2/T3 x MIX/CW/CCW"]
+    A1 --> A2["Raw sensor logs + RobotStudio flange pose export"]
+    A2 --> A3["Apply CAD-derived T_sensor→flange"]
+    A3 --> A4["Compute R_real(t) residuals"]
+    A4 --> A5["Segment residuals into S0-S3"]
+    A5 --> A6["Fit M4 on T1 + T2"]
+    A6 --> B["Step 2: Simulated data"]
+    B --> B1["Run Gazebo with same YuMi trajectory"]
+    B1 --> B2["Run M1/M2/M3/M4 noise models"]
+    B2 --> B3["Compute R_sim(t) residuals"]
+    B3 --> C["Step 3: TOST equivalence testing"]
+    C --> C1["Compare R_real vs R_sim per model"]
+    C1 --> C2["TOST per sensor/session (T2 primary)"]
+    C2 --> C3["Holm-Bonferroni across sessions"]
+    C3 --> C4["T3 held-out generalization check for M4"]
+```
 
 ```txt
 Pipeline Step 1: Real hardware data collection

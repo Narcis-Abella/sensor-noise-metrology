@@ -104,6 +104,16 @@ Four sessions, one sensor configuration per session.
 6. Block CCW
 7. 60 s static (thermal state at end)
 
+```mermaid
+flowchart LR
+    S0["60 s static<br/>(AVAR baseline)"] --> MIX["Block MIX<br/>(CW/CCW/CW alternating)"]
+    MIX --> C1["Cooldown"]
+    C1 --> CW["Block CW"]
+    CW --> C2["Cooldown"]
+    C2 --> CCW["Block CCW"]
+    CCW --> S1["60 s static<br/>(thermal state end)"]
+```
+
 Three trajectory profiles per session are used: T1 (smooth), T2 (moderate), and T3 (aggressive). Canonical session-specific nominal velocity and angular-rate values are defined in [docs/EXPERIMENTAL_DESIGN.md](docs/EXPERIMENTAL_DESIGN.md). The TOST primary endpoint uses T2. T3 is held out as the generalization check for M4.
 
 **Sensor-to-flange transform (CAD-based):**
@@ -218,13 +228,20 @@ The plugin will be released as a standalone open-source GitHub repository before
 
 ## 8. Timeline
 
-| Period              | Milestone                                                                                                                                                                                                                                                                                                                                                                      |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Until June 2026     | Stage 1 static characterization (all sensors). CAD fixture tolerances measured; contact probing repeatability quantified. Pilot session (WT901C, Session A, ~3 h) to verify full pipeline end-to-end: sync, CAD-derived T_sensor→flange, RobotStudio export, residual computation, TOST on small n. Delta values defined and locked with supervisor. Power analysis completed. |
-| June 2026           | YuMi dynamic sessions A-D (post-exams).                                                                                                                                                                                                                                                                                                                                        |
-| July-September 2026 | M4 model fitting from YuMi residuals. TOST analysis at sensor residual level. Gazebo Fortress plugin for Mid-360 development and testing.                                                                                                                                                                                                                                      |
-| Q4 2026             | Plugin released on GitHub as standalone open-source repository (before paper submission). Statistical analysis finalized.                                                                                                                                                                                                                                                      |
-| Q4 2026 - Q1 2027   | Manuscript submission to *Measurement* or *IEEE Transactions on Instrumentation and Measurement*.                                                                                                                                                                                                                                                                              |
+```mermaid
+gantt
+    title Project Timeline
+    dateFormat  YYYY-MM-DD
+    axisFormat  %b %Y
+    section Preparation
+    Stage 1 static characterization and pilot checks :a1, 2026-03-01, 2026-05-31
+    CAD fixture printing + payload verification + delta definition/lock :a2, 2026-06-01, 2026-06-30
+    section Main Work (Sep 2026 - May 2027)
+    YuMi dynamic sessions A-D + M4 fitting + TOST analysis :a3, 2026-09-01, 2027-05-31
+    Gazebo Fortress Mid-360 plugin development/testing :a4, 2026-09-01, 2027-05-31
+    section Closure
+    Statistical finalization + manuscript submission window :a5, 2027-04-01, 2027-06-30
+```
 
 ---
 

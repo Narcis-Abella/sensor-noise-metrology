@@ -113,6 +113,16 @@ If the simulator assumes a perfect camera and the real camera shows intrinsic dr
 
 Each dynamic session follows the same temporal structure, regardless of sensor type:
 
+```mermaid
+flowchart LR
+    S0["60 s static"] --> MIX["Block MIX (~2 h)"]
+    MIX --> C1["30 min cooling"]
+    C1 --> CW["Block CW (~2 h)"]
+    CW --> C2["30 min cooling"]
+    C2 --> CCW["Block CCW (~2 h)"]
+    CCW --> S1["60 s static"]
+```
+
 ```text
 [60s static] → [Block MIX ~2h] → [30min cooling] → [Block CW ~2h] → [30min cooling] → [Block CCW ~2h] → [60s static]
 Total: ~7–8 h per session
@@ -123,6 +133,17 @@ Total: ~7–8 h per session
 Each block lasts approximately 2 hours. To satisfy the high statistical power required by equivalence testing (TOST, see `METHODOLOGY.md` §3.4) without extending laboratory time, the YuMi will execute the trajectory in a continuous loop pattern rather than a small fixed number of repetitions.
 
 Each repetition is **[60 s static] → [trajectory execution, ~1–2 min] → [60 s static]**. For a ~1–2 min trajectory, a 2 h block yields **$n \approx 40$–60 independent repetitions** per block. The three blocks (MIX, CW, CCW) together give **$n \approx 120$–180 repetitions per trajectory type** (T1, T2, or T3); CW and CCW runs both count as repetitions of the same trajectory type for equivalence testing (M vs R). The sequence logic is:
+
+```mermaid
+flowchart TD
+    SESSION["Session (A/B/C/D)"] --> BLOCKS["Blocks: MIX / CW / CCW"]
+    BLOCKS --> LOOP["Continuous loop during ~2 h block"]
+    LOOP --> REP["Repetition"]
+    REP --> PRE["60 s static (pre)"]
+    PRE --> TRAJ["Trajectory (~1–2 min)"]
+    TRAJ --> POST["60 s static (post)"]
+    POST --> REP
+```
 
 | Block | Repetition pattern (continuous loop for ~2 h) |
 |-------|-----------------------------------------------|
@@ -330,6 +351,21 @@ Reviewers are likely to flag this if it is not addressed explicitly.
 ## 10. Geometric Reference Protocol (CAD + Contact Probing)
 
 RobotStudio provides the pose of the YuMi mechanical flange. Sensor residual computation must be expressed in a fixed laboratory geometric frame that is independent of sensor self-estimation. The active protocol in this work is a **fixture-based geometric reference** built from nominal CAD geometry and corrected with **contact probing** before dynamic sessions.
+
+```mermaid
+flowchart TD
+    A["Mount and lock fixture"] --> B["Import CAD in RobotStudio and define nominal frame"]
+    B --> C["Contact probing on predefined points/planes"]
+    C --> D["Fit CAD-to-lab rigid transform"]
+    D --> E{"Acceptance criteria met?<br/>Probe RMS <= 0.20 mm<br/>Fit RMS <= 0.50 mm"}
+    E -- "No" --> C
+    E -- "Yes" --> F["Store corrected session frame"]
+    F --> G["Session-start verification probing subset"]
+    G --> H{"Verification drift <= 0.50 mm<br/>and <= 0.30 deg?"}
+    H -- "No" --> A
+    H -- "Yes" --> I["Compute residuals in corrected frame"]
+    I --> J["Archive raw points, transform, residual report, pass/fail"]
+```
 
 ### 10.1 Active Geometric Reference Workflow
 
