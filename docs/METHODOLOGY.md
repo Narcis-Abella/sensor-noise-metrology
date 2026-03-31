@@ -27,7 +27,6 @@
 Allan Variance (AVAR) and its square root, Allan Deviation (ADEV), are the standard IEEE tools for identifying stochastic noise processes in inertial sensors. The log-log ADEV curve reveals different noise types at different averaging times ($\tau$):
 
 | Noise process | ADEV slope | Parameter extracted |
-
 |---------------|-----------|---------------------|
 | Angle Random Walk (ARW) | $-1/2$ | Read at $\tau = 1$ s on log-log plot [°/√h] |
 | Bias Instability (BI) | 0 (minimum) | Read at minimum of curve [°/h] |
@@ -76,7 +75,6 @@ Gravitational bias (X/Y/Z): X.XX mg
 The primary measurands of this study are sensor residuals: the difference between measured sensor output and the true value derived from YuMi kinematics. These are the quantities on which TOST is applied.
 
 | Sensor | Residual definition | Physical quantity | Units |
-
 |--------|---------------------|-------------------|-------|
 | IMU (S1, S3-IMU, S4-IMU) | $R_\omega(t) = \omega_\text{measured}(t) - \omega_\text{true}(t)$; $R_a(t) = a_\text{measured}(t) - a_\text{true}(t)$ | Angular rate error; linear acceleration error | deg/s; m/s² |
 | LiDAR (S2, S3) | Point-to-plane distance from scan points to a reference plane established at $t = 0$ | Range noise; thermal ToF drift | mm |
@@ -91,7 +89,6 @@ All timestamps must be synchronized (see [EXPERIMENTAL_DESIGN.md §9](EXPERIMENT
 The ground truth trajectory is not perfect. Its uncertainty must be quantified so that (i) reviewers can assess the validity of comparisons and (ii) differences smaller than the ground truth floor are not over-interpreted. All contributions must be documented at the time of experimentation; values below are design targets or typical orders of magnitude.
 
 | Source | Type | Magnitude (design / typical) | Notes |
-
 |--------|------|------------------------------|-------|
 | **YuMi pose repeatability (RP)** | Random (per pose) | $\pm0.02$ mm | ABB ISO 9283 specification. Applies only to static points (start/end of trajectories, waypoints in T3). |
 | **YuMi linear path accuracy (AT)** | Systematic (trajectory) | $1.36$ mm (worst-case ISO condition) | ABB ISO 9283 specification for actual vs programmed path. Tested at max speed (1.5 m/s) and max load. Since sessions max at 0.1 to 0.5 m/s, the practical AT is lower, but this defines the worst-case bound. Declared as Type B uncertainty; no calibration certificate exists for the IQS unit. |
@@ -176,7 +173,6 @@ Equivalently: construct a 90% confidence interval for $\mu_M - \mu_R$; if it lie
 **Equivalence margin $\delta$:** Defined per sensor type in physical signal units. Anchored to external system requirements (task-driven navigation performance thresholds from published literature) and agreed with the supervisor before any data collection. It must not be defined as a percentage of the measured residuals, and must not be changed after data collection begins.
 
 | Sensor | Measurand | $\delta$ units |
-
 |--------|-----------|----------------|
 | LiDAR (S2, S3) | Point-to-plane residuals | mm |
 | IMU gyroscope (S1, S3-IMU, S4-IMU) | Angular rate residuals | deg/s |
@@ -191,7 +187,6 @@ Numerical values of $\delta$ are locked in this section before session execution
 **Success criteria:**
 
 | Condition | Test | Success criterion | Interpretation |
-
 |-----------|------|-------------------|----------------|
 | Metrological sim (M) vs. real hardware (R) | TOST with $\delta$ per sensor type | 90% CI for mean residual difference within $[-\delta, +\delta]$ | Simulated residuals equivalent to real hardware within margin |
 | Standard sim (S) vs. real hardware (R) | NHST (t-test / Wilcoxon) | p < 0.05, medium/large effect | Standard noise parameters insufficient; metrological approach necessary |
@@ -282,7 +277,6 @@ Characterized variables are those intrinsic to the sensor's physical measurement
 ### 4.2 Noise Model Definitions (M1–M4)
 
 | ID | Name | Source | Description |
-
 |----|------|--------|-------------|
 | M1 | Manufacturer | Datasheet / typical values | Default noise parameters taken from vendor specifications or typical values used in the community. Represents "standard" simulation. |
 | M2 | Static-Allan | Allan Variance on long static logs | Coefficients ARW, BI, RRW extracted from 10 to 12 h static logs. Time-invariant model. |
@@ -294,7 +288,6 @@ Characterized variables are those intrinsic to the sensor's physical measurement
 **Kinematic regime taxonomy (used for M4 segmentation):**
 
 | ID | Name | Definition (illustrative) | Purpose |
-
 |----|------|---------------------------|---------|
 | S0 | Static-in-session | $|\omega| < \epsilon_\omega$, $|a| < \epsilon_a$ for ≥ 60 s | Source for M3 (in-session static Allan). |
 | S1 | Low-velocity | small $\|\omega\|$, low $\|a\|$ (e.g., T1) | Baseline dynamic regime. |
@@ -351,7 +344,6 @@ where $\sigma^2_{\mathrm{cold}}$ is variance at cold start (early static charact
 The full M4 variance combines $\sigma^2_{\mathrm{static}}(T)$ with a kinematic term. The kinematic state includes: linear velocity $\|v\|$, angular velocity $\|\omega\|$, linear acceleration $\|a\|$, angular acceleration $\|\dot{\omega}\|$, and jerk $\|\dot{a}\|$. The following candidates are proposed for experimental validation. Coefficients are fitted from residuals $R_a(t), R_\omega(t)$ over S1-S3; the study determines which formulations generalise to T3 (held-out) and improve metrics vs. M1-M3.
 
 | # | Formulation | Formula | Notes |
-
 |---|-------------|---------|-------|
 | 1 | **Additive linear** | $\sigma^2 = \sigma^2_{\mathrm{static}} + c_v \|v\| + c_\omega \|\omega\| + c_a \|a\| + c_{\dot{\omega}} \|\dot{\omega}\| + c_j \|\dot{a}\|$ | Requires explicit units per coefficient; risk of $\sigma^2 < 0$ if coefficients are negative. |
 | 2 | **Multiplicative** | $\sigma^2 = \sigma^2_{\mathrm{static}} \cdot \max\bigl(1 + c_v \|v\| + c_\omega \|\omega\| + c_a \|a\| + c_{\dot{\omega}} \|\dot{\omega}\| + c_j \|\dot{a}\|,\; \epsilon\bigr)$ | Guarantees $\sigma^2 > 0$; all $c \geq 0$; dimensionless scaling. |
@@ -365,7 +357,6 @@ The chosen formulation(s) are reported in the manuscript; candidates that fail t
 Not all kinematic terms are physically relevant for every sensor. Coefficients are fixed to zero when the underlying mechanism does not apply, reducing parameters and improving identifiability. The following pruning is applied by default:
 
 | Sensor | Coefficient fixed to 0 | Rationale |
-
 |--------|-------------------------|-----------|
 | **IMU** | $c_v$ (linear velocity) | The IMU measures acceleration and angular rate, not velocity. Velocity is an integrated quantity; it does not directly affect IMU noise. G-sensitivity and vibration depend on $a$, $\omega$, $\dot{a}$, $\dot{\omega}$, not on $v$. |
 | **IMU** | $c_{\dot{\omega}}$ (optional) | Angular acceleration may be collinear with jerk in many trajectories; if identifiability is poor, $c_{\dot{\omega}} = 0$ can be applied. |
@@ -459,7 +450,6 @@ This experiment applies to all four sessions (A, B, C, D) and provides a sensor-
 ## 9. Analysis Toolchain Summary
 
 | Task | Tool | Notes |
-
 |------|------|-------|
 | Allan Variance | `imu_utils` (ROS) / `allantools` (Python) | Overlapping ADEV estimator; chi-squared CI, k = 2 |
 | Six-Position Test | Custom Python script | Manual per-axis scale factor and bias extraction |

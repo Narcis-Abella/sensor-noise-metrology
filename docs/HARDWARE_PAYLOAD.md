@@ -31,7 +31,6 @@
 ## 1. Ground Truth System: ABB YuMi IRC5
 
 | Parameter | Value |
-
 |-----------|-------|
 | Type | Dual-arm collaborative robot (7-DOF per arm) |
 | Pose repeatability (RP) | ±0.02 mm (static points only) |
@@ -61,7 +60,6 @@ The YuMi's ~500 g payload capacity per arm is the primary physical constraint on
 Sessions A–D follow modality order: IMU-only → 2D LiDAR → 3D LiDAR → visual-inertial.
 
 | Session | Estimated payload | % of capacity | Margin |
-
 |---------|-----------------|---------------|--------|
 | A (WitMotion IMU) | ~100 g | 20% | Comfortable |
 | B (RPLiDAR A2M12) | ~250 g | 50% | Safe |
@@ -77,7 +75,6 @@ Sessions A–D follow modality order: IMU-only → 2D LiDAR → 3D LiDAR → vis
 ### 3.1 WitMotion WT901C-TTI
 
 | Parameter | Value |
-
 |-----------|-------|
 | IMU chip | InvenSense MPU9250 |
 | Axes | 9-DOF (3-axis gyro, accel, magnetometer) |
@@ -97,7 +94,6 @@ Sessions A–D follow modality order: IMU-only → 2D LiDAR → 3D LiDAR → vis
 ### 3.2 Intel RealSense D455
 
 | Parameter | Value |
-
 |-----------|-------|
 | Type | RGB-D camera (stereo IR + RGB) |
 | IMU chip | Bosch BMI055 (6-DOF: 3-axis gyro + accel) |
@@ -117,7 +113,6 @@ Sessions A–D follow modality order: IMU-only → 2D LiDAR → 3D LiDAR → vis
 ### 3.3 Livox Mid-360
 
 | Parameter | Value |
-
 |-----------|-------|
 | Type | Solid-state 3D LiDAR |
 | Scanning pattern | Non-repetitive "Rosetta" (360° horizontal, ~59° vertical FOV) |
@@ -139,7 +134,6 @@ Sessions A–D follow modality order: IMU-only → 2D LiDAR → 3D LiDAR → vis
 ### 3.4 Additional Non-Repetitive 3D 360 Solid-State LiDAR (High-Priority Placeholder)
 
 | Parameter | Value |
-
 |-----------|-------|
 | Type | 3D LiDAR, non-repetitive scan pattern, 360 deg horizontal coverage |
 | Model | **TBD** |
@@ -159,7 +153,6 @@ Sessions A–D follow modality order: IMU-only → 2D LiDAR → 3D LiDAR → vis
 ### 3.5 RPLiDAR A2M12
 
 | Parameter | Value |
-
 |-----------|-------|
 | Type | Mechanical 2D LiDAR (360° planar) |
 | Scan rate | 10 Hz |
@@ -178,7 +171,6 @@ Sessions A–D follow modality order: IMU-only → 2D LiDAR → 3D LiDAR → vis
 ### 3.6 1D Laser Dynamometer/Rangefinder (Placeholder)
 
 | Parameter | Value |
-
 |-----------|-------|
 | Type | 1D laser dynamometer or rangefinder |
 | Model | **TBD** |
@@ -199,7 +191,6 @@ Sessions A–D follow modality order: IMU-only → 2D LiDAR → 3D LiDAR → vis
 **Weight verification status:** Not yet verified - estimates only
 
 | Session | Sensor | Mount | Total est. | Verified | Notes |
-
 |---------|--------|-------|------------|----------|-------|
 | A | 50 g | 50 g | **100 g** | No | Simplest mount; low risk |
 | B | 170 g | 80 g | **250 g** | No | 2D only; Z constraint critical |
@@ -211,7 +202,6 @@ Sessions A–D follow modality order: IMU-only → 2D LiDAR → 3D LiDAR → vis
 ### 4.1 Optional Placeholder Payload Slots (Model TBD)
 
 | Optional slot | Sensor | Mount | Total est. | Verified | Activation rule |
-
 |---------------|--------|-------|------------|----------|-----------------|
 | E | Additional non-repetitive 3D 360 LiDAR | TBD | **TBD** | No | Activate after model selection and weight verification |
 | F | 1D laser dynamometer/rangefinder | TBD | **TBD** | No | Activate when selected as auxiliary instrumentation |
@@ -225,7 +215,6 @@ When either optional slot is activated, update both this table and the final ses
 The original proposal (Abella, Feb 2026) used the Livox Mid-70. The recommendation was changed to the **Mid-360** for the following reasons:
 
 | Criterion | Mid-70 | Mid-360 | Winner |
-
 |-----------|--------|---------|--------|
 | Weight | ~590 g | ~250 g | Mid-360 |
 | YuMi compatibility | Exceeds capacity even without mount | Within capacity with margin | Mid-360 |
@@ -259,7 +248,6 @@ The IQS flexible manufacturing cell includes a Mitsubishi robot that could serve
 ## 7. Support Hardware and Cables
 
 | Item | Purpose | Notes |
-
 |------|---------|-------|
 | Custom 3D-printed mounts | Attach sensors to YuMi flange | Require CAD design + printing per sensor |
 | M6 hex bolts + locknuts | Secure mount to flange | Use thread-locking compound for dynamic sessions |

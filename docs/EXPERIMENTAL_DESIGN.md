@@ -25,8 +25,8 @@
 
 The experimental campaign is organized into **two stages**:
 
-- **Stage 1: Static Characterization:** Independent of robot arm time. Sensors record continuously while fixed and immobile. Can be run in parallel for multiple sensors (leaving them logging overnight or over a full day). No YuMi booking required.
-- **Stage 2: Dynamic Sessions:** Require exclusive access to the YuMi. Four independent sessions (A, B, C, D), one per sensor, ~8 h each.
+* **Stage 1: Static Characterization:** Independent of robot arm time. Sensors record continuously while fixed and immobile. Can be run in parallel for multiple sensors (leaving them logging overnight or over a full day). No YuMi booking required.
+* **Stage 2: Dynamic Sessions:** Require exclusive access to the YuMi. Four independent sessions (A, B, C, D), one per sensor, ~8 h each.
 
 **Total estimated robot arm time:** ~32 h (4 sessions × 8 h), plus ~1 h initial fixture probing and ~10 min geometric verification per session.
 
@@ -35,7 +35,6 @@ The experimental campaign is organized into **two stages**:
 Sessions are ordered by modality complexity (IMU-only → 2D LiDAR → 3D LiDAR → visual-inertial):
 
 | Session | Sensor | Payload | Motion DOF | Est. duration |
-
 |---------|--------|---------|------------|---------------|
 | A | WitMotion WT901C | ~100 g | 3D (full) | ~8 h |
 | B | RPLiDAR A2M12 | ~250 g | 2D (yaw only) | ~8 h |
@@ -126,7 +125,6 @@ Each block lasts approximately 2 hours. To satisfy the high statistical power re
 Each repetition is **[60 s static] → [trajectory execution, ~1–2 min] → [60 s static]**. For a ~1–2 min trajectory, a 2 h block yields **$n \approx 40$–60 independent repetitions** per block. The three blocks (MIX, CW, CCW) together give **$n \approx 120$–180 repetitions per trajectory type** (T1, T2, or T3); CW and CCW runs both count as repetitions of the same trajectory type for equivalence testing (M vs R). The sequence logic is:
 
 | Block | Repetition pattern (continuous loop for ~2 h) |
-
 |-------|-----------------------------------------------|
 | MIX | CW, CCW, CW, CCW, CW, CCW... |
 | CW | CW, CW, CW, CW... |
@@ -190,7 +188,7 @@ In T3 (aggressive trajectory), inter-waypoint pauses are 2 s. Before accepting t
 
 Session A serves as the **IMU-only baseline**: it quantifies how much of the sensor system residual error is attributable to IMU drift alone, before adding LiDAR or visual observations. This provides a lower bound on achievable accuracy with tight-coupling (the IMU is the weakest component in any tight-coupled system).
 
-### Session D Trajectories T1, T2, T3 (3D)
+### Session A Trajectories T1, T2, T3 (3D)
 
 Same profiles as Sessions C and D (smooth spherical spiral / figure-8 with Z sinus / aggressive waypoints). IMU integration error (position and orientation drift) measured against YuMi at each trajectory end.
 
@@ -301,7 +299,6 @@ Same profile as Session C (smooth spherical spiral / figure-8 with Z sinus / agg
 The YuMi working area must be prepared to minimize uncontrolled variables that would prevent valid comparison between sessions:
 
 | Variable | Requirement | Method |
-
 |----------|-------------|--------|
 | Geometry | Known, stable, planar surfaces within ~2–3 m (desirable but secondary) | Foam/PVC panels of known dimensions mounted on a simple frame when available; otherwise document approximate lab geometry and treat missing panels as a limitation. |
 | Illumination | Stable, diffuse, temperature-stable | LED panel (constant current driver, warm-up ≥ 30 min before session) |
