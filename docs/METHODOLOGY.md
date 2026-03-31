@@ -9,7 +9,7 @@
 ## Table of Contents
 
 1. [Allan Variance Analysis](#1-allan-variance-analysis)
-2. [Residual Metrics and Ground Truth](#2-residual-metrics-and-ground-truth) (includes [Ground Truth Uncertainty Budget](#23-ground-truth-uncertainty-budget))
+2. [Residual Metrics and Ground Truth](#2-residual-metrics-and-ground-truth) (includes [Ground Truth Uncertainty Budget](#22-ground-truth-uncertainty-budget))
 3. [Statistical Test Design](#3-statistical-test-design)
 4. [Sensor Noise Models (M1-M4)](#4-sensor-noise-models-m1-m4)
 5. [Kinematic Residual Extraction](#5-kinematic-residual-extraction)
@@ -83,14 +83,10 @@ The primary measurands of this study are sensor residuals: the difference betwee
 | Camera (S4) | AprilTag board pose drift: $\Delta p(t) = p_\text{board}(t) - p_\text{board}(0)$; $\Delta R(t)$ | Thermal intrinsic drift; FPN | mm (translation), deg (rotation) |
 
 Residuals are computed for both real hardware (Stage 2 sessions A-D) and simulated data (Gazebo Fortress plugin). The TOST equivalence test compares the distribution of real hardware residuals against the distribution of simulated residuals under each noise model M1 through M4. The residual computation procedure is defined in §5.
-
-### 2.2 Ground Truth Format
-
 YuMi RobotStudio trajectory export is transformed to the analysis format required by the residual extraction pipeline (time-synchronized pose and sensor streams with explicit frame metadata).
-
 All timestamps must be synchronized (see [EXPERIMENTAL_DESIGN.md §9](EXPERIMENTAL_DESIGN.md)) before metric computation.
 
-### 2.3 Ground Truth Uncertainty Budget
+### 2.2 Ground Truth Uncertainty Budget
 
 The ground truth trajectory is not perfect. Its uncertainty must be quantified so that (i) reviewers can assess the validity of comparisons and (ii) differences smaller than the ground truth floor are not over-interpreted. All contributions must be documented at the time of experimentation; values below are design targets or typical orders of magnitude.
 
@@ -114,7 +110,7 @@ Combined uncertainty (position): Under independent contributions, a conservative
 
 ---
 
-### 2.4 Sensor-to-Flange Transform (CAD-based)
+### 2.3 Sensor-to-Flange Transform (CAD-based)
 
 Sensor-to-flange transforms $T_{\text{sensor→flange}}$ are derived from CAD-designed 3D-printed fixtures. Each fixture is designed in SolidWorks from the sensor's published mechanical CAD model and the YuMi flange specification; the nominal transform is therefore known by design.
 
@@ -122,11 +118,11 @@ Per-sensor frame corrections applied as fixed offsets to $T_{\text{sensor→flan
 
 - **IMU (WT901C, ICM-40609, BMI055):** Inertial frame coincides with housing to within published tolerances. No correction applied.
 - **Livox Mid-360:** Point cloud frame origin is the optical center of the Risley prism system. The offset from the housing is taken from Livox technical documentation and applied as a fixed correction.
-- **RealSense D455:** Optical frame origin and intrinsic parameters from Intel factory calibration, accessible via the RealSense SDK. Factory intrinsics used directly; nominal accuracy declared in §2.3.
+- **RealSense D455:** Optical frame origin and intrinsic parameters from Intel factory calibration, accessible via the RealSense SDK. Factory intrinsics used directly; nominal accuracy declared in §2.2.
 
-Before each session, target poses in the laboratory frame are characterized via contact probing: a conical tip fixture (CAD-known geometry) is mounted on the YuMi flange, ≥3 non-collinear reference points on each target are touched, and YuMi FK (RT = 0.10 mm) provides their 3D coordinates in the world frame. Six-DOF target pose is reconstructed analytically from ≥3 points. For targets beyond YuMi reach (e.g. far walls for LiDAR characterization), a laser rangefinder in a CAD-known fixture provides 1D distance at known YuMi poses; ≥3 non-collinear measurements give the target pose. Whether variable-distance targets are required is pending decision and is marked TBD in §2.3.
+Before each session, target poses in the laboratory frame are characterized via contact probing: a conical tip fixture (CAD-known geometry) is mounted on the YuMi flange, ≥3 non-collinear reference points on each target are touched, and YuMi FK (RT = 0.10 mm) provides their 3D coordinates in the world frame. Six-DOF target pose is reconstructed analytically from ≥3 points. For targets beyond YuMi reach (e.g. far walls for LiDAR characterization), a laser rangefinder in a CAD-known fixture provides 1D distance at known YuMi poses; ≥3 non-collinear measurements give the target pose. Whether variable-distance targets are required is pending decision and is marked TBD in §2.2.
 
-Fixture nominal tolerances and per-piece caliper measurements enter the budget as Type B contributors; probing repeatability (within-session and cross-session) enters as Type A contributors (see §2.3).
+Fixture nominal tolerances and per-piece caliper measurements enter the budget as Type B contributors; probing repeatability (within-session and cross-session) enters as Type A contributors (see §2.2).
 
 Interpretation: Residual differences between conditions (real vs. simulated under M1/M4) that are of the same order as or smaller than the ground truth uncertainty floor are not claimed as significant. This budget does not replace the TOST but defines the physical limit below which comparisons are not meaningful.
 
@@ -319,7 +315,7 @@ For IMUs, the true specific force $a_{\mathrm{true}}(t)$ and angular rate $\omeg
 
 1. Interpolating the YuMi flange poses with a smooth spline (e.g., cubic B-splines) in SE(3).
 2. Differentiating the spline analytically to obtain linear and angular velocities and accelerations.
-3. Applying the CAD-derived $T_{\text{sensor→flange}}$ (with sensor frame offset correction per sensor type; see §2.6) to express $a_{\mathrm{true}}(t), \omega_{\mathrm{true}}(t)$ in the sensor frame.
+3. Applying the CAD-derived $T_{\text{sensor→flange}}$ (with sensor frame offset correction per sensor type; see §2.3) to express $a_{\mathrm{true}}(t), \omega_{\mathrm{true}}(t)$ in the sensor frame.
 
 The residual signal is then:
 

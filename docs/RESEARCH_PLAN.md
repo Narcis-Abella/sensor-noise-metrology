@@ -94,7 +94,7 @@ Liu & Zhang (2021) highlighted the geometric degeneracy risks of solid-state LiD
 
 For static LiDAR characterization, we propose a **planar orthogonal residual method** (instead of absolute distance measurement): the sensor is fixed facing a flat wall, and temporal variation is evaluated by computing the orthogonal error of successive point clouds against a reference plane fitted at t=0. This isolates thermal ToF drift without introducing ICP registration errors.
 
-Regarding vibration-induced effects, Schlager et al. [[26]](REFERENCES_CONSOLIDATED.md) and Brazeal et al. [[27]](REFERENCES_CONSOLIDATED.md) provide relevant but indirect precedents (different setups and/or simulation-focused analyses). Based on the audited corpus, direct empirical characterization of Livox Mid-360 range-noise statistics under controlled kinematic stress remains limited; this study is designed to address that gap conservatively.
+Regarding vibration-induced effects, Schlager et al. [[26]](REFERENCES_CONSOLIDATED.md) and Brazeal et al. [[27]](REFERENCES_CONSOLIDATED.md) provide relevant but indirect precedents (different setups and/or simulation-focused analyses). No study has empirically characterized whether Livox Mid-360 range noise statistics change under controlled kinematic conditions — specifically, whether velocity, acceleration, and jerk at the sensor level produce measurable changes in point-to-plane residuals.
 
 ### 3.3 Camera Characterization
 
@@ -158,9 +158,9 @@ What has not been done, and what this study contributes:
 
 **Software contribution:** A CPU-based Gazebo Fortress plugin for the Livox Mid-360 non-repetitive (Rosetta) scan pattern with empirically-derived noise model, fully compatible with ROS 2 Humble. While a third-party plugin exists for Gazebo Harmonic (RobotecAI), it typically depends on NVIDIA OptiX/CUDA and does not provide this project's CPU-first Humble/Fortress workflow. Community demand for a Fortress-oriented solution has been documented since April 2023 (gz-sim issue #1958) [[81]](REFERENCES_CONSOLIDATED.md). We position this as a practical implementation gap fill, not an exclusivity claim.
 
-**Experimental contribution:** Empirical characterization of whether Livox Mid-360 range noise statistics change under controlled kinematic stress, addressing a gap where available prior work is indirect or setup-mismatched (for example, different hardware or simulation-only analyses) [[26]](REFERENCES_CONSOLIDATED.md), [[27]](REFERENCES_CONSOLIDATED.md).
+**Experimental contribution:** Empirical characterization of whether Livox Mid-360 range noise statistics change under controlled kinematic conditions (velocity, acceleration, and jerk at the sensor level), addressing a gap where available prior work is indirect or setup-mismatched (for example, different hardware or simulation-only analyses) [[26]](REFERENCES_CONSOLIDATED.md), [[27]](REFERENCES_CONSOLIDATED.md).
 
-The combination of these four contributions - formal equivalence testing, metrologically-fitted parametric noise model, Fortress plugin, and vibration characterization - constitutes the novelty of the work as an integrated system, even where individual components have precedent. The closest prior work, Ngo et al. (2021), proposes explicit + implicit sensor evaluation for radar sim-to-real but relies on descriptive distance metrics (no pre-specified equivalence bounds) and lacks a controlled kinematic ground truth. This study provides both.
+The combination of these four contributions - formal equivalence testing, metrologically-fitted parametric noise model, Fortress plugin, and kinematic-stress characterization - constitutes the novelty of the work as an integrated system, even where individual components have precedent. The closest prior work, Ngo et al. (2021), proposes explicit + implicit sensor evaluation for radar sim-to-real but relies on descriptive distance metrics (no pre-specified equivalence bounds) and lacks a controlled kinematic ground truth. This study provides both.
 
 ---
 
@@ -191,12 +191,7 @@ Formal test: **TOST (Two One-Sided Tests)** for equivalence [[1]](REFERENCES_CON
 
 **ABB YuMi IRC5** (dual-arm collaborative robot):
 
-- Pose repeatability: $\pm0.02$ mm (ISO 9283 RP); applies only to static points (waypoints, start/end poses).
-- Linear path repeatability: $0.10$ mm (ISO 9283 RT); relevant for dynamic trajectory comparison.
-- Linear path accuracy: $1.36$ mm (ISO 9283 AT, worst-case at 1.5 m/s; lower at our ~0.1 m/s).
-- Payload capacity: ~500 g per arm
-- Programming: RobotStudio (offline trajectory definition and playback)
-- Reference frame: mechanical flange. Sensor-to-flange transforms are derived from CAD-designed fixtures; target poses are characterized via contact probing before each session. See [METHODOLOGY.md §2.6](METHODOLOGY.md).
+Key ground truth parameters: path repeatability RT = 0.10 mm, path accuracy AT ≤ 1.36 mm (ISO 9283 worst-case); RP = ±0.02 mm applies to static points only. Full specification in [docs/HARDWARE_PAYLOAD.md](HARDWARE_PAYLOAD.md) §1.
 
 > For dynamic residual comparisons, the bounding mechanical uncertainty is path repeatability (0.10 mm) and path accuracy (up to 1.36 mm). Pose repeatability ($\pm0.02$ mm) applies only to static points. This distinction must be stated explicitly in any publication.
 

@@ -34,12 +34,7 @@ The detailed scientific rationale and hypotheses are in [docs/RESEARCH_PLAN.md](
 
 ABB YuMi IRB 14000 IRC5 dual-arm collaborative robot. Provides kinematic ground truth for all dynamic sessions via RobotStudio-exported time-stamped flange poses.
 
-| Parameter                 | Value                   | Source                                                                |
-| ------------------------- | ----------------------- | --------------------------------------------------------------------- |
-| Path repeatability (RT)   | 0.10 mm                 | ABB spec, ISO 9283 [[85]](docs/REFERENCES_CONSOLIDATED.md)            |
-| Path accuracy (AT)        | ≤ 1.36 mm (worst-case)  | ABB spec [[43]](docs/REFERENCES_CONSOLIDATED.md), ISO 9283 conditions |
-| Pose repeatability (RP)   | ± 0.02 mm               | Static points only                                                    |
-| Metrological traceability | Type B (datasheet)      | No calibration certificate at IQS                                     |
+Key ground truth parameters: path repeatability RT = 0.10 mm, path accuracy AT ≤ 1.36 mm (ISO 9283 worst-case); full specification and uncertainty interpretation in [docs/HARDWARE_PAYLOAD.md](docs/HARDWARE_PAYLOAD.md) §1 and [docs/METHODOLOGY.md](docs/METHODOLOGY.md) §2.2.
 
 Sensor-to-flange transforms are derived from CAD-designed 3D-printed fixtures. Target poses in the laboratory frame are characterized via contact probing before each session (see §3.2).
 
@@ -95,7 +90,7 @@ Four sessions, one sensor configuration per session.
 | Session | Sensor              | Motion              | Residual computation                                                            |
 | ------- | ------------------- | ------------------- | ------------------------------------------------------------------------------- |
 | A       | WT901C (S1)         | 3D                  | YuMi flange angular rate + acceleration via spline differentiation              |
-| B       | RPLiDAR A2M12 (S2)  | 2D planar (Z fixed) | YuMi flange pose projected to planar motion                                     |
+| B       | RPLiDAR A2M12 (S2)  | 2D planar (Z fixed) | YuMi flange pose (CAD-derived T_sensor→flange) projected to planar motion       |
 | C       | Livox Mid-360 (S3)  | 3D                  | YuMi flange pose + CAD-derived T_sensor→flange                                  |
 | D       | RealSense D455 (S4) | 3D                  | YuMi flange pose + CAD-derived T_sensor→flange; fixed AprilTag board for camera |
 
@@ -112,7 +107,7 @@ Four sessions, one sensor configuration per session.
 Three trajectory profiles per session are used: T1 (smooth), T2 (moderate), and T3 (aggressive). Canonical session-specific nominal velocity and angular-rate values are defined in [docs/EXPERIMENTAL_DESIGN.md](docs/EXPERIMENTAL_DESIGN.md). The TOST primary endpoint uses T2. T3 is held out as the generalization check for M4.
 
 **Sensor-to-flange transform (CAD-based):**
-Sensor-to-flange transforms are derived from CAD-designed 3D-printed fixtures (SolidWorks geometry from the sensor's published mechanical CAD and the YuMi flange specification). Per-sensor frame corrections are applied as fixed offsets: the Livox Mid-360 point cloud frame origin offset from the housing is taken from Livox technical documentation; the RealSense D455 optical frame origin and intrinsic parameters are taken from Intel factory calibration via the RealSense SDK. Before each session, target poses in the laboratory frame are characterized via contact probing: a conical tip fixture (CAD-known geometry) is mounted on the flange, ≥3 non-collinear reference points on each target are touched, and YuMi FK (RT = 0.10 mm) gives their 3D world-frame coordinates. Fixture nominal tolerances and per-piece caliper measurements enter the uncertainty budget as Type B contributors; probing repeatability (within-session ≥10 touches; cross-session) enters as a Type A contributor (see §9 and METHODOLOGY.md §2.5).
+Sensor-to-flange transforms are derived from CAD-designed 3D-printed fixtures (SolidWorks geometry from each sensor's published CAD and the YuMi flange specification); AX=XB hand-eye calibration is not used. Per-sensor optical/inertial frame offsets are applied as fixed corrections from manufacturer documentation. Before each session, target poses are characterized via contact probing with a conical tip fixture; fixture tolerances and probing repeatability enter the uncertainty budget as Type B and Type A contributors respectively. Full protocol in [docs/EXPERIMENTAL_DESIGN.md](docs/EXPERIMENTAL_DESIGN.md) §10 and [docs/METHODOLOGY.md](docs/METHODOLOGY.md) §2.3.
 
 **Temporal synchronization:**
 PTP IEEE 1588 is the preferred synchronization method (< 1 µs accuracy). At 100 mm/s linear velocity, a 10 ms timing offset introduces 1 mm spatial projection error [[52]](docs/REFERENCES_CONSOLIDATED.md). NTP (approximately 0.2 ms accuracy) is the documented fallback; residual jitter enters the ground truth uncertainty budget as a declared contributor.
@@ -141,6 +136,8 @@ The TOST is applied at every rung M1 through M4. If M2 achieves equivalence with
 ### 4.1 M4: state-dependent parametric covariance
 
 $$\sigma^2(t) = \sigma^2_\text{static}(T(t)) + c_\omega \omega(t)^2 + c_a a(t)^2 + c_j \dot{a}(t)^2 + c_{\dot\omega} \dot{\omega}(t)^2$$
+
+This is one of four candidate formulations evaluated empirically; the experimental study will determine which generalizes best to held-out data (see docs/METHODOLOGY.md §5.4).
 
 where $\sigma^2_\text{static}(T) = \sigma^2_0 \exp\bigl(\alpha (T - T_\text{ref})\bigr)$ is a project modeling choice informed by thermal IMU literature [[13]](docs/REFERENCES_CONSOLIDATED.md), and $c_\omega$, $c_a$, $c_j$, $c_{\dot\omega}$ are kinematic coefficients fitted from YuMi residuals.
 
@@ -171,7 +168,7 @@ TOST is applied independently per sensor type. Holm-Bonferroni correction is app
 
 Full mathematical procedure is in [docs/METHODOLOGY.md](docs/METHODOLOGY.md) §3.4.
 
-### 5.3 Equivalence margin delta
+### 5.2 Equivalence margin delta
 
 The margin delta is defined per sensor type in physical signal units. It is anchored to external system requirements (task-driven navigation performance thresholds from published literature) and agreed with the supervisor before any data collection. Defining delta after inspecting data, or as a percentage of measured outcomes, invalidates the TOST.
 
@@ -235,7 +232,7 @@ The plugin will be released as a standalone open-source GitHub repository before
 
 **Time synchronization and M4.** Under the PTP target (< 1 µs clock accuracy), the spatial error contribution from timing uncertainty is < 1 µm at T3 peak velocity, negligible relative to the YuMi path repeatability floor of 0.10 mm and all dominant sources in the ground truth uncertainty budget. Studies that cannot achieve this synchronization accuracy should augment M4 with a timing-dependent bias term derived from their measured clock offset using the spatial error model of Olson (2010) [[52]](docs/REFERENCES_CONSOLIDATED.md).
 
-**Ground truth bounds.** For dynamic trajectories, the accuracy floor is path accuracy AT ≤ 1.36 mm (ISO 9283 worst-case conditions) and path repeatability RT = 0.10 mm. Pose repeatability RP = ± 0.02 mm applies to static points only. Absolute volumetric accuracy is not characterized. The AT specification is a Type B uncertainty with no traceable calibration certificate for the IQS unit; this is declared explicitly in the uncertainty budget in [docs/METHODOLOGY.md](docs/METHODOLOGY.md) §2.3.
+**Ground truth bounds.** For dynamic trajectories, the accuracy floor is path accuracy AT ≤ 1.36 mm (ISO 9283 worst-case conditions) and path repeatability RT = 0.10 mm. Pose repeatability RP = ± 0.02 mm applies to static points only. Absolute volumetric accuracy is not characterized. The AT specification is a Type B uncertainty with no traceable calibration certificate for the IQS unit; this is declared explicitly in the uncertainty budget in [docs/METHODOLOGY.md](docs/METHODOLOGY.md) §2.2.
 
 **TOST margin anchoring.** The equivalence margin delta must be defined externally and prior to data collection. If delta is defined post-hoc, the TOST is statistically invalid. Margin definition and supervisor agreement are a P0 blocker before YuMi booking.
 
@@ -247,7 +244,7 @@ The plugin will be released as a standalone open-source GitHub repository before
 
 **Cable routing effects.** USB 3.0 (D455) and Ethernet (Mid-360) cables routed along the YuMi arm introduce variable external forces on the flange during T2/T3 trajectories. Mitigated by cable chain routing before each session; residual effect is included as a declared contributor in the ground truth uncertainty budget.
 
-**Fixture dimensional tolerance and cross-session remounting.** Sensor-to-flange transforms are derived from CAD-designed 3D-printed fixtures. Fixture nominal tolerances (SolidWorks design) and measured tolerances (per-piece caliper measurement) are declared as Type B contributors in the uncertainty budget (METHODOLOGY.md §2.3). Cross-session remounting uncertainty is quantified via contact probing repeatability at the start of each session (≥10 independent touches; Type A contributor). The acceptance criterion for cross-session probing deviation is documented in the experimental report.
+**Fixture dimensional tolerance and cross-session remounting.** Sensor-to-flange transforms are derived from CAD-designed 3D-printed fixtures. Fixture nominal tolerances (SolidWorks design) and measured tolerances (per-piece caliper measurement) are declared as Type B contributors in the uncertainty budget (METHODOLOGY.md §2.2). Cross-session remounting uncertainty is quantified via contact probing repeatability at the start of each session (≥10 independent touches; Type A contributor). The acceptance criterion for cross-session probing deviation is documented in the experimental report.
 
 ---
 

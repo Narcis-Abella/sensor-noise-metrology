@@ -132,6 +132,7 @@ Sessions A–D follow modality order: IMU-only → 2D LiDAR → 3D LiDAR → vis
 | Quality grade | Mid (ICM40609 better than BMI055, below MPU9250) |
 
 **Notes:** The Mid-360 is the primary 3D LiDAR for this study. Its factory-calibrated LiDAR-IMU extrinsics eliminate the need for additional extrinsic calibration when using tight-coupled backends (FAST-LIO2, GLIM). GLIM natively supports the Mid-360. The Rosetta scanning pattern provides full spherical coverage over time - a main advantage over the Mid-70's limited FOV and the A2M12's planar-only coverage.
+**Warm-up:** The Mid-360 requires a minimum 20-minute powered warm-up before any static characterization log or dynamic session begins, due to internal self-heating of the ToF detector. See EXPERIMENTAL_DESIGN.md §2.3.
 
 ---
 
@@ -171,7 +172,6 @@ Sessions A–D follow modality order: IMU-only → 2D LiDAR → 3D LiDAR → vis
 | Quality grade | Consumer-grade 2D LiDAR |
 
 **Notes:** Session B is 2D-only (Z fixed). The A2M12 provides a planar 2D LiDAR baseline established in the literature and commonly used in benchmark datasets, with no geometric degeneracy risk in properly structured environments. It serves as the minimal-complexity comparison baseline before evaluating the 3D sensors.
-**Warm-up:** The Mid-360 requires a minimum 20-minute powered warm-up before any static characterization log or dynamic session begins, due to internal self-heating of the ToF detector. See EXPERIMENTAL_DESIGN.md §2.3.
 
 ---
 

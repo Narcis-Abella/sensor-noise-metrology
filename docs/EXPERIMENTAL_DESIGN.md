@@ -163,7 +163,7 @@ During cooling periods: log IMU and LiDAR continuously (static). **Temperature $
 
 ### Cable Management During Dynamic Sessions
 
-USB 3.0 (RealSense D455) and Ethernet (Livox Mid-360) cables must be routed along the YuMi arm using cable chain or equivalent strain-relief before each session begins. Free-hanging cables introduce variable external forces on the flange during T2/T3 trajectories that are not part of the RobotStudio kinematic model and contaminate the ground truth. This effect is documented as a known limitation and included in the ground truth uncertainty budget (see [METHODOLOGY.md §2.3](METHODOLOGY.md)).
+USB 3.0 (RealSense D455) and Ethernet (Livox Mid-360) cables must be routed along the YuMi arm using cable chain or equivalent strain-relief before each session begins. Free-hanging cables introduce variable external forces on the flange during T2/T3 trajectories that are not part of the RobotStudio kinematic model and contaminate the ground truth. This effect is documented as a known limitation and included in the ground truth uncertainty budget (see [METHODOLOGY.md §2.2](METHODOLOGY.md)).
 
 **Protocol:**
 
