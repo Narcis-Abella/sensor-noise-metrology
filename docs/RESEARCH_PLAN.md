@@ -137,7 +137,7 @@ M4 is therefore best understood as a **necessary enabler of the validation frame
 
 This modeling effort **differs from** continuous-time calibration frameworks such as Kalibr. Furgale et al. [[49]](REFERENCES_CONSOLIDATED.md) and Rehder et al. [[50]](REFERENCES_CONSOLIDATED.md) established a robust methodology to optimize spatial and temporal extrinsics alongside IMU biases using a continuous-time spline representation. While they model biases using random walks and optimize parameters against visual ground truth, they assume a constant measurement noise covariance. M4 goes a step further: it captures how the *variance* of the noise itself scales with the kinematic state, rather than just estimating the bias states or fixed extrinsics.
 
-The sensor-specific coefficient pruning ($c_v = 0$ for IMU; full vector for LiDAR) and the held-out generalization check (fit on T1+T2, evaluate on T3) are described in [`docs/METHODOLOGY.md`](METHODOLOGY.md) §5.4.1 and §5.6.
+The sensor-specific coefficient pruning ($c_v = 0$ for IMU; full vector for LiDAR) and the held-out generalization check (fit on T1+T2, evaluate on T3) are described in [`docs/METHODOLOGY.md`](METHODOLOGY.md) §4.4.1 and §4.6.
 
 ### 3.7 Summary and Novelty Statement
 

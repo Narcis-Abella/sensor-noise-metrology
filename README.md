@@ -146,7 +146,7 @@ The TOST is applied at every rung M1 through M4. If M2 achieves equivalence with
 
 $$\sigma^2(t) = \sigma^2_\text{static}(T(t)) + c_\omega \omega(t)^2 + c_a a(t)^2 + c_j \dot{a}(t)^2 + c_{\dot\omega} \dot{\omega}(t)^2$$
 
-This is one of four candidate formulations evaluated empirically; the experimental study will determine which generalizes best to held-out data (see docs/METHODOLOGY.md §5.4).
+This is one of four candidate formulations evaluated empirically; the experimental study will determine which generalizes best to held-out data (see docs/METHODOLOGY.md §4.4).
 
 where $\sigma^2_\text{static}(T) = \sigma^2_0 \exp\bigl(\alpha (T - T_\text{ref})\bigr)$ is a project modeling choice informed by thermal IMU literature [[13]](docs/REFERENCES_CONSOLIDATED.md), and $c_\omega$, $c_a$, $c_j$, $c_{\dot\omega}$ are kinematic coefficients fitted from YuMi residuals.
 
@@ -154,7 +154,7 @@ Coefficients are fitted on trajectories T1 and T2. T3 is held out for a generali
 
 M4 is not a new category of noise model. Learning-based state-dependent covariance estimators already exist (VIO-DualProNet [[18]](docs/REFERENCES_CONSOLIDATED.md), AirIMU [[19]](docs/REFERENCES_CONSOLIDATED.md)). M4 differs in three respects: it is an explicit parametric formula with physically interpretable coefficients, fitted from a sub-millimetre kinematic reference rather than from uncontrolled training data, and directly injectable into a deterministic simulation plugin.
 
-Sensor-specific instantiations, candidate formula variants, and the identifiability protocol are in [docs/METHODOLOGY.md](docs/METHODOLOGY.md) §5.
+Sensor-specific instantiations, candidate formula variants, and the identifiability protocol are in [docs/METHODOLOGY.md](docs/METHODOLOGY.md) §4.
 
 ---
 
