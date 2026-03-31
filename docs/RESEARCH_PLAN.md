@@ -253,7 +253,7 @@ A Gazebo Fortress (gz-sim) reference implementation that reproduces the non-repe
 
 An explicit, physics-motivated parametric covariance model with identifiable coefficients, fitted from dynamic residuals against YuMi ground truth:
 
-$$\sigma^2(t) = f\bigl(T(t),\, \|v(t)\|,\, \|\omega(t)\|,\, \|a(t)\|,\, \|\dot{\omega}(t)\|,\, \|\dot{a}(t)\|\bigr)$$
+$$\sigma^2(t) = f\bigl(T(t), \|v(t)\|, \|\omega(t)\|, \|a(t)\|, \|\dot{\omega}(t)\|, \|\dot{a}(t)\|\bigr)$$
 
 - Thermal component $\sigma^2_{\mathrm{static}}(T)$ characterising noise variance evolution with measured temperature from cold start to steady state.
 - Kinematic coefficients fitted on T1+T2, evaluated on held-out T3 to verify generalization.
