@@ -129,17 +129,30 @@ Interpretation: Residual differences between conditions (real vs. simulated unde
 
 ```mermaid
 flowchart TD
-    A["Residual pairs per sensor/session/trajectory"] --> B["Step 1: Shapiro-Wilk normality"]
-    B --> C{"Normal in both conditions?"}
-    C -- "Yes" --> D["Step 2: Paired t-test family"]
-    C -- "No" --> E["Step 2: Wilcoxon family"]
-    D --> F["Step 3a: TOST (M vs R) with preset delta"]
+    classDef data     fill:#B5D4F4,stroke:#185FA5,color:#042C53
+    classDef test     fill:#D3D1C7,stroke:#5F5E5A,color:#2C2C2A
+    classDef decision fill:#FAC775,stroke:#854F0B,color:#412402
+    classDef pass     fill:#C0DD97,stroke:#3B6D11,color:#173404
+    classDef fail     fill:#F7C1C1,stroke:#A32D2D,color:#501313
+    classDef tost     fill:#CECBF6,stroke:#534AB7,color:#26215C
+
+    A["Residual pairs\nper sensor / session / trajectory"]:::data
+
+    A --> B["Shapiro-Wilk normality test"]:::test
+    B --> C{"Normal in both\nconditions?"}:::decision
+    C -- Yes --> D["Paired t-test"]:::test
+    C -- No  --> E["Wilcoxon signed-rank"]:::test
+
+    D --> F["TOST: M vs R\n(pre-specified δ)"]:::tost
     E --> F
-    D --> G["Step 3b: NHST (S vs R) expected p < 0.05"]
+    D --> G["NHST: S vs R"]:::test
     E --> G
-    F --> H{"90% CI within [-delta, +delta]?"}
-    H -- "Yes" --> I["Equivalence declared"]
-    H -- "No" --> J["Equivalence not declared (publishable)"]
+
+    F --> H{"90% CI within\n[−δ, +δ]?"}:::decision
+    H -- Yes --> I["Equivalence declared ✓"]:::pass
+    H -- No  --> J["Not declared\n(publishable result)"]:::fail
+
+    G --> K["S differs from R\n(expected p < 0.05) ✓"]:::pass
 ```
 
 ### 3.1 Test Selection
