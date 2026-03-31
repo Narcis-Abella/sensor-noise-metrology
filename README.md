@@ -157,12 +157,12 @@ This is the primary scientific contribution of the study.
 
 TOST declares equivalence by testing two one-sided null hypotheses simultaneously [[1]](docs/REFERENCES_CONSOLIDATED.md), [[2]](docs/REFERENCES_CONSOLIDATED.md):
 
-- H_lower: mu_real - mu_sim > -delta (lower one-sided null)
-- H_upper: mu_real - mu_sim < +delta (upper one-sided null)
+- $H_{\text{lower}}: \mu_{\text{real}} - \mu_{\text{sim}} > -\delta$ (lower one-sided null)
+- $H_{\text{upper}}: \mu_{\text{real}} - \mu_{\text{sim}} < +\delta$ (upper one-sided null)
 
-Equivalence is declared when both are rejected at alpha = 0.05, which is equivalent to the 90% confidence interval for the mean residual difference lying entirely within [-delta, +delta].
+Equivalence is declared when both are rejected at $\alpha = 0.05$, which is equivalent to the 90% confidence interval for the mean residual difference lying entirely within $[-\delta, +\delta]$.
 
-Sample size and statistical power are computed using exact TOST power functions [[7]](docs/REFERENCES_CONSOLIDATED.md) before data collection begins. Target: 1-beta ≥ 0.80 at alpha = 0.05, with n and sigma derived from Stage 1 static logs and literature values. This power analysis is a P0 blocker: sessions cannot begin until the planned n achieves the required power given the chosen delta.
+Sample size and statistical power are computed using exact TOST power functions [[7]](docs/REFERENCES_CONSOLIDATED.md) before data collection begins. Target: $1-\beta \geq 0.80$ at $\alpha = 0.05$, with $n$ and $\sigma$ derived from Stage 1 static logs and literature values. This power analysis is a P0 blocker: sessions cannot begin until the planned $n$ achieves the required power given the chosen $\delta$.
 
 TOST is applied independently per sensor type. Holm-Bonferroni correction is applied across the four sessions (A-D) to control the family-wise error rate.
 
@@ -170,9 +170,9 @@ Full mathematical procedure is in [docs/METHODOLOGY.md](docs/METHODOLOGY.md) §3
 
 ### 5.2 Equivalence margin delta
 
-The margin delta is defined per sensor type in physical signal units. It is anchored to external system requirements (task-driven navigation performance thresholds from published literature) and agreed with the supervisor before any data collection. Defining delta after inspecting data, or as a percentage of measured outcomes, invalidates the TOST.
+The margin $\delta$ is defined per sensor type in physical signal units. It is anchored to external system requirements (task-driven navigation performance thresholds from published literature) and agreed with the supervisor before any data collection. Defining $\delta$ after inspecting data, or as a percentage of measured outcomes, invalidates the TOST.
 
-| Sensor                                 | Residual type                    | delta units |
+| Sensor                                 | Residual type                    | $\delta$ units |
 | -------------------------------------- | -------------------------------- | ----------- |
 | LiDAR (S2, S3)                         | Point-to-plane residuals         | mm          |
 | IMU gyroscope (S1, S3-IMU, S4-IMU)     | Angular rate residual            | deg/s       |
@@ -180,7 +180,7 @@ The margin delta is defined per sensor type in physical signal units. It is anch
 | Camera (S4)                            | AprilTag pose drift: translation | mm          |
 | Camera (S4)                            | AprilTag pose drift: rotation    | deg         |
 
-Numerical values of delta are defined and locked in [docs/METHODOLOGY.md](docs/METHODOLOGY.md) §3.4 before session execution. They must not be changed after data collection begins.
+Numerical values of $\delta$ are defined and locked in [docs/METHODOLOGY.md](docs/METHODOLOGY.md) §3.4 before session execution. They must not be changed after data collection begins.
 
 ---
 
@@ -236,7 +236,7 @@ The plugin will be released as a standalone open-source GitHub repository before
 
 **TOST margin anchoring.** The equivalence margin delta must be defined externally and prior to data collection. If delta is defined post-hoc, the TOST is statistically invalid. Margin definition and supervisor agreement are a P0 blocker before YuMi booking.
 
-**M4 identifiability.** The kinematic term of M4 includes up to five predictors (v, omega, a, d-omega/dt, da/dt) that may be collinear across the fitted trajectories. Mitigation protocol: AIC/BIC model selection, VIF < 10 threshold, ridge regression fallback with leave-one-out CV. This protocol is a P0 item that must be finalized before session execution.
+**M4 identifiability.** The kinematic term of M4 includes up to five predictors $(v, \omega, a, d\omega/dt, da/dt)$ that may be collinear across the fitted trajectories. Mitigation protocol: AIC/BIC model selection, VIF < 10 threshold, ridge regression fallback with leave-one-out CV. This protocol is a P0 item that must be finalized before session execution.
 
 **M4 scope of validity.** M4 is fitted on T1 and T2 velocities and steady-state thermal conditions. Extrapolation to T3 velocities (held-out generalization check) and cold-start transients is not validated. Extrapolation limits are declared explicitly in the experimental report.
 

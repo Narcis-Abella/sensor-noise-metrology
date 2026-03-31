@@ -321,7 +321,7 @@ Preferred method: PTP (IEEE 1588 Precision Time Protocol) between YuMi IRC5 and 
 
 Fallback: NTP synchronization with explicit jitter measurement and documentation.
 
-In all cases, the synchronization method used, the measured time offset, and the measured jitter must be reported. The spatial error contribution from timing uncertainty (v_max × Δt) must be computed and included in the ground truth uncertainty budget.
+In all cases, the synchronization method used, the measured time offset, and the measured jitter must be reported. The spatial error contribution from timing uncertainty ($v_{\max} \times \Delta t$) must be computed and included in the ground truth uncertainty budget.
 
 Reviewers are likely to flag this if it is not addressed explicitly.
 
@@ -352,8 +352,8 @@ RobotStudio provides the pose of the YuMi mechanical flange. Sensor residual com
 
 The contact probing dataset is accepted only if both conditions are satisfied:
 
-- Probe point repeatability (same point, repeated touches): RMS ≤ 0.20 mm
-- CAD-to-probed rigid fit residual over the control set: RMS ≤ 0.50 mm
+- Probe point repeatability (same point, repeated touches): $\mathrm{RMS} \leq 0.20$ mm
+- CAD-to-probed rigid fit residual over the control set: $\mathrm{RMS} \leq 0.50$ mm
 
 If any criterion fails, repeat probing after checking fixture locking, probe tip condition, and robot approach velocity.
 
@@ -364,7 +364,7 @@ At the start of each dynamic session, before any trajectory data is recorded:
 1. Execute a short verification probing pass on a reduced subset of fixture control points.
 2. Recompute the local CAD-to-lab correction.
 3. Compare against the stored baseline correction.
-4. Accept the session only if frame drift is ≤ 0.50 mm translation and ≤ 0.30 deg rotation.
+4. Accept the session only if frame drift is $\leq 0.50$ mm translation and $\leq 0.30$ deg rotation.
 
 If the verification fails, re-seat the fixture and re-run the full probing workflow from Section 10.1.
 

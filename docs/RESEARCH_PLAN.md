@@ -191,7 +191,7 @@ Formal test: **TOST (Two One-Sided Tests)** for equivalence [[1]](REFERENCES_CON
 
 **ABB YuMi IRC5** (dual-arm collaborative robot):
 
-Key ground truth parameters: path repeatability RT = 0.10 mm, path accuracy AT ≤ 1.36 mm (ISO 9283 worst-case); RP = ±0.02 mm applies to static points only. Full specification in [docs/HARDWARE_PAYLOAD.md](HARDWARE_PAYLOAD.md) §1.
+Key ground truth parameters: path repeatability $RT = 0.10$ mm, path accuracy $AT \leq 1.36$ mm (ISO 9283 worst-case); $RP = \pm 0.02$ mm applies to static points only. Full specification in [docs/HARDWARE_PAYLOAD.md](HARDWARE_PAYLOAD.md) §1.
 
 > For dynamic residual comparisons, the bounding mechanical uncertainty is path repeatability (0.10 mm) and path accuracy (up to 1.36 mm). Pose repeatability ($\pm0.02$ mm) applies only to static points. This distinction must be stated explicitly in any publication.
 
