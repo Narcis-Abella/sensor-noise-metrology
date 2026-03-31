@@ -1,0 +1,291 @@
+# Context for Claude Code: CAD-Based Geometric Reference System
+
+DO NOT commit this file to the repo. Internal context only.
+
+Date: 2026-03-30
+
+---
+
+## What changed and why
+
+The original study design used hand-eye calibration (AX=XB, ≥30 poses) to determine the
+rigid transform between the YuMi flange and each sensor's measurement frame. This has been
+replaced entirely by a CAD-based geometric reference system. The hand-eye AX=XB procedure
+is removed from all documents.
+
+The key insight: using the sensor being characterized to verify its own pose is a circular
+dependency. The new system eliminates this by deriving all geometry from mechanical design.
+
+---
+
+## New system: how it works
+
+### 1. Sensor fixtures (T_sensor→flange)
+
+- Each sensor is mounted to the YuMi flange via a dedicated 3D-printed fixture
+- Geometry designed in SolidWorks from the sensor's published CAD + YuMi flange spec
+- T_sensor→flange is known by CAD, not derived from calibration
+- Uncertainty budget contributions:
+  - Fixture nominal tolerance (from SolidWorks design) — Type B, TBD per fixture
+  - Fixture measured tolerance (caliper measurement of printed piece) — Type B, ± ? mm TBD by printer (unvertainty pending to be evaluated and justificated)
+- CAD files and caliper logs are published outputs of the study
+
+### 2. Sensor frame offsets (per sensor)
+
+The CAD transform gives the housing pose. Additional corrections:
+
+- IMU (WT901C, ICM-40609, BMI055): inertial frame coincides with housing to within
+  published tolerances. No correction needed.
+- Livox Mid-360: point cloud frame origin = optical center of Risley prism system.
+  Offset relative to housing is published in Livox technical documentation.
+  Applied as a fixed correction to T_sensor→flange.
+- RealSense D455: optical frame origin and intrinsic parameters from Intel factory
+  calibration, accessible via RealSense SDK. No manual intrinsic calibration required.
+  Factory intrinsics used directly; nominal accuracy declared in uncertainty budget.
+
+### 3. Target pose characterization (contact probing)
+
+To know where the targets (AprilTag boards, reference planes) are in world coordinates:
+
+- A conical contact tip is mounted to the YuMi flange via a CAD-known fixture
+- Tip touches ≥3 non-collinear reference points on each target
+- YuMi FK gives 3D coordinates of each contact point in world frame (RT = 0.10mm)
+- 6DOF pose of target reconstructed analytically from ≥3 points
+- Performed once before each session, with target mechanically fixed
+- Contact features are geometrically unambiguous (machined edges or conical indentations,
+  not printed surfaces)
+
+For targets beyond YuMi reach (e.g. far walls for LiDAR):
+
+- Laser rangefinder mounted in CAD-known fixture on the flange
+- At each YuMi pose, beam origin and direction are known in world coordinates
+- 1D distance + known TF → 3D point; ≥3 non-collinear points → full target pose
+- Whether variable-distance targets are needed is pending decision
+
+### 4. Probing repeatability characterization
+
+- Within-session: ≥10 repeated independent touches on the same reference point
+  → standard deviation of probing procedure (Type A)
+- Cross-session: same procedure at start of each session → remounting uncertainty (Type A)
+- Acceptance criterion: cross-session deviation < ?mm translation, < ?° rotation
+  relative to previous session (uncertainy pending evaluation and justiifcaion)
+
+### 5. Residual human operator contribution
+
+Manual guidance of contact tip introduces a small operator contribution. This is:
+
+- NOT eliminated
+- Quantified via the probing repeatability protocol (§4 above)
+- Declared in uncertainty budget as Type A contributor
+
+---
+
+## Updated uncertainty budget (replaces hand-eye rows in METHODOLOGY §2.5)
+
+| Contributor                          | Source                        | Magnitude          | Type   |
+|--------------------------------------|-------------------------------|--------------------|--------|
+| YuMi path repeatability (RT)         | ABB spec, ISO 9283            | 0.10 mm            | Type B |
+| YuMi path accuracy (AT)              | ABB spec, ISO 9283 worst-case | ≤ 1.36 mm          | Type B |
+| CAD fixture nominal tolerance        | SolidWorks design             | TBD per fixture    | Type B |
+| Fixture dimensional measurement      | Caliper, per piece            | ±?       mm TBD    | Type B |
+| Contact tip probing — within session | Measured, ≥10 repetitions     | TBD                | Type A |
+| Contact tip probing — cross-session  | Measured, per-session         | TBD                | Type A |
+| Operator contact tip placement       | Human, declared               | TBD                | Type A |
+| Laser rangefinder 1D uncertainty     | Instrument spec               | TBD                | Type B |
+| Temporal synchronization (PTP)       | < 1µs → < 1µm at T3           | Negligible         | Type B |
+| Temporal synchronization (NTP)       | ~0.2ms → ~0.02mm at T2        | Declared           | Type B |
+| Cable routing on arm                 | Declared, mitigated           | Declared           | Type B |
+
+REMOVE from budget: "Hand-eye calibration — 0.2–1mm translation, 0.1–0.3° rotation"
+REMOVE from budget: "Hand-eye cross-session drift"
+
+---
+
+## Changes required per document
+
+### README.md
+
+- §2 Hardware: add one sentence stating that T_sensor→flange is known by CAD-derived
+  fixtures, not by hand-eye calibration. Remove any mention of AX=XB.
+- §9 Known Limitations: remove "Hand-eye cross-session drift" bullet entirely.
+  Replace with a brief note on fixture dimensional tolerance as the mounting uncertainty
+  contributor, declared and measured per session.
+
+### METHODOLOGY.md
+
+- §2.5 Ground Truth Uncertainty Budget: replace the hand-eye row(s) with the new rows
+  from the updated budget table above.
+- §3.2 (Hand-eye calibration subsection, currently describing AX=XB protocol):
+  Rewrite entirely. New content:
+  "Sensor-to-flange transforms are derived from CAD-designed 3D-printed fixtures.
+  The AX=XB iterative calibration procedure is not used. Target poses are characterized
+  via contact probing with a tip fixture before each session (see §X). Fixture tolerances
+  and probing repeatability enter the uncertainty budget as Type A and Type B contributors
+  respectively (see §2.5)."
+- §5.1 Residual Definition: remove the sentence "Applying the hand-eye transform to
+  express a_true(t), omega_true(t) in the sensor frame." Replace with: "Applying the
+  CAD-derived T_sensor→flange (with sensor frame offset correction per sensor type, see
+  §2.5) to express a_true(t), omega_true(t) in the sensor frame."
+
+### RESEARCH_PLAN.md
+
+- §5.1 Ground Truth System: remove the sentence "Reference frame: mechanical flange
+  (requires hand-eye calibration to sensor optical/inertial center; see METHODOLOGY.md)"
+  Replace with: "Reference frame: mechanical flange. Sensor-to-flange transforms are
+  derived from CAD-designed fixtures; target poses are characterized via contact probing
+  before each session. See METHODOLOGY.md §3.2."
+- §3.5 (or wherever hand-eye protocol is cited as a differentiator vs mobile platforms):
+  Update language to reflect CAD-based approach.
+
+---
+
+---
+
+## Scope of variables: what is characterized and what is not
+
+### Where each part goes in the repo
+
+**RESEARCH_PLAN.md §2 (Scope and Strategic Reorientation):**
+Add the consolidated scope table and scope boundary statement at the end of the section.
+This gives the "what and why" at a high level.
+
+**METHODOLOGY.md:**
+Add a new section §4.1 "Variables In Scope" (before the existing M1-M4 table) with the
+full per-sensor tables including justifications.
+
+---
+
+### Scope boundary rule (for both documents)
+
+**In scope:** Variables intrinsic to the sensor's physical measurement principle,
+controllable or observable under 6DOF kinematic ground truth in a laboratory setting.
+
+**Out of scope:** Variables external to the sensor, environment-dependent, or
+platform-specific. Explicitly deferred to future work.
+
+---
+
+### IMU (WT901C, ICM-40609, BMI055)
+
+| Variable | Status | Justification |
+
+|----------|--------|---------------|
+| Thermal drift (bias vs temperature) | IN | Intrinsic; measurable via static logs with thermal monitoring |
+| Kinematic state-dependent noise (g-sensitivity, acceleration, jerk, angular rate) | IN | Captured in M4 via YuMi dynamic residuals |
+| Cross-axis sensitivity | IN | Intrinsic; extracted from Six-Position Test at negligible additional cost |
+| Quantization noise | IN | Deterministic from bit resolution and measurement range specs |
+| Vibration from external mechanical sources | OUT — Future work | External, platform-dependent; not reproducible across setups. M4 kinematic terms provide a lower bound. |
+| Magnetic interference | OUT — Future work | External, environment-dependent |
+| Power supply noise | OUT — Future work | External, platform-dependent |
+| Aging / long-term drift | OUT — Future work | Requires longitudinal study over months to years |
+
+Note: The YuMi induces minimal structural vibration by design. M4 captures kinematic
+state-dependent noise, not high-frequency mechanical oscillation. M4 is a lower bound
+on operational noise; real deployment platforms will exceed this floor. Declared explicitly.
+
+---
+
+### LiDAR 2D Mechanical (RPLiDAR A2M12)
+
+| Variable | Status | Justification |
+
+|----------|--------|---------------|
+| Thermal range drift | IN | Intrinsic; characterizable via static wall sessions with thermal monitoring |
+| Range-dependent noise | IN | Intrinsic; measurable by varying sensor-to-wall distance |
+| Incidence angle dependence | IN | Intrinsic to beam geometry; controllable by rotating sensor relative to reference wall |
+| Kinematic-induced point scatter (M4) | IN | Captured via YuMi dynamic sessions |
+| Quantization noise | IN | Deterministic from range resolution specs |
+| Material reflectivity | OUT — Future work | External, surface-dependent |
+| Ambient light interference | OUT — Future work | External, environment-dependent |
+| Multi-return / crosstalk | OUT — Future work | Requires complex multi-surface environments |
+
+---
+
+### LiDAR 3D Solid-State (Livox Mid-360)
+
+| Variable | Status | Justification |
+
+|----------|--------|---------------|
+| Thermal range drift | IN | Intrinsic; same protocol as RPLiDAR |
+| Range-dependent noise | IN | Intrinsic; measurable at multiple wall distances |
+| Scan pattern geometry (Rosetta non-repetitive) | IN | Core software contribution — Gazebo Fortress plugin reproduces Risley prism scan topology |
+| Kinematic-induced point scatter (M4) | IN | Captured via YuMi dynamic sessions |
+| Quantization noise | IN | Deterministic from range resolution specs |
+| Incidence angle as independent variable | OUT — declared | Mid-360 covers all angles simultaneously by design. Angle effects are implicitly mixed into range residuals but cannot be isolated without a goniometric setup. Declared as contributor to residual variance. Future work: dedicated goniometric characterization. |
+| Material reflectivity | OUT — Future work | External, surface-dependent |
+| Ambient light interference | OUT — Future work | External, environment-dependent |
+| Multi-return / crosstalk | OUT — Future work | Requires complex multi-surface environments |
+
+Note on ICM-40609: No independent published Allan Variance characterization exists for
+this IMU. The AVAR coefficients from Session C static logs are an original metrological
+contribution of this study.
+
+---
+
+### RGB-D Camera (Intel RealSense D455)
+
+| Variable | Status | Justification |
+
+|----------|--------|---------------|
+| Thermal intrinsic drift | IN | Intrinsic; characterized via AprilTag pose drift during 3–4h static observation |
+| IR projector fixed-pattern noise | IN | Intrinsic; observable in static sessions as spatially structured depth residuals |
+| Depth accuracy vs range | IN | Intrinsic; measurable at multiple distances from reference plane |
+| Motion blur at high velocity | IN | Intrinsic to exposure time; captured in T3 dynamic sessions |
+| Kinematic-induced noise (M4) | IN | Captured via YuMi dynamic sessions |
+| Quantization noise | IN | Deterministic from depth resolution specs |
+| Ambient light / sun blinding | OUT — Future work | External, environment-dependent |
+| Surface reflectivity / transparency | OUT — Future work | External, surface-dependent |
+| Rolling shutter | OUT — Future work | High modeling complexity; disproportionate effort relative to contribution in V1 |
+
+---
+
+### Consolidated scope table (goes in RESEARCH_PLAN §2)
+
+| Variable | IMU | LiDAR 2D | LiDAR 3D | RGB-D |
+
+|----------|-----|----------|----------|-------|
+| Thermal drift | ✅ | ✅ | ✅ | ✅ |
+| Kinematic state-dependent noise (M4) | ✅ | ✅ | ✅ | ✅ |
+| Range-dependent noise | — | ✅ | ✅ | ✅ |
+| Incidence angle | — | ✅ | ❌ declared | — |
+| Scan pattern geometry | — | — | ✅ | — |
+| Cross-axis sensitivity | ✅ | — | — | — |
+| IR fixed-pattern noise | — | — | — | ✅ |
+| Motion blur | — | — | — | ✅ |
+| Quantization | ✅ | ✅ | ✅ | ✅ |
+| Vibration (external) | ❌ FW | ❌ FW | ❌ FW | ❌ FW |
+| Material reflectivity | ❌ FW | ❌ FW | ❌ FW | ❌ FW |
+| Ambient light | ❌ FW | ❌ FW | ❌ FW | ❌ FW |
+| Magnetic interference | ❌ FW | — | — | — |
+| Power supply noise | ❌ FW | ❌ FW | ❌ FW | ❌ FW |
+| Aging / long-term drift | ❌ FW | ❌ FW | ❌ FW | ❌ FW |
+| Rolling shutter | — | — | — | ❌ FW |
+| Multi-return / crosstalk | — | ❌ FW | ❌ FW | — |
+
+✅ = In scope | ❌ FW = Out of scope, future work | ❌ declared = Out of scope, contributor declared in uncertainty budget | — = Not applicable
+
+---
+
+### Scope boundary statement (goes verbatim in RESEARCH_PLAN §2, end of section)
+
+"This study characterizes sensor noise variables that are intrinsic to the sensor's
+physical measurement principle and controllable under 6DOF kinematic ground truth in a
+laboratory setting. External environmental variables — including material reflectivity,
+ambient light interference, magnetic fields, power supply noise, and mechanical vibration
+from operational platforms — are explicitly out of scope and identified as structured
+directions for future work. The kinematic state-dependent noise model (M4) characterizes
+the effect of controlled 6DOF motion on sensor output and represents a lower bound on
+dynamic operational noise; real deployment platforms will exceed this floor due to
+mechanical vibration sources not modeled here. This limitation is declared explicitly in
+the uncertainty budget."
+
+---
+
+## What does NOT change
+
+- The TOST framework, noise models M1-M4, and experimental protocol are unchanged
+- YuMi is still the kinematic ground truth
+- Session structure (T1/T2/T3, MIX/CW/CCW blocks) is unchanged
+- The open question of variable-distance targets for LiDAR is pending and should NOT
+  be resolved in the documents yet — mark as TBD where relevant
+  

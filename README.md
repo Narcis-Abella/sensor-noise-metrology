@@ -1,362 +1,258 @@
-# Metrological Validation of Visual-LiDAR SLAM Sensors
+# Metrological Characterization of Robotic Sensor Noise Models: A TOST-Based Equivalence Framework for Simulation Validation
 
-<div align="justify">
-
-**Institution:** IQS School of Engineering (Universitat Ramon Llull), Barcelona  
-**Author:** Narcís Abella  
-**Supervisor:** Dr. Antonio Gabino Salazar Martín  
-**Status:** Design phase — pending experimental execution  
-**Last updated:** 2026-03-06
-
-</div>
+**Institution:** IQS School of Engineering (Universitat Ramon Llull), Barcelona
+**Author:** Narcís Abella
+**Supervisor:** Dr. Antonio Gabino Salazar Martín
+**Status:** Design phase (pending experimental execution)
+**Last updated:** 2026-03-28
 
 ---
 
-## 0. Why this study matters
+## 1. What this study is and why it exists
 
-<div align="justify">
+Robotic simulators (Gazebo, Isaac Sim, Webots) use placeholder sensor noise parameters by design. The Gazebo documentation explicitly states that noise values are approximate and intended to be replaced by hardware-derived data. In practice, almost no published study performs that replacement rigorously. The dominant workaround, domain randomization, does not fix the problem: randomizing a structurally incorrect noise model generates a distribution of incorrect models, not a distribution that brackets reality [[55]](docs/REFERENCES_CONSOLIDATED.md). Aljalbout et al. [[56]](docs/REFERENCES_CONSOLIDATED.md) identify unvalidated sensor models as a structurally distinct and unresolved source of the sim-to-real gap, separate from dynamics, contact, and visual rendering. Downstream applications that depend on sensor fidelity in simulation, such as SLAM algorithm evaluation, inherit this unresolved gap.
 
-Robotics researchers rely heavily on simulation to design and tune SLAM 
-systems before deployment. The dominant response to the sim-to-real gap — 
-domain randomisation — has a well-documented failure mode: robots learn to 
-exploit simulator inconsistencies rather than solve the actual task (Muratore 
-et al., 2022; Aljalbout et al., *Annual Review*, 2026). The root cause is 
-not insufficient randomisation — it is that sensor models are never validated 
-against real hardware. A robot trained on an unvalidated sensor model doesn't 
-learn robustness; it learns to assume the simulator's artefacts.
+Classical NHST cannot demonstrate equivalence: a non-significant result (p > 0.05) supports only the claim that the experiment lacked power to detect a real gap, not that the simulation is adequate. TOST inverts the burden of proof: the model must demonstrate equivalence within a pre-specified margin, not merely fail rejection [[4]](docs/REFERENCES_CONSOLIDATED.md) [[5]](docs/REFERENCES_CONSOLIDATED.md). Work in adjacent domains also uses practical-equivalence ideas [[6]](docs/REFERENCES_CONSOLIDATED.md). To the best of our knowledge, no prior work has applied this logic directly at the sensor residual level in robotics.
 
-This study asks a very concrete question:
+This study closes that gap. It uses an ABB YuMi collaborative arm (path repeatability RT = 0.10 mm [[43]](docs/REFERENCES_CONSOLIDATED.md)) as kinematic ground truth to characterize the noise statistics of three sensor families (IMU, LiDAR, RGB-D camera) under controlled dynamic conditions. It builds a family of noise models (M1 through M4) from those measurements and validates them using Two One-Sided Tests (TOST) with equivalence margins defined per sensor type in physical signal units, specified before any data collection. Equivalence is declared only when the 90% confidence interval for the mean sensor residual difference lies entirely within the pre-specified margin.
 
-> *If we take sensor modelling as seriously as metrology does — using 
-> a calibrated robot arm as ground truth and detailed noise models — 
-> can we demonstrate statistically that simulation is sufficiently 
-> faithful to real hardware for design decisions?*
+The primary outcome is sensor residuals: measured minus true (YuMi-derived) for each sensor type.
 
-The word *demonstrate* is deliberate. Current sim-to-real validation 
-practice compares RMSE values or applies significance tests designed 
-to detect differences — not to demonstrate sufficiency. A 
-non-significant result (p > 0.05) does not mean the simulation is 
-good enough; it may simply mean the sample was too small to detect a 
-real gap. No existing study applies formal equivalence testing with 
-pre-specified margins to sensor model validation in robotics. This 
-study does.
+| Sensor                                        | Residual type                                                                     | Physical interpretation                                     |
+| --------------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| LiDAR (RPLiDAR A2M12, Livox Mid-360)          | Point-to-plane residuals against a reference plane                                | Thermal time-of-flight drift; vibration-induced range noise |
+| IMU (WT901C, Mid-360 internal, D455 internal) | Angular rate and linear acceleration residuals against YuMi kinematic derivatives | Bias; g-sensitivity; state-dependent variance               |
+| Camera (RealSense D455)                       | AprilTag board pose drift under static observation                                | Thermal intrinsic drift; fixed-pattern noise                |
 
-This matters for two reasons:
-- **For practice:** labs and companies make design decisions (sensor 
-  selection, algorithm tuning, parameter choices) based on simulation. 
-  If the sensor models are naïve, those decisions can be systematically 
-  biased — and there is currently no rigorous way to know how biased.
-- **For research:** many Sim2Real papers study algorithms and 
-  environments, but far fewer quantify the role of sensor model 
-  fidelity itself in the Reality Gap, and none do so with formal 
-  equivalence testing.
-
-Several works already cover individual pieces of this puzzle:
-- **IMUs:** [Furrer et al., 2016](docs/RESEARCH_PLAN.md#9-references) 
-  showed that Allan Variance coefficients must be derived from real 
-  hardware logs — not datasheets — to replicate inertial drift in 
-  simulation.
-- **LiDARs:** [Liu & Zhang, 2021](docs/RESEARCH_PLAN.md#9-references) 
-  characterised the degeneracy risks of solid-state Livox sensors and 
-  their non-repetitive scan patterns.
-- **Dynamic metrology:** [Lin et al., 2022 
-  (*Measurement*)](docs/RESEARCH_PLAN.md#9-references) validated a 
-  dynamic measurement system with a laser tracker as ground truth using 
-  Allan analysis and fault-tolerant sensor fusion.
-- **State-dependent covariance:** learning-based approaches 
-  (VIO-DualProNet, AirIMU) already model IMU noise covariance as a 
-  function of kinematic state — demonstrating that the concept is 
-  physically motivated and practically useful.
-
-What is missing — and what this study contributes — is a single, 
-metrologically grounded framework that:
-1. Uses a sub-millimetre industrial robot (ABB YuMi, path repeatability 
-   0.10 mm) as kinematic ground truth for dynamic sensor 
-   characterisation.
-2. Builds an explicit, physically interpretable parametric noise model 
-   (M4) whose variance depends on measured temperature and kinematic 
-   state — fitted from residuals against the YuMi reference, not 
-   learned from black-box data.
-3. Implements M4 in a Gazebo Fortress plugin for the Livox Mid-360 
-   non-repetitive scan pattern — a combination with no existing 
-   open-source solution for ROS 2 Humble.
-4. Validates the complete pipeline using **formal statistical 
-   equivalence testing (TOST)** with pre-specified margins derived from 
-   system requirements: metrological simulation is declared equivalent 
-   to real hardware only if the 90% confidence interval for the mean 
-   ATE difference falls within those margins — not from post-hoc 
-   inspection of RMSE values.
-5. Tests the full pipeline across multiple tight-coupled SLAM backends 
-   to ensure conclusions are not an artefact of a single estimator's 
-   tolerance to noise model mismatch.
-
-M4 is not proposed as a conceptually new type of noise model — the 
-idea of state-dependent covariance already exists. Its contribution 
-here is different: it provides sufficient simulation fidelity for the 
-equivalence test to have statistical power. Without a model of this 
-precision, TOST cannot distinguish a good simulator from a bad one 
-within margins that are meaningful for system design. The formula, 
-candidate formulations, and physical justification are in 
-[`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) §5.
-
-The study does not assume that M4 is necessary. The four noise model configurations (M1–M4) form an epistemic ladder: from current practice (M1, datasheet) to metrologically correct but low-cost (M2, static Allan) to operationally refined (M3, in-session static) to fully state-dependent (M4, kinematic-residual and thermal). The TOST is applied at every rung. If M2 already achieves statistical equivalence within δ, that is the primary result: it means that a rigorous static Allan characterisation — accessible to any laboratory with a vibration-isolated bench and a 10–12 hour log — resolves a problem the community has spent decades either ignoring or over-complicating. M4 then serves as a positive control: without it, a passing result at M2 could be an artefact of the SLAM backends' insensitivity to high-frequency noise rather than genuine sensor model fidelity. The hierarchy is not redundant — it is what makes any result at any rung interpretable.
-
-</div>
+The detailed scientific rationale and hypotheses are in [docs/RESEARCH_PLAN.md](docs/RESEARCH_PLAN.md).
 
 ---
 
-## 1. What this project is about
+## 2. Hardware and ground truth
 
-<div align="justify">
+### Ground truth platform
 
-This repository contains the design of a stand‑alone metrological study on Visual–LiDAR SLAM. Its goal is simple to state:
+ABB YuMi IRB 14000 IRC5 dual-arm collaborative robot. Provides kinematic ground truth for all dynamic sessions via RobotStudio-exported time-stamped flange poses.
 
-> Quantitatively measure how close a simulator can get to real sensors if we model their noise and scanning behaviour with the same level of care used in instrumentation and metrology.
+| Parameter                 | Value                   | Source                                                                |
+| ------------------------- | ----------------------- | --------------------------------------------------------------------- |
+| Path repeatability (RT)   | 0.10 mm                 | ABB spec, ISO 9283 [[85]](docs/REFERENCES_CONSOLIDATED.md)            |
+| Path accuracy (AT)        | ≤ 1.36 mm (worst-case)  | ABB spec [[43]](docs/REFERENCES_CONSOLIDATED.md), ISO 9283 conditions |
+| Pose repeatability (RP)   | ± 0.02 mm               | Static points only                                                    |
+| Metrological traceability | Type B (datasheet)      | No calibration certificate at IQS                                     |
 
-Concretely:
-- We use an ABB YuMi collaborative robot as kinematic ground truth (path repeatability 0.10 mm; path accuracy up to 1.36 mm; pose repeatability ±0.02 mm at static points only) and RobotStudio as an independent trajectory predictor.
-- We characterise three sensor families: IMUs, LiDARs (2D mechanical and 3D solid‑state Livox Mid‑360) and an RGB‑D camera (RealSense D455).
-- We build a family of sensor noise models whose variance depends on:
-  - measured temperature (thermal state), and
-  - kinematic state of the sensor (linear and angular velocity, acceleration, jerk, angular acceleration).
-- We then compare, for multiple SLAM systems, three kinds of data:
-  1. Real hardware logs on the YuMi,
-  2. Standard simulation (Gazebo defaults / manufacturer specs),
-  3. Metrological simulation (our noise + scanning models).
+Sensor-to-flange transforms are derived from CAD-designed 3D-printed fixtures. Target poses in the laboratory frame are characterized via contact probing before each session (see §3.2).
 
-The three conditions are compared using formal statistical equivalence 
-testing (TOST): we declare metrological simulation equivalent to real 
-hardware only if the 90% confidence interval for the mean difference 
-in ATE falls within a pre-specified margin δ derived from system 
-requirements — not from post-hoc inspection of the data.
+### Sensors under test
 
-The detailed scientific rationale and hypotheses live in [`docs/RESEARCH_PLAN.md`](docs/RESEARCH_PLAN.md).
+Sessions A-D cover one sensor configuration each: IMU-only, 2D LiDAR, 3D LiDAR, visual-inertial.
 
-</div>
+| ID  | Sensor                        | Type                       | Primary session |
+| --- | ----------------------------- | -------------------------- | --------------- |
+| S1  | WitMotion WT901C (MPU9250)    | IMU, 200 Hz                | A               |
+| S2  | RPLiDAR A2M12                 | 2D mechanical LiDAR        | B               |
+| S3  | Livox Mid-360 (ICM-40609)     | 3D solid-state LiDAR + IMU | C               |
+| S4  | Intel RealSense D455 (BMI055) | RGB-D + IMU                | D               |
 
----
+The ICM-40609 inside the Livox Mid-360 has no independent published Allan Variance characterization in the literature. The AVAR coefficients produced by this study from Session C static logs are an original metrological contribution.
 
-## 2. Scope and possible extensions
-
-<div align="justify">
-
-This study was originally conceived as the sensor‑level step of a broader research line on Sim‑to‑Real Visual–LiDAR SLAM (with possible extensions to a mobile‑platform Reality Gap benchmark and large‑scale SLAM optimisation in simulation).  
-In the context of this degree project, however, only the metrological validation with YuMi ground truth is in scope. Any mobile‑platform benchmark or automatic optimisation stage is treated strictly as possible future work, not as a commitment of this project.
-
-For a compact overview of the current study’s goals and contributions, see [`docs/RESEARCH_PLAN.md`](docs/RESEARCH_PLAN.md), sections 1–2 and 6.
-
-</div>
+Geometry, payload mass, and arm viability analysis are in [docs/HARDWARE_PAYLOAD.md](docs/HARDWARE_PAYLOAD.md).
 
 ---
 
-## 3. Hardware and ground truth at a glance
+## 3. Experimental design
 
-<div align="justify">
+Full protocol details are in [docs/EXPERIMENTAL_DESIGN.md](docs/EXPERIMENTAL_DESIGN.md).
 
-Ground truth platform
-- ABB YuMi IRC5 dual‑arm cobot  
-- Path repeatability 0.10 mm; path accuracy up to 1.36 mm; pose repeatability ±0.02 mm at static points only.  
-- Trajectories programmed in RobotStudio and exported as time‑stamped poses.
+### 3.1 Stage 1: Static characterization
 
-Sensors under test (sessions A–D by modality: IMU-only → 2D LiDAR → 3D LiDAR → visual‑inertial)
+All sensors are fixed and immobile. No robot arm involvement.
 
-</div>
+**IMUs (S1, S3-IMU, S4-IMU):**
 
-| ID | Sensor | Type | Role |
-|----|--------|------|------|
-| S1 | WitMotion WT901C (MPU9250) | IMU, 200 Hz | Reference IMU (Session A) |
-| S2 | RPLiDAR A2M12 | 2D LiDAR (mechanical) | 2D SLAM baseline (Session B) |
-| S3 | Livox Mid‑360 (ICM40609) | 3D LiDAR + IMU | Primary 3D LiDAR (Session C) |
-| S4 | Intel RealSense D455 (BMI055) | RGB‑D + IMU | Visual–inertial sensor (Session D) |
+- 10 to 12 h static logs per IMU on a vibration-isolated surface.
+- Allan Variance analysis extracts ARW, Bias Instability, and RRW per axis [[9]](docs/REFERENCES_CONSOLIDATED.md). The 10 to 12 h duration is a conservative engineering choice to improve RRW identifiability, not an absolute requirement in all setups [[11]](docs/REFERENCES_CONSOLIDATED.md).
+- Six-Position Test per IEEE Std 1293 [[83]](docs/REFERENCES_CONSOLIDATED.md) for scale factor and gravitational bias characterization.
+- Stationarity of each log verified via ADF or KPSS test before AVAR fitting. A non-stationary log (e.g., uncompensated thermal ramp) invalidates AVAR coefficients.
+- Minimum 20-minute powered warm-up before each log [[16]](docs/REFERENCES_CONSOLIDATED.md).
 
-<div align="justify">
+**LiDAR (S2, S3):**
 
-Geometry, payload and viability details are in [`docs/HARDWARE_PAYLOAD.md`](docs/HARDWARE_PAYLOAD.md).
+- Sensor faces a flat reference wall at fixed distance for 3 to 4 h.
+- Point-to-plane residuals tracked as a time series to characterize thermal time-of-flight drift.
 
-</div>
+**Camera (S4):**
 
----
+- D455 observes a static AprilTag board for 3 to 4 h.
+- AprilTag pose drift quantifies thermal deformation of intrinsic parameters and related depth-stability effects. Supporting evidence is partly direct and partly analogous from structured-light/IR imaging literature [[34]](docs/REFERENCES_CONSOLIDATED.md), [[37]](docs/REFERENCES_CONSOLIDATED.md).
 
-## 4. High‑level experimental design
+Stage 1 measurements produce the M2 (long-term Allan) noise model parameters and the thermal baseline for M4.
 
-<div align="justify">
+### 3.2 Stage 2: Dynamic sessions on YuMi
 
-The experimental design has two stages; full details live in [`docs/EXPERIMENTAL_DESIGN.md`](docs/EXPERIMENTAL_DESIGN.md).
+Four sessions, one sensor configuration per session.
 
-</div>
+| Session | Sensor              | Motion              | Residual computation                                                            |
+| ------- | ------------------- | ------------------- | ------------------------------------------------------------------------------- |
+| A       | WT901C (S1)         | 3D                  | YuMi flange angular rate + acceleration via spline differentiation              |
+| B       | RPLiDAR A2M12 (S2)  | 2D planar (Z fixed) | YuMi flange pose projected to planar motion                                     |
+| C       | Livox Mid-360 (S3)  | 3D                  | YuMi flange pose + CAD-derived T_sensor→flange                                  |
+| D       | RealSense D455 (S4) | 3D                  | YuMi flange pose + CAD-derived T_sensor→flange; fixed AprilTag board for camera |
 
-### 4.1 Stage 1 — Static characterisation
+**Session structure (identical across A-D):**
 
-<div align="justify">
+1. 60 s static (AVAR baseline + thermal state reference)
+2. Block MIX: CW/CCW/CW alternating
+3. Cooldown
+4. Block CW
+5. Cooldown
+6. Block CCW
+7. 60 s static (thermal state at end)
 
-Performed without the robot arm:
-- IMUs: 10–12 h static logs per IMU. Allan Variance (ARW, Bias Instability, RRW) + Six‑Position Test (IEEE Std 1293).
-- LiDARs: sensor facing a flat wall. We track how point‑to‑plane residuals drift over time (thermal ToF drift).
-- Camera: RealSense D455 observing a static AprilTag board for several hours. We quantify pose drift of the board (thermal deformation of intrinsics and FPN).
+Three trajectory profiles per session are used: T1 (smooth), T2 (moderate), and T3 (aggressive). Canonical session-specific nominal velocity and angular-rate values are defined in [docs/EXPERIMENTAL_DESIGN.md](docs/EXPERIMENTAL_DESIGN.md). The TOST primary endpoint uses T2. T3 is held out as the generalization check for M4.
 
-These logs feed the static parts of the noise models (manufacturer vs. long‑term Allan vs. in‑session static).
+**Sensor-to-flange transform (CAD-based):**
+Sensor-to-flange transforms are derived from CAD-designed 3D-printed fixtures (SolidWorks geometry from the sensor's published mechanical CAD and the YuMi flange specification). Per-sensor frame corrections are applied as fixed offsets: the Livox Mid-360 point cloud frame origin offset from the housing is taken from Livox technical documentation; the RealSense D455 optical frame origin and intrinsic parameters are taken from Intel factory calibration via the RealSense SDK. Before each session, target poses in the laboratory frame are characterized via contact probing: a conical tip fixture (CAD-known geometry) is mounted on the flange, ≥3 non-collinear reference points on each target are touched, and YuMi FK (RT = 0.10 mm) gives their 3D world-frame coordinates. Fixture nominal tolerances and per-piece caliper measurements enter the uncertainty budget as Type B contributors; probing repeatability (within-session ≥10 touches; cross-session) enters as a Type A contributor (see §9 and METHODOLOGY.md §2.5).
 
-</div>
-
-### 4.2 Stage 2 — Dynamic sessions on YuMi
-
-<div align="justify">
-
-Four sessions, one per sensor configuration:
-
-</div>
-
-| Session | Sensor | Motion DOF | Notes |
-|---------|--------|-----------|-------|
-| A | WitMotion WT901C | 3D | IMU‑only reference |
-| B | RPLiDAR A2M12 | 2D (yaw only) | Planar LiDAR SLAM |
-| C | Livox Mid‑360 | 3D | 3D LiDAR‑IMU with Rosetta pattern |
-| D | RealSense D455 | 3D | Visual–inertial (RGB‑D + IMU) |
-
-<div align="justify">
-
-Each session follows the same pattern:
-- 60 s static → Block MIX (CW/CCW/CW) → cooldown → Block CW → cooldown → Block CCW → 60 s static.
-- Three trajectory profiles (smooth / moderate / aggressive) per session (T1/T2/T3), re‑used across sensors.
-
-The static 60 s segments inside dynamic runs are also used to characterise thermal behaviour in working conditions.
-
-</div>
+**Temporal synchronization:**
+PTP IEEE 1588 is the preferred synchronization method (< 1 µs accuracy). At 100 mm/s linear velocity, a 10 ms timing offset introduces 1 mm spatial projection error [[52]](docs/REFERENCES_CONSOLIDATED.md). NTP (approximately 0.2 ms accuracy) is the documented fallback; residual jitter enters the ground truth uncertainty budget as a declared contributor.
 
 ---
 
-## 5. Noise models — from datasheet to kinematic residuals
+## 4. Noise models M1-M4
 
-<div align="justify">
+Four noise model configurations are evaluated in simulation. They form a hierarchy from current community practice to metrologically refined.
 
-The simulator will be run under four noise model configurations (see [`docs/SLAM_BACKENDS.md`](docs/SLAM_BACKENDS.md) and [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) §4–5):
+| ID  | Name                         | Parameters                                                                   | Source                                |
+| --- | ---------------------------- | ---------------------------------------------------------------------------- | ------------------------------------- |
+| M1  | Manufacturer                 | ARW, BI from datasheet; range sigma from datasheet                           | Sensor datasheets, community defaults |
+| M2  | Static Allan                 | ARW, BI, RRW from 10 to 12 h static logs                                     | Stage 1 AVAR                          |
+| M3  | In-Session Static            | ARW, BI, RRW from 60 s static windows within each dynamic session            | Stage 2 pre/post-block statics        |
+| M4  | Kinematic-Residual + Thermal | sigma^2(t) = f(T, v, omega, a, d-omega/dt, da/dt) fitted from YuMi residuals | Stage 2 dynamic data                  |
 
-1. M1 — Manufacturer: values from datasheets or typical community practice.
-2. M2 — Static Allan: coefficients (ARW, BI, RRW) from long static logs (Stage 1).
-3. M3 — In‑Session Static: Allan analysis on concatenated 60 s static windows within dynamic sessions (captures warm‑up and mounting effects).
-4. M4 — Kinematic‑Residual + Thermal:
-   - First, we reconstruct the true kinematics of the sensor from YuMi ground truth (splines + derivatives + hand‑eye).  
-   - Then we compute residuals (measured − true) for IMU, LiDAR and camera.  
-   - Finally, we fit a model where the noise variance depends on measured temperature and on kinematic state:
-     - IMU: rotation, acceleration, jerk, angular acceleration (g‑sensitivity, vibration).  
-     - LiDAR: velocity, rotation, acceleration, jerk (motion blur, ToF drift, vibration).  
-     - Camera: thermal drift of intrinsics; velocity and rotation for motion blur.
+Manufacturer datasheets specify noise under ideal conditions: static sensor, thermally stabilized, no mechanical load. In practice, simulation pipelines often need empirically tuned inertial noise to match operational behavior [[10]](docs/REFERENCES_CONSOLIDATED.md). Lethander & Taylor [[14]](docs/REFERENCES_CONSOLIDATED.md) support treating static AVAR as a conservative lower-bound reference for some operational conditions. M1 is retained as a baseline to quantify the gap against empirically fitted models, not as a claimed operationally sufficient model.
 
-</div>
+The hierarchy has a physical interpretation grounded in measurement science. Static AVAR (M2) provides a lower bound on operational noise: operational conditions (vibration, g-sensitivity, thermal cycling) always increase noise variance above the static floor [[14]](docs/REFERENCES_CONSOLIDATED.md). M3 captures warm-up and mounting effects within a session. M4 adds the kinematic- and temperature-dependence fitted from dynamic residuals.
 
-### 5.1 Model M4: parametric state-dependent covariance for simulation fidelity
+**M4 is an enabler for the TOST, not the primary contribution.** Its purpose is to provide sufficient simulation fidelity for the equivalence test to have statistical power within margins that are physically meaningful for sensor design decisions. Without M4, a passing TOST at M2 or M3 could reflect estimator robustness to noise mismatches rather than genuine sensor model equivalence.
 
-<div align="justify">
+The TOST is applied at every rung M1 through M4. If M2 achieves equivalence within delta, that result is reported and interpreted on its own terms: a long-term static Allan Variance characterization, accessible to any laboratory with a vibration-isolated bench and a 10 to 12 h logging session, is sufficient.
 
-M4 is not proposed as a conceptually new noise model — state-dependent covariance estimation already exists in the literature via learning-based approaches (VIO-DualProNet, AirIMU). The contribution of M4 is different: it provides an explicit, physics-motivated parametric formula with identifiable coefficients that can be (a) fitted from residuals against a sub-millimetre kinematic reference, (b) interpreted physically per coefficient, and (c) injected into a Gazebo plugin with sufficient fidelity for TOST to have statistical power. Without a model of this precision, the equivalence test cannot distinguish between a good simulator and a bad one within meaningful margins.
+### 4.1 M4: state-dependent parametric covariance
 
-The aim is to demonstrate empirically which formulation fits the data, not to deduce it a priori. Several candidate formulas are proposed in [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md#54-candidate-formulas-for-the-kinematic-term-to-validate-empirically) §5.4; the experimental study will validate or discard each.
+$$\sigma^2(t) = \sigma^2_\text{static}(T(t)) + c_\omega \omega(t)^2 + c_a a(t)^2 + c_j \dot{a}(t)^2 + c_{\dot\omega} \dot{\omega}(t)^2$$
 
-<a id="m4-target-formula"></a>
+where $\sigma^2_\text{static}(T) = \sigma^2_0 \exp\bigl(\alpha (T - T_\text{ref})\bigr)$ is a project modeling choice informed by thermal IMU literature [[13]](docs/REFERENCES_CONSOLIDATED.md), and $c_\omega$, $c_a$, $c_j$, $c_{\dot\omega}$ are kinematic coefficients fitted from YuMi residuals.
 
-$\sigma^2(t) = f\bigl( T(t), \|v(t)\|, \|\omega(t)\|, \|a(t)\|, \|\dot{\omega}(t)\|, \|\dot{a}(t)\| \bigr)$
+Coefficients are fitted on trajectories T1 and T2. T3 is held out for a generalization check. Model selection uses AIC/BIC. Collinearity is assessed by VIF; threshold VIF < 10. Fallback if collinearity persists: ridge regression with leave-one-out cross-validation.
 
-where:
-- $T(t)$ is measured temperature (thermal state).
-- $\|v(t)\|$ is linear velocity magnitude.
-- $\|\omega(t)\|$ is angular velocity magnitude (rotation).
-- $\|a(t)\|$ is linear acceleration magnitude.
-- $\|\dot{\omega}(t)\|$ is angular acceleration magnitude.
-- $\|\dot{a}(t)\|$ is jerk magnitude (rate of change of linear acceleration).
+M4 is not a new category of noise model. Learning-based state-dependent covariance estimators already exist (VIO-DualProNet [[18]](docs/REFERENCES_CONSOLIDATED.md), AirIMU [[19]](docs/REFERENCES_CONSOLIDATED.md)). M4 differs in three respects: it is an explicit parametric formula with physically interpretable coefficients, fitted from a sub-millimetre kinematic reference rather than from uncontrolled training data, and directly injectable into a deterministic simulation plugin.
 
-The model is grounded in: static Allan Variance [\[1\]](docs/RESEARCH_PLAN.md#9-references), exponential thermal settling [\[11\]](docs/RESEARCH_PLAN.md#9-references), [\[12\]](docs/RESEARCH_PLAN.md#9-references), g-sensitivity and motion-dependent noise in MEMS [\[11\]](docs/RESEARCH_PLAN.md#9-references), residual-based identification with ground truth [\[13\]](docs/RESEARCH_PLAN.md#9-references), and robot-arm validation [\[10\]](docs/RESEARCH_PLAN.md#9-references). See [`docs/RESEARCH_PLAN.md`](docs/RESEARCH_PLAN.md) §3.6 and References for full citations.
-
-</div>
+Sensor-specific instantiations, candidate formula variants, and the identifiability protocol are in [docs/METHODOLOGY.md](docs/METHODOLOGY.md) §5.
 
 ---
 
-## 6. SLAM backends and comparison logic
+## 5. TOST equivalence framework
 
-<div align="justify">
+This is the primary scientific contribution of the study.
 
-SLAM algorithms are treated as measuring instruments: we use several per modality to avoid conclusions that depend on a single implementation. Using multiple backends also strengthens the statistical argument: if metrological simulation is declared equivalent to real hardware across FAST-LIO2, GLIM, and ORB-SLAM3 simultaneously, the conclusion is not an artefact of a single estimator's tolerance to noise model mismatch. The full list and matrix are in [`docs/SLAM_BACKENDS.md`](docs/SLAM_BACKENDS.md); in summary:
+### 5.1 Procedure
 
-- **Cross-modal baseline:** `GLIM` (factor graph, GPU, tight-coupled LiDAR+IMU and visual-inertial).
-- **LiDAR 3D (Mid-360):** `FAST-LIO2`, `Point-LIO`, `GLIM`.
-- **LiDAR 2D (RPLiDAR):** `Cartographer 2D`, `KISS-ICP 2D`, `GLIM`   (planar 3D, experimental).
-- **Visual / Visual–inertial (D455):** `ORB-SLAM3`, `GLIM`, `OpenVINS`. (R3LIVE excluded — camera+LiDAR fusion out of scope for   Session D.)
-- **Loose-coupled baseline (optional):** `RTAB-Map` in 2D, 3D and RGB-D to contrast tight vs. loose coupling.
+TOST declares equivalence by testing two one-sided null hypotheses simultaneously [[1]](docs/REFERENCES_CONSOLIDATED.md), [[2]](docs/REFERENCES_CONSOLIDATED.md):
 
-For each backend:
-- We tune a nominal configuration on real data (with M2/M3) and freeze it.
-- We derive two sensitivity variants (LOW/HIGH) by scaling key covariances.
-- We run all configurations on real data (YuMi) and on simulations with M1–M4.
+- H_lower: mu_real - mu_sim > -delta (lower one-sided null)
+- H_upper: mu_real - mu_sim < +delta (upper one-sided null)
 
-Trajectories are compared against the YuMi using `evo` (ATE/RPE with Umeyama alignment). Metrological simulation (M4) is declared equivalent to real hardware only if the 90% confidence interval for 
-the mean ATE difference lies entirely within the pre-specified equivalence margin δ — applied independently per backend and per trajectory type. The statistical design (TOST, Bonferroni correction, effect sizes) is in [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) §2–3.
+Equivalence is declared when both are rejected at alpha = 0.05, which is equivalent to the 90% confidence interval for the mean residual difference lying entirely within [-delta, +delta].
 
-</div>
+Sample size and statistical power are computed using exact TOST power functions [[7]](docs/REFERENCES_CONSOLIDATED.md) before data collection begins. Target: 1-beta ≥ 0.80 at alpha = 0.05, with n and sigma derived from Stage 1 static logs and literature values. This power analysis is a P0 blocker: sessions cannot begin until the planned n achieves the required power given the chosen delta.
+
+TOST is applied independently per sensor type. Holm-Bonferroni correction is applied across the four sessions (A-D) to control the family-wise error rate.
+
+Full mathematical procedure is in [docs/METHODOLOGY.md](docs/METHODOLOGY.md) §3.4.
+
+### 5.3 Equivalence margin delta
+
+The margin delta is defined per sensor type in physical signal units. It is anchored to external system requirements (task-driven navigation performance thresholds from published literature) and agreed with the supervisor before any data collection. Defining delta after inspecting data, or as a percentage of measured outcomes, invalidates the TOST.
+
+| Sensor                                 | Residual type                    | delta units |
+| -------------------------------------- | -------------------------------- | ----------- |
+| LiDAR (S2, S3)                         | Point-to-plane residuals         | mm          |
+| IMU gyroscope (S1, S3-IMU, S4-IMU)     | Angular rate residual            | deg/s       |
+| IMU accelerometer (S1, S3-IMU, S4-IMU) | Linear acceleration residual     | m/s^2       |
+| Camera (S4)                            | AprilTag pose drift: translation | mm          |
+| Camera (S4)                            | AprilTag pose drift: rotation    | deg         |
+
+Numerical values of delta are defined and locked in [docs/METHODOLOGY.md](docs/METHODOLOGY.md) §3.4 before session execution. They must not be changed after data collection begins.
+
+---
+
+## 6. Software contribution: Gazebo Fortress plugin for Mid-360
+
+The Livox Mid-360 generates a non-repetitive Rosetta scan pattern via two contra-rotating Risley prisms. Standard Gazebo sensor models assume a fixed angular sampling grid and cannot reproduce this topology. The scan pattern geometry matters for simulation fidelity: non-repetitive coverage reduces degeneracy risk in low-structure environments [[24]](docs/REFERENCES_CONSOLIDATED.md), and simulating it incorrectly produces a point cloud with different structural properties than real hardware.
+
+No standard ROS 2 Humble / Gazebo Fortress Mid-360 Rosetta plugin was identified at the study design date. The gz-sim community request for this capability has remained open since April 2023 [[81]](docs/REFERENCES_CONSOLIDATED.md). A known partial option is RobotecAI RGLGazeboPlugin [[82]](docs/REFERENCES_CONSOLIDATED.md), which targets Gazebo Harmonic and typically depends on NVIDIA OptiX/CUDA; it is therefore not the default CPU-first path for Humble/Fortress workflows in this project.
+
+The closest prior work is Vultaggio et al. [[25]](docs/REFERENCES_CONSOLIDATED.md), who built a Gazebo Classic plugin for the Mid-360 Rosetta pattern and evaluated with generic Gaussian noise parameters. That plugin targets Gazebo Classic (EOL January 2025) and does not map directly to this project's ROS 2 Humble + Gazebo Fortress stack. The present contribution differs in three respects: Gazebo Fortress target, ROS 2 Humble compatibility, and M4 parametric state-dependent noise injection.
+
+**Deliverable:** A Gazebo Fortress sensor plugin that:
+
+1. Reproduces the Rosetta point distribution geometry from the Risley prism angular parameters of the Mid-360.
+2. Injects M4 noise: per-point range variance as a function of instantaneous sensor kinematic state and temperature.
+3. Outputs `sensor_msgs/PointCloud2` compatible with the ROS 2 Humble LTS stack.
+
+The plugin will be released as a standalone open-source GitHub repository before paper submission, independently establishing priority on the software contribution.
 
 ---
 
 ## 7. How to read this repository
 
-<div align="justify">
-
-- Quick understanding of the idea:  
-  - This `README.md`  
-  - [`docs/RESEARCH_PLAN.md`](docs/RESEARCH_PLAN.md) — sections 1–2, 3.6 (M4 justification), and 6  
-- Exact experimental protocol (what is done with the YuMi):  
-  - [`docs/EXPERIMENTAL_DESIGN.md`](docs/EXPERIMENTAL_DESIGN.md)  
-- Mathematical/statistical detail (Allan, residuals, tests):  
-  - [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md)  
-- Which SLAMs and noise models are tested and how:  
-  - [`docs/SLAM_BACKENDS.md`](docs/SLAM_BACKENDS.md)  
-- Hardware constraints and payload analysis:  
-  - [`docs/HARDWARE_PAYLOAD.md`](docs/HARDWARE_PAYLOAD.md)  
-- Current status and decisions taken so far:  
-  - [`PROGRESS_LOG.md`](PROGRESS_LOG.md)
-- Extended reference pool (for manuscript and experimentation):  
-  - [`docs/REFERENCES_POOL.md`](docs/REFERENCES_POOL.md)
-
-</div>
+| Question                                                            | Document                                                           |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Why does this study exist?                                          | This README, §1                                                    |
+| Scientific rationale and hypotheses                                 | [docs/RESEARCH_PLAN.md](docs/RESEARCH_PLAN.md) §1-§4               |
+| Exact experimental protocol                                         | [docs/EXPERIMENTAL_DESIGN.md](docs/EXPERIMENTAL_DESIGN.md)         |
+| Statistical methodology and noise model formulas                    | [docs/METHODOLOGY.md](docs/METHODOLOGY.md)                         |
+| All citations with abstracts and project relevance                  | [docs/REFERENCES_CONSOLIDATED.md](docs/REFERENCES_CONSOLIDATED.md) |
+| Hardware geometry and payload analysis                              | [docs/HARDWARE_PAYLOAD.md](docs/HARDWARE_PAYLOAD.md)               |
+| Current status, decisions, open blockers, and pilot session results | [PROGRESS_LOG.md](PROGRESS_LOG.md)                                 |
 
 ---
 
-## 8. Execution timeline (planned)
+## 8. Timeline
 
-| Period | Milestone |
-|--------|-----------|
-| Until June 2026 | Stage 1 (static characterisation); preparation (mounts, sync, hand-eye protocol). Mid-360 warm-up protocol and cross-session hand-eye verification procedure defined and documented. |
-| June 2026 | YuMi dynamic sessions A–D (after exams). Order of sessions at author's discretion. |
-| From July 2026 | **Gazebo Fortress plugin for Mid-360 non-repetitive scan pattern** (standalone open-source deliverable, ROS 2 Humble compatible — no existing solution); M4 model fitting from YuMi residuals; SLAM evaluation matrix with TOST equivalence analysis. |
-| Q4 2026 – Q1 2027 | Statistical analysis, manuscript submission to *Measurement* / IEEE TIM. Plugin released independently on GitHub prior to paper submission. |
+| Period              | Milestone                                                                                                                                                                                                                                                                                                                                                                      |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Until June 2026     | Stage 1 static characterization (all sensors). CAD fixture tolerances measured; contact probing repeatability quantified. Pilot session (WT901C, Session A, ~3 h) to verify full pipeline end-to-end: sync, CAD-derived T_sensor→flange, RobotStudio export, residual computation, TOST on small n. Delta values defined and locked with supervisor. Power analysis completed. |
+| June 2026           | YuMi dynamic sessions A-D (post-exams).                                                                                                                                                                                                                                                                                                                                        |
+| July-September 2026 | M4 model fitting from YuMi residuals. TOST analysis at sensor residual level. Gazebo Fortress plugin for Mid-360 development and testing.                                                                                                                                                                                                                                      |
+| Q4 2026             | Plugin released on GitHub as standalone open-source repository (before paper submission). Statistical analysis finalized.                                                                                                                                                                                                                                                      |
+| Q4 2026 - Q1 2027   | Manuscript submission to *Measurement* or *IEEE Transactions on Instrumentation and Measurement*.                                                                                                                                                                                                                                                                              |
 
 ---
 
 ## 9. Known limitations
 
-<div align="justify">
+**Time synchronization and M4.** Under the PTP target (< 1 µs clock accuracy), the spatial error contribution from timing uncertainty is < 1 µm at T3 peak velocity, negligible relative to the YuMi path repeatability floor of 0.10 mm and all dominant sources in the ground truth uncertainty budget. Studies that cannot achieve this synchronization accuracy should augment M4 with a timing-dependent bias term derived from their measured clock offset using the spatial error model of Olson (2010) [[52]](docs/REFERENCES_CONSOLIDATED.md).
 
-- **Ground truth bound:** For dynamic trajectories the floor is set by path repeatability (0.10 mm) and path accuracy (up to 1.36 mm). Pose repeatability (±0.02 mm) applies only to static points. Absolute volumetric accuracy is not characterised.
+**Ground truth bounds.** For dynamic trajectories, the accuracy floor is path accuracy AT ≤ 1.36 mm (ISO 9283 worst-case conditions) and path repeatability RT = 0.10 mm. Pose repeatability RP = ± 0.02 mm applies to static points only. Absolute volumetric accuracy is not characterized. The AT specification is a Type B uncertainty with no traceable calibration certificate for the IQS unit; this is declared explicitly in the uncertainty budget in [docs/METHODOLOGY.md](docs/METHODOLOGY.md) §2.3.
 
-- **No spinning mechanical LiDAR:** LIO-SAM and similar algorithms optimised for repetitive-pattern LiDARs are not included; extension possible if a Velodyne/Ouster becomes available.
+**TOST margin anchoring.** The equivalence margin delta must be defined externally and prior to data collection. If delta is defined post-hoc, the TOST is statistically invalid. Margin definition and supervisor agreement are a P0 blocker before YuMi booking.
 
-- **Thermal model scope:** Thermal models assume quasi-steady-state operation; cold-start transients &lt;5 min (typical MEMS warm-up) are not fully modelled.
+**M4 identifiability.** The kinematic term of M4 includes up to five predictors (v, omega, a, d-omega/dt, da/dt) that may be collinear across the fitted trajectories. Mitigation protocol: AIC/BIC model selection, VIF < 10 threshold, ridge regression fallback with leave-one-out CV. This protocol is a P0 item that must be finalized before session execution.
 
-- **Cable routing effects:** USB 3.0 (RealSense D455) and Ethernet (Livox Mid-360) cables routed along the YuMi arm introduce variable external forces on the flange during T2/T3 dynamic trajectories. Mitigated by careful cable chain routing prior to each session; residual effect is documented as a contributor to the ground truth uncertainty budget and declared as an explicit limitation in the experimental report.
+**M4 scope of validity.** M4 is fitted on T1 and T2 velocities and steady-state thermal conditions. Extrapolation to T3 velocities (held-out generalization check) and cold-start transients is not validated. Extrapolation limits are declared explicitly in the experimental report.
 
-- **Mid-360 internal self-heating:** The sensor's internal detector temperature may differ from the externally measured ambient temperature by a non-negligible gradient during the first 15–20 minutes of operation. Protocol requires a minimum 20-minute powered warm-up before any static characterisation log or dynamic session begins. This is documented in [`docs/EXPERIMENTAL_DESIGN.md`](docs/EXPERIMENTAL_DESIGN.md) §2.3.
+**No spinning mechanical LiDAR.** Algorithms optimized for repetitive-scan 3D LiDARs are not tested. Extension is possible if a Velodyne or Ouster becomes available at IQS.
 
-- **Hand-eye cross-session verification:** Hand-eye calibration is redone per session, but microscopic mount displacement between sessions (dismount and remount) cannot be fully excluded. A fixed verification pose at the start of each dynamic session — reprojection error check against a reference AprilTag board fixed in the environment — serves as an acceptance criterion before data collection begins. Results archived in `data/calibration/`.
+**Cable routing effects.** USB 3.0 (D455) and Ethernet (Mid-360) cables routed along the YuMi arm introduce variable external forces on the flange during T2/T3 trajectories. Mitigated by cable chain routing before each session; residual effect is included as a declared contributor in the ground truth uncertainty budget.
 
-- **TOST margin selection:** The equivalence margin $\delta$ must be defined *a priori* based on specific system requirements, and agreed upon before any empirical data analysis. Defining $\delta$ after inspecting data (or as a percentage of measured outcomes) would invalidate the statistical test. Results will be reported for the chosen $\delta$ and sensitivity to alternative margins will be discussed.
-
-</div>
+**Fixture dimensional tolerance and cross-session remounting.** Sensor-to-flange transforms are derived from CAD-designed 3D-printed fixtures. Fixture nominal tolerances (SolidWorks design) and measured tolerances (per-piece caliper measurement) are declared as Type B contributors in the uncertainty budget (METHODOLOGY.md §2.3). Cross-session remounting uncertainty is quantified via contact probing repeatability at the start of each session (≥10 independent touches; Type A contributor). The acceptance criterion for cross-session probing deviation is documented in the experimental report.
 
 ---
 
 ## 10. License
 
-<div align="justify">
-
 MIT License. See [LICENSE](LICENSE) for details.
 
 Research conducted at IQS School of Engineering (Universitat Ramon Llull), Barcelona.
-
-</div>

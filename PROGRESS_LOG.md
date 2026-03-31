@@ -1,43 +1,43 @@
-# Progress Log — Phase I: Metrological Validation of Visual-LiDAR SLAM Sensors
+# Progress Log - Sensor Metrology and Equivalence Validation
 
-> This is the **living chronological tracker** of Phase I. Every decision, milestone, completed task, open item, and status change is recorded here in chronological order. Nothing is deleted; entries are only appended.
+> This is the **living chronological tracker** of the active study scope (sensor metrology and residual-level equivalence testing). Every decision, milestone, completed task, open item, and status change is recorded here in chronological order. Nothing is deleted; entries are only appended.
 
-**Format:** `### YYYY-MM-DD — [Event type]: Title`  
+**Format:** `### YYYY-MM-DD - [Event type]: Title`  
 **Event types:** `DECISION` | `MILESTONE` | `TASK_DONE` | `OPEN_ITEM` | `SUPERVISOR` | `BLOCKER` | `NOTE`
 
 ---
 
 ## Current Status Summary
 
-> Updated: 2026-03-23
+> Updated: 2026-03-31
 
 | Area | Status | Next action |
-|------|--------|-------------|
-| Research Plan | ✅ v0.3 drafted | Supervisor review → v1.0 |
-| Experimental Design | ✅ v0.3 drafted | Supervisor review |
-| Methodology | ✅ v0.3 drafted | Supervisor review |
-| Hardware & Payload | ✅ v0.3 drafted | Physical weight verification |
+| ------ | -------- | ------------- |
+| Research Plan | ✅ v0.6 drafted | Supervisor review → v1.0 |
+| Experimental Design | ✅ v0.6 drafted | Supervisor review |
+| Methodology | ✅ v0.6 drafted | Supervisor review |
+| Hardware & Payload | ✅ v0.6 drafted | Physical weight verification |
 | Static characterization | ❌ Not started | Pending hardware availability |
 | Dynamic sessions | ❌ Not started | Pending: weight verification + YuMi booking |
 | Simulation plugin | ❌ Not started | Pending: static characterization results |
-| FAST-LIO2 baseline | ❌ Not started | Pending: real sensor availability (Mid-360 confirmed) |
+| SLAM backend evaluation | Archived context | Removed from active scope (see 2026-03-28 decisions) |
 | Statistical analysis | ❌ Not started | Pending: data collection |
 | Publication draft | ❌ Not started | Pending: results |
-| GitHub repository | ✅ Pushed | [github.com/Narcis-Abella/slam-sensor-metrological-validation](https://github.com/Narcis-Abella/slam-sensor-metrological-validation) |
+| GitHub repository | ✅ Pushed | [github.com/Narcis-Abella/sensor-noise-metrology](https://github.com/Narcis-Abella/sensor-noise-metrology) |
 | Research framing | Done | v0.5 post-audit reframe complete |
 
 ---
 
 ## Documentation Milestones
 
-> Documentation tasks from the Phase I audit (2026-03). v1.0 = post–supervisor review.
+> Documentation tasks from the v0.6 scope reset (2026-03). v1.0 = post-supervisor review.
 
 | Milestone | Status | Notes |
-|-----------|--------|-------|
-| README public-ready (motivation, plain language, links to refs) | ✅ Done | Section 0 + §1 restructured; citations linked to RESEARCH_PLAN §9. |
-| Audit of references (all citations have entry in §9) | ✅ Done | Cross-checked README + docs; no orphan citations. |
-| Ground truth uncertainty budget (METHODOLOGY §2.4) | ✅ Done | YuMi + hand-eye + sync; ATE/RPE interpreted above floor. |
-| Sharpen language (HARDWARE_PAYLOAD, EXPERIMENTAL_DESIGN, SLAM_BACKENDS) | ✅ Done | Replaced colloquial/vague terms with neutral formulations. |
+| ----------- | -------- | ------- |
+| README public-ready (motivation, plain language, links to refs) | ✅ Done | Section 0 + §1 restructured; citations linked to `docs/REFERENCES_CONSOLIDATED.md`. |
+| Audit of references (all active citations consolidated) | ✅ Done | Cross-checked active docs against `docs/REFERENCES_CONSOLIDATED.md`. |
+| Ground truth uncertainty budget (METHODOLOGY §2.3) | ✅ Done | YuMi + geometric reference + sync; residual-level comparisons interpreted above floor. |
+| Sharpen language (HARDWARE_PAYLOAD, EXPERIMENTAL_DESIGN) | ✅ Done | Replaced colloquial/vague terms with neutral formulations. |
 | v1.0 RESEARCH_PLAN / EXPERIMENTAL_DESIGN / METHODOLOGY / HARDWARE_PAYLOAD | ⏳ Pending | After supervisor review; implement feedback. |
 | v1.0 README "public-ready" (final pass post–supervisor) | ⏳ Pending | Minor tweaks if supervisor requests changes to framing. |
 
@@ -47,40 +47,42 @@
 
 > Sorted by priority. Check off when resolved and add entry to log.
 >
-> **Hard prereqs for YuMi booking:** weight verification, sync method defined, mounts designed, supervisor sign-off on protocol. **Can run in parallel:** static characterization (no YuMi), documentation review, FAST-LIO2 sanity check. **Planned:** YuMi dynamic sessions in June (after exams); simulation and plugin development from July onwards. Session order is at the author’s discretion.
+> **Hard prereqs for YuMi booking:** weight verification, sync method defined, mounts designed, supervisor sign-off on protocol. **Can run in parallel:** static characterization (no YuMi), documentation review. **Planned:** YuMi dynamic sessions in June (after exams); simulation and plugin development from July onwards. Session order is at the author's discretion.
 
-- [x] **[BLOCKER — HIGH]** Confirm Livox Mid-360 availability. *(Done — Mid-360 confirmed for Session C.)*
-- [ ] **[BLOCKER — HIGH]** Verify actual sensor + mount weights with physical scale. Session C (Mid-360) is at 70% payload margin based on estimates — must confirm before booking YuMi.
-- [ ] **[BLOCKER — HIGH]** Verify FAST-LIO2 operation with real Livox Mid-360 data on Jetson Orin NX (ROS 2 Humble). Must establish logistical and networking viability of the real-hardware baseline before booking the YuMi arm to prevent wasted session time.
-- [ ] **[MEDIUM — optional extension]** Secure access to an **industry-standard repetitive (spinning) 360° LiDAR** (e.g. Velodyne VLP-16/32, Ouster OS0/OS1, Hesai) — widely cited in SLAM, navigation and mapping literature. Would enable extension of the study with LIO-SAM and similar backends; not a blocker for the current scope.
+- [x] **[BLOCKER - HIGH]** Confirm Livox Mid-360 availability. *(Done - Mid-360 confirmed for Session C.)*
+- [ ] **[BLOCKER - HIGH]** Verify actual sensor + mount weights with physical scale. Session C (Mid-360) is at 70% payload margin based on estimates - must confirm before booking YuMi.
+- [ ] **[MEDIUM - optional extension]** Secure access to an **industry-standard repetitive (spinning) 360° LiDAR** (e.g. Velodyne VLP-16/32, Ouster OS0/OS1, Hesai) - widely cited in SLAM, navigation and mapping literature. Would enable extension of the study with LIO-SAM and similar backends; not a blocker for the current scope.
 - [ ] **[HIGH]** Supervisor review of v0.3 documents (RESEARCH_PLAN, EXPERIMENTAL_DESIGN, METHODOLOGY, HARDWARE_PAYLOAD). Implement feedback → v1.0.
 - [ ] **[HIGH]** Define temporal synchronization method: PTP IEEE 1588 vs. NTP. Assess IRC5 network capabilities.
 - [ ] **[MEDIUM]** Design and 3D-print sensor mounts for each session. Mount design must be done before any dynamic session.
 - [ ] **[MEDIUM]** Identify and book a suitable YuMi session slot (pending weight verification and supervisor sign-off on protocol).
 - [ ] **[MEDIUM]** Assess availability of metrology or optics laboratory at IQS for static characterization sessions (better temperature control).
 - [ ] **[LOW]** Decide waypoint strategy for T3 3D aggressive trajectory: fixed set vs. pseudo-random with fixed seed. Confirm with supervisor.
-- [x] **[LOW]** Push repository to GitHub remote (create public repo under github.com/Narcis-Abella). *(Done — repo at github.com/Narcis-Abella/slam-sensor-metrological-validation)*
+- [x] **[LOW]** Push repository to GitHub remote (create public repo under github.com/Narcis-Abella). *(Done - repo at github.com/Narcis-Abella/sensor-noise-metrology)*
 - [ ] **[LOW]** Confirm Mitsubishi robot access conditions (permission, PLC programming, payload/repeatability specs).
 
 ---
 
 ## Changelog / Chronological Log
 
+> Historical entries below are preserved verbatim for traceability and may include legacy scope wording.
+
 ---
 
-### 2026-02-16 — MILESTONE: Original three-phase proposal submitted
+### 2026-02-16 - MILESTONE: Original three-phase proposal submitted
 
-- Submitted "Comprehensive Validation and AI-Driven Optimization of Visual-LiDAR SLAM for Mobile Robotics — A Three-Stage Research Framework" to Dr. Salazar.
+- Submitted "Comprehensive Validation and AI-Driven Optimization of Visual-LiDAR SLAM for Mobile Robotics - A Three-Stage Research Framework" to Dr. Salazar.
 - Proposal covered: (I) Metrological sensor validation, (II) Reality Gap benchmark (mobile platform), (III) Bayesian SLAM optimization.
 - Hardware at time of proposal: Livox Mid-70, RPLiDAR A2M12, RealSense D455, WitMotion WT901C, AgileX Tracer 2.0.
 
 ---
 
-### 2026-02 (approx.) — SUPERVISOR: Salazar feedback — strategic reorientation
+### 2026-02 (approx.) - SUPERVISOR: Salazar feedback - strategic reorientation
 
-**Source:** Email from Dr. A.G. Salazar Martín (exact date TBC — add when available)
+**Source:** Email from Dr. A.G. Salazar Martín (exact date TBC - add when available)
 
 **Key decisions from supervisor feedback:**
+
 1. **Scope:** Focus exclusively on Phase I (metrological validation). Do not include Reality Gap or optimization in this paper.
 2. **Ground truth:** Use ABB YuMi as kinematic ground truth (path repeatability 0.10 mm, path accuracy up to 1.36 mm; pose repeatability ±0.02 mm at static points only).
 3. **RobotStudio:** Use as independent trajectory predictor.
@@ -92,11 +94,12 @@
 
 ---
 
-### 2026-02/03 (approx.) — NOTE: Response and plan from Narcís — v0.1 experimental plan
+### 2026-02/03 (approx.) - NOTE: Response and plan from Narcís - v0.1 experimental plan
 
 **Key additions from Narcís's response:**
+
 1. **LiDAR change proposed:** Mid-360 (~250 g) vs. Mid-70 (~590 g). Resolves payload problem. Mid-360 additionally: Rosetta pattern, factory LiDAR-IMU extrinsics, native GLIM support, higher community adoption.
-2. **Three IMUs:** WT901C (MPU9250), D455 (BMI055), Mid-360 (ICM40609) — three quality grades for H1 (IMU quality effect on tight coupling).
+2. **Three IMUs:** WT901C (MPU9250), D455 (BMI055), Mid-360 (ICM40609) - three quality grades for H1 (IMU quality effect on tight coupling).
 3. **Four sessions defined:** A (IMU only), B (camera+IMU), C (2D LiDAR), D (3D LiDAR).
 4. **Block structure defined:** MIX / CW / CCW blocks × 3 repetitions, 30 min cooling between blocks.
 5. **Trajectory structure:** T1/T2/T3 for 2D and 3D, with velocity and angular rate parameters.
@@ -104,35 +107,38 @@
 
 ---
 
-### 2026-02/03 (approx.) — NOTE: Methodological addenda from Narcís — v0.2 plan
+### 2026-02/03 (approx.) - NOTE: Methodological addenda from Narcís - v0.2 plan
 
 **Key additions:**
-1. **Temporal synchronization:** PTP IEEE 1588 preferred. NTP fallback with jitter measurement. Mandatory to document — any reviewer will flag missing synchronization protocol.
+
+1. **Temporal synchronization:** PTP IEEE 1588 preferred. NTP fallback with jitter measurement. Mandatory to document - any reviewer will flag missing synchronization protocol.
 2. **Hand-eye calibration:** AX=XB required to map flange pose to sensor center. Without it, ground truth has a systematic offset that invalidates all metrics. Must be redone per session.
-3. **Six-Position Test (IEEE Std 1293):** Before long IMU logs. Isolates scale factor and gravitational bias — not obtainable from horizontal logs alone. Critical for tight-coupling initialization.
+3. **Six-Position Test (IEEE Std 1293):** Before long IMU logs. Isolates scale factor and gravitational bias - not obtainable from horizontal logs alone. Critical for tight-coupling initialization.
 4. **LiDAR static characterization:** Planar orthogonal residual method (not absolute distance). Avoids ICP errors, isolates thermal ToF drift.
 5. **Camera static characterization:** AprilTag board for 3–4 h. Quantifies thermal intrinsic drift and FPN in RealSense D455. Documents Reality Gap origin.
 6. **Settling time verification for T3:** Measure vibration PSD during inter-waypoint pauses. Criterion: amplitude < 2× noise floor before accepting pause as valid.
 7. **evo for trajectory evaluation:** Standard tool in the community. Umeyama alignment for ATE and RPE. Facilitates comparison with other published results.
-8. **Optional — frequency sweep trajectory:** Empirical cut-off frequency identification. Not in core protocol; add if time permits.
+8. **Optional - frequency sweep trajectory:** Empirical cut-off frequency identification. Not in core protocol; add if time permits.
 
 ---
 
-### 2026-03-06 — MILESTONE: Repository initialized and documentation drafted (v0.3)
+### 2026-03-06 - MILESTONE: Repository initialized and documentation drafted (v0.3)
 
 **Tasks completed this session:**
+
 - Created repository structure locally: `C:\Users\narci\Documents\Cursor\slam-phase1\`
 - Drafted all core documentation files:
-  - `README.md` — public entry point and overview
-  - `docs/RESEARCH_PLAN.md` — full research plan (motivation, hypotheses, platform, contributions)
-  - `docs/EXPERIMENTAL_DESIGN.md` — session-by-session protocol, trajectory parameters, synchronization, hand-eye calibration
-  - `docs/METHODOLOGY.md` — Allan Variance, ATE/RPE, statistical test design, three-condition pipeline
-  - `docs/HARDWARE_PAYLOAD.md` — sensor specs, weight breakdown, Mid-360 vs. Mid-70 rationale, verification checklist
-  - `PROGRESS_LOG.md` — this file
+  - `README.md` - public entry point and overview
+  - `docs/RESEARCH_PLAN.md` - full research plan (motivation, hypotheses, platform, contributions)
+  - `docs/EXPERIMENTAL_DESIGN.md` - session-by-session protocol, trajectory parameters, synchronization, hand-eye calibration
+  - `docs/METHODOLOGY.md` - Allan Variance, ATE/RPE, statistical test design, three-condition pipeline
+  - `docs/HARDWARE_PAYLOAD.md` - sensor specs, weight breakdown, Mid-360 vs. Mid-70 rationale, verification checklist
+  - `PROGRESS_LOG.md` - this file
 
 **Document version:** All files at v0.3 (design phase, pending supervisor review)
 
 **Open items identified (added to tracker above):**
+
 - Physical weight verification (priority before YuMi booking)
 - Mid-360 purchase confirmation
 - Supervisor review of v0.3 documents
@@ -141,44 +147,51 @@
 
 ---
 
-### 2026-03-07 — MILESTONE: Documentation audit completed (plan tasks 1–5)
+### 2026-03-07 - MILESTONE: Documentation audit completed (plan tasks 1–5)
 
 **Documentation improvements applied:**
+
 - README: Section 0 (motivation, prior work, gap, core contribution) restructured; citations in §0 and §5.1 linked to RESEARCH_PLAN §9.
 - References: Full audit; all cited studies have entries in RESEARCH_PLAN §9.
-- METHODOLOGY §2.4: Ground truth uncertainty budget (YuMi repeatability, hand-eye, sync); ATE/RPE interpreted above floor.
+- METHODOLOGY §2.3: Ground truth uncertainty budget (YuMi repeatability, geometric reference, sync); residual-level comparisons interpreted above floor.
 - SLAM_BACKENDS: Justification column per backend; §7 extension table for repetitive 360° LiDAR.
 - HARDWARE_PAYLOAD, EXPERIMENTAL_DESIGN, SLAM_BACKENDS: Colloquial/vague language replaced with neutral formulations.
 - PROGRESS_LOG: Documentation milestones table added; hard prereqs vs parallel tasks clarified in Open Items.
 
 ---
 
-### 2026-03-07 — DECISION: Mid-360 confirmed; R3LIVE excluded; M4 hold-out; timeline; plugin contribution
+### 2026-03-07 - DECISION: Mid-360 confirmed; R3LIVE excluded; M4 hold-out; timeline; plugin contribution
 
 **Hardware & scope:**
+
 - Livox Mid-360 confirmed available for Session C. Open item "Confirm Mid-360 availability" marked done.
 - Repetitive (spinning) 360° LiDAR added as optional extension: target industry-standard, widely cited (Velodyne, Ouster, Hesai) for possible future extension; not a blocker.
 
 **Methodology:**
-- METHODOLOGY §5.5: M4 generalization check — fit on T1+T2, evaluate on T3 (held-out) to demonstrate no overfitting.
+
+- METHODOLOGY §5.5: M4 generalization check - fit on T1+T2, evaluate on T3 (held-out) to demonstrate no overfitting.
 
 **Session D backends (visual-inertial):**
+
 - R3LIVE excluded from this study: ideally would test camera+LiDAR fusion, but Session D is RGB-D+IMU only; R3LIVE expects LiDAR+camera and has limited ROS 2 fit. Noted as future extension.
 - B3 replacement: **OpenVINS** (EKF-based VIO, tight-coupled, ROS 2, distinct from ORB-SLAM3 and GLIM). SLAM_BACKENDS §4.4 and RESEARCH_PLAN §7 updated; README §6 updated.
 
 **Timeline:**
+
 - YuMi dynamic sessions planned for June 2026 (after exams). Simulation and plugin work from July 2026. Session order at author’s discretion. README §8 and Open Items updated.
 
 **Contributions:**
-- RESEARCH_PLAN §6.4: Explicit contribution added — Gazebo plugin for **non-repetitive scan pattern** (Mid-360 Rosetta, optionally Mid-70) as part of expected open-source output.
+
+- RESEARCH_PLAN §6.4: Explicit contribution added - Gazebo plugin for **non-repetitive scan pattern** (Mid-360 Rosetta, optionally Mid-70) as part of expected open-source output.
 
 ---
 
-### 2026-03-23 — DECISION: Research reframing — TOST as primary contribution; M4 as enabler; Fortress plugin as standalone deliverable
+### 2026-03-23 - DECISION: Research reframing - TOST as primary contribution; M4 as enabler; Fortress plugin as standalone deliverable
 
 **Context:** Extended literature audit conducted (adversarial novelty search across IEEE Xplore, arXiv, Semantic Scholar, Google Scholar) covering ~80+ papers across sim-to-real, state-dependent covariance, robot arm ground truth, Livox simulation, and vibration-induced LiDAR noise.
 
 **Key findings from audit:**
+
 - State-dependent covariance (M4 concept) has substantial prior art: VIO-DualProNet (2024), AirIMU (2023). M4 is not the primary novelty.
 - Robot arm as dynamic sensor reference has direct precedent: Kuti et al. (2024), Ferguson et al. (2023).
 - Livox Mid-360 Gazebo Classic plugins exist (5+). Gazebo Fortress plugin with Rosetta pattern: confirmed absent. Gap documented via gz-sim issue #1958 (open since April 2023).
@@ -186,9 +199,10 @@
 - Vibration characterization of Mid-360 range noise: no prior work found. Schlager et al. (2022) tested Ouster only; Brazeal et al. (2021) simulated Risley prism misalignment but did not validate experimentally.
 
 **Decisions taken:**
+
 1. **Reframe primary contribution:** TOST-based equivalence testing framework is the lead contribution, not M4. M4 is repositioned as a necessary enabler of the TOST pipeline.
 2. **Fortress plugin as standalone deliverable:** Added explicitly to RESEARCH_PLAN §6.2 and README §8 timeline. To be released on GitHub before paper submission.
-3. **M4 prior art acknowledged:** VIO-DualProNet and AirIMU cited in RESEARCH_PLAN §3.6 and §3.7. M4 differentiated as parametric + interpretable + temperature+kinematics combined — not conceptually new but methodologically rigorous.
+3. **M4 prior art acknowledged:** VIO-DualProNet and AirIMU cited in RESEARCH_PLAN §3.6 and §3.7. M4 differentiated as parametric + interpretable + temperature+kinematics combined - not conceptually new but methodologically rigorous.
 4. **Three protocol gaps added to EXPERIMENTAL_DESIGN:**
    - Cable drag mitigation protocol (§3 Cable Management)
    - Mid-360 20-minute warm-up requirement (§2.3)
@@ -197,20 +211,70 @@
 6. **Future direction noted:** F/T sensor metrological validation identified as natural P2 extension using same YuMi + TOST framework. Added to RESEARCH_PLAN §8 as possible future work without commitment.
 
 **Documents updated this session:**
-- README.md — §0 rewritten, §5.1 reframed, §6 reordered, §8 plugin added, §9 three new limitations
-- docs/RESEARCH_PLAN.md — §1, §3.4, §3.6, §3.7 rewritten; §4 TOST motivation added; §6 reordered; §8 F/T future work; §9 refs [40]–[48]
-- docs/METHODOLOGY.md — §3.4 motivation paragraph; §4 M4 note; §5.4.1 LiDAR vibration caveat; §6 pipeline updated; §9 TOST tooling
-- docs/EXPERIMENTAL_DESIGN.md — §2.3 warm-up; §3 cable management; §6 T3 vibration gap; §8 table cable row; §10 cross-session verification
-- docs/SLAM_BACKENDS.md — §1 TOST argument; §2 M4 note; §6 last paragraph replaced
-- docs/HARDWARE_PAYLOAD.md — §3.3 warm-up note; §4 cable note; §8 two checklist items
+
+- README.md - §0 rewritten, §5.1 reframed, §6 reordered, §8 plugin added, §9 three new limitations
+- docs/RESEARCH_PLAN.md - §1, §3.4, §3.6, §3.7 rewritten; §4 TOST motivation added; §6 reordered; §8 F/T future work; §9 refs [40]–[48]
+- docs/METHODOLOGY.md - §3.4 motivation paragraph; §4 M4 note; §5.4.1 LiDAR vibration caveat; §6 pipeline updated; §9 TOST tooling
+- docs/EXPERIMENTAL_DESIGN.md - §2.3 warm-up; §3 cable management; §6 T3 vibration gap; §8 table cable row; §10 cross-session verification
+- docs/SLAM_BACKENDS.md - §1 TOST argument; §2 M4 note; §6 last paragraph replaced
+- docs/HARDWARE_PAYLOAD.md - §3.3 warm-up note; §4 cable note; §8 two checklist items
 
 **Version bump:** All docs moved from v0.4 → v0.5.
+
+---
+
+### 2026-03-28 - DECISION: Scope reframe - sensor metrological characterization only; SLAM removed from Phase I scope
+
+- Primary scope shifted from "SLAM sensor validation" to "metrological characterization of robotic sensor noise models for simulation."
+- TOST applied at sensor signal level (residuals), not at trajectory level (ATE/RPE).
+- SLAM backend evaluation removed from Phase I entirely. SLAM_BACKENDS.md moved to archived/.
+- Equivalence margin δ defined per sensor type in physical signal units (mm, deg/s, m/s², deg) - not in ATE units.
+- M4 does not include a time-synchronization term. Under PTP target (< 1 µs), spatial error contribution is < 1 µm at T3 peak velocity - negligible relative to YuMi RT floor. Studies that cannot achieve PTP accuracy must augment M4 with a timing-dependent bias term per Olson (2010).
+
+---
+
+### 2026-03-28 - DECISION: Repository rename and initial proposal archived
+
+- Repository renamed to: sensor-noise-metrology
+- Original three-phase proposal (Abella, Feb 2026) moved to archived/. No forward references from active docs.
+- Context and design documents moved to archived/.
+
+---
+
+### 2026-03-28 - MILESTONE: Documentation rewrite v0.6 complete
+
+- README.md: full rewrite. §0/§1/§2 collapsed into single §1. 10 sections total. SLAM removed. Repo name updated.
+- docs/METHODOLOGY.md: v0.6. Primary pipeline reframed around sensor residuals. SLAM pipeline moved to archived context.
+- docs/RESEARCH_PLAN.md: v0.6. Title updated. H0 reframed to sensor residuals. H1 reframed to IMU quality effect on residuals. §7 (SLAM extension) removed.
+- docs/REFERENCES_CONSOLIDATED.md: created. Single source of truth for all citations. 87 entries, tagged by topic.
+- docs/REFERENCES_POOL.md: deprecated (superseded by REFERENCES_CONSOLIDATED.md).
+- docs/EXTENDED_LITERATURE_REVIEW.md: deprecated (superseded by REFERENCES_CONSOLIDATED.md).
+- archived/SLAM_BACKENDS.md: moved from docs/.
+
+---
+
+### 2026-03-31 - DECISION: Active authoritative corpus freeze and terminology policy lock
+
+- Frozen authoritative file set for deep review in `internal/ACTIVE_CORPUS_FREEZE_2026-03-31.md`:
+  - `README.md`
+  - `docs/RESEARCH_PLAN.md`
+  - `docs/METHODOLOGY.md`
+  - `docs/EXPERIMENTAL_DESIGN.md`
+  - `docs/HARDWARE_PAYLOAD.md`
+  - `docs/REFERENCES_CONSOLIDATED.md`
+  - `PROGRESS_LOG.md`
+- Archive boundary clarified: files under `archived/` and deprecated docs superseded by `docs/REFERENCES_CONSOLIDATED.md` are non-authoritative context only.
+- Terminology policy locked for review cycle:
+  - Use metrology/sensor-residual framing as canonical scope language.
+  - Keep Stage 1 / Stage 2 operational naming for current experiment.
+  - Do not reintroduce legacy macro-phase framing as active terminology.
 
 ---
 
 ## How to Use This Log
 
 **When to add an entry:**
+
 - Any supervisor meeting or feedback received
 - Any decision made that affects protocol design
 - Any task completed (static log, calibration, session, analysis step)
@@ -221,7 +285,7 @@
 **Entry format:**
 
 ```markdown
-### YYYY-MM-DD — [TYPE]: Title
+### YYYY-MM-DD - [TYPE]: Title
 
 - Bullet point with key information
 - Include: who was involved, what was decided, what action follows
@@ -229,6 +293,7 @@
 ```
 
 **What NOT to put here:**
+
 - Raw data (goes in `data/`)
 - Analysis results (goes in `results/`)
 - Code (goes in `analysis/`)

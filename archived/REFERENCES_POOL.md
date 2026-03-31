@@ -1,6 +1,8 @@
 # References Pool — Phase I (for later use)
 
-> **Purpose:** Dense list of additional references identified during the Phase I literature sweep (March 2026). Use when drafting the manuscript, when facing a specific experimental problem, or when a reviewer asks for support. Each entry has a short note on **why it may interest you**.  
+> **DEPRECATED — Superseded by [`docs/REFERENCES_CONSOLIDATED.md`](REFERENCES_CONSOLIDATED.md).** Do not add new references here. REFERENCES_CONSOLIDATED.md is the single source of truth for all citations.
+>
+> **Purpose:** Dense list of additional references identified during the Phase I literature sweep (March 2026). Use when drafting the manuscript, when facing a specific experimental problem, or when a reviewer asks for support. Each entry has a short note on **why it may interest you**.
 > **Status:** Not all are cited in RESEARCH_PLAN.md; pick as needed. References [40]–[48] are already cited in RESEARCH_PLAN.md §9. References [49]–[63] added after adversarial novelty audit (2026-03-23).
 
 ---

@@ -1,10 +1,12 @@
 # Extended Literature Review & Reference Audit
 
+> **DEPRECATED — Superseded by [`docs/REFERENCES_CONSOLIDATED.md`](REFERENCES_CONSOLIDATED.md).** Do not add new references here. REFERENCES_CONSOLIDATED.md is the single source of truth for all citations.
+
 <div align="justify">
 
-**Version:** 0.5  
-**Date:** 2026-03-23  
-**Status:** Pending supervisor review  
+**Version:** 0.5
+**Date:** 2026-03-23
+**Status:** Deprecated — see REFERENCES_CONSOLIDATED.md
 
 > **Purpose:** This document aggregates the findings of an exhaustive, multi-database literature search (arXiv, Google Scholar, IEEE Xplore, ScienceDirect via Exa/MCP) covering over 120+ recent papers. The goal is to mathematically and methodologically shield ("blindar") the Phase I metrological validation proposal against any novelty or state-of-the-art critiques in high-impact journals like *IEEE TIM* or *Measurement*.
 
