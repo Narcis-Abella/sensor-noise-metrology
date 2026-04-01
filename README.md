@@ -229,7 +229,7 @@ The plugin will be released as a standalone open-source GitHub repository before
 ## 8. Timeline
 
 ```mermaid
-%%{init: {'theme':'base','themeVariables': {'lineColor':'#5F5E5A','fontFamily':'Arial'}}}%%
+%%{init: {'theme':'base','themeVariables': {'fontFamily':'Arial','background':'transparent','textColor':'#E6EDF3','lineColor':'#9CA3AF','primaryColor':'#334155','primaryTextColor':'#E6EDF3','secondaryColor':'#1F2937','secondaryTextColor':'#E6EDF3','tertiaryColor':'#111827'}}}%%
 gantt
     title Project Timeline
     dateFormat  YYYY-MM-DD
