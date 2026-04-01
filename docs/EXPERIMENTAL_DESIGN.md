@@ -74,8 +74,11 @@ All coefficients reported **numerically with units and confidence intervals**, n
 ### 2.2 Six-Position Test (IEEE Std 1293) - IMUs
 
 **Sensors:** WitMotion WT901C, RealSense D455 (IMU), Livox Mid-360 (internal IMU)
+
 **Timing:** Performed **before** long-duration static logs, on the same day
+
 **Procedure:** Place sensor in 6 static orthogonal orientations ($\pm X$, $\pm Y$, $\pm Z$ pointing up), ~5 min per orientation
+
 **Goal:** Isolate scale factor errors and gravitational bias per axis
 
 These parameters are **not observable** from horizontal static logs and are critical for tight-coupling IMU initialization in LiDAR-inertial estimators.
@@ -85,8 +88,11 @@ These parameters are **not observable** from horizontal static logs and are crit
 ### 2.3 LiDAR Static Characterization (Planar Orthogonal Residual Method)
 
 **Sensors:** Livox Mid-360, RPLiDAR A2M12
+
 **Setup:** Sensor fixed facing a flat wall at ~1.5–2 m distance
+
 **Duration:** 3–4 h (sufficient to capture thermal stabilization)
+
 **Method:** Fit a reference plane to the point cloud at t=0. For each subsequent frame, compute the mean and standard deviation of orthogonal distances from all points to the reference plane.
 
 Because the reference plane is fixed at t=0 and never updated, any apparent displacement in later frames is attributable to the sensor's thermal ToF drift, not to registration errors between frames. There is no ICP matching involved.
@@ -100,7 +106,9 @@ Because the reference plane is fixed at t=0 and never updated, any apparent disp
 ### 2.4 Camera Static Characterization (RealSense D455)
 
 **Setup:** RealSense D455 facing a static AprilTag board (minimum 4 tags, known geometry)
+
 **Duration:** 3–4 h (must capture full thermal warm-up from cold start)
+
 **Logging:** 6-DOF pose estimation of the AprilTag board at 1 Hz
 
 **Goal:** Quantify:
@@ -207,7 +215,9 @@ In T3 (aggressive trajectory), inter-waypoint pauses are 2 s. Before accepting t
 ## 4. Session A: WitMotion WT901C (3D)
 
 **Working volume:** ~400×400×300 mm around YuMi end-effector center (same as Sessions B, C, D).
+
 **DOF:** Full 3D
+
 **Role:** IMU-only session: no LiDAR or camera. Pure inertial estimation evaluated against YuMi ground truth.
 
 Session A serves as the **IMU-only baseline**: it quantifies how much of the sensor system residual error is attributable to IMU drift alone, before adding LiDAR or visual observations. This provides a lower bound on achievable accuracy with tight-coupling (the IMU is the weakest component in any tight-coupled system).
@@ -229,9 +239,13 @@ Same profiles as Sessions C and D (smooth spherical spiral / figure-8 with Z sin
 ### Trajectory T1: Smooth (2D)
 
 **Profile:** Rounded rectangle in XY plane, 300×300 mm, corners with radius ≥ 50 mm
+
 **Linear velocity:** ~20 mm/s
+
 **Angular velocity (yaw):** ~5°/s
+
 **Yaw:** Coupled to direction of motion (tangent following)
+
 **Purpose:** Baseline - verify that simulated 2D LiDAR matches real data under minimal dynamic stress. Reference for Bias Instability extraction under gentle motion.
 
 ### Trajectory T2: Moderate (2D)
